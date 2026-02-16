@@ -1,0 +1,203 @@
+{
+  "get": "teams",
+  "parameters": {
+    "league": "2",
+    "season": "2025-2026"
+  },
+  "errors": [],
+  "results": 16,
+  "response": [
+    {
+      "id": 22,
+      "name": "Boulazac",
+      "logo": "https://media.api-sports.io/basketball/teams/22.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 20,
+      "name": "Chalon/Saone",
+      "logo": "https://media.api-sports.io/basketball/teams/20.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 18,
+      "name": "Cholet",
+      "logo": "https://media.api-sports.io/basketball/teams/18.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 10,
+      "name": "Dijon",
+      "logo": "https://media.api-sports.io/basketball/teams/10.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 17,
+      "name": "Gravelines-Dunkerque",
+      "logo": "https://media.api-sports.io/basketball/teams/17.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 24,
+      "name": "JL Bourg",
+      "logo": "https://media.api-sports.io/basketball/teams/24.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 23,
+      "name": "Le Mans",
+      "logo": "https://media.api-sports.io/basketball/teams/23.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 11,
+      "name": "Le Portel",
+      "logo": "https://media.api-sports.io/basketball/teams/11.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 27,
+      "name": "Limoges",
+      "logo": "https://media.api-sports.io/basketball/teams/27.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 26,
+      "name": "Lyon-Villeurbanne",
+      "logo": "https://media.api-sports.io/basketball/teams/26.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 16,
+      "name": "Monaco",
+      "logo": "https://media.api-sports.io/basketball/teams/16.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 100,
+      "name": "Nancy",
+      "logo": "https://media.api-sports.io/basketball/teams/100.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 21,
+      "name": "Nanterre",
+      "logo": "https://media.api-sports.io/basketball/teams/21.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 108,
+      "name": "Paris",
+      "logo": "https://media.api-sports.io/basketball/teams/108.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 106,
+      "name": "Saint Quentin",
+      "logo": "https://media.api-sports.io/basketball/teams/106.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 25,
+      "name": "Strasbourg",
+      "logo": "https://media.api-sports.io/basketball/teams/25.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    }
+  ]
+}

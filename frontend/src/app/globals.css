@@ -1,0 +1,526 @@
+@import "tailwindcss";
+
+/* ===================================================================
+   BETIX Design System v2 — Premium Dark Sport Theme
+   =================================================================== */
+
+@theme inline {
+    /* --- Fonts --- */
+    --font-sans: var(--font-inter);
+    --font-mono: var(--font-geist-mono);
+
+    /* --- Radius --- */
+    --radius: 0.625rem;
+
+    /* --- BETIX Custom Colors --- */
+    --color-safe: oklch(0.72 0.17 152);
+    --color-safe-foreground: oklch(0.15 0.05 152);
+    --color-value: oklch(0.75 0.18 85);
+    --color-value-foreground: oklch(0.15 0.05 85);
+    --color-risky: oklch(0.65 0.22 25);
+    --color-risky-foreground: oklch(1 0 0);
+    --color-live: oklch(0.65 0.25 25);
+
+    /* --- shadcn CSS variables (Dark) --- */
+    --color-background: oklch(0.12 0.02 260);
+    --color-foreground: oklch(0.97 0.005 260);
+    --color-card: oklch(0.15 0.015 260);
+    --color-card-foreground: oklch(0.97 0.005 260);
+    --color-popover: oklch(0.15 0.015 260);
+    --color-popover-foreground: oklch(0.97 0.005 260);
+    --color-primary: oklch(0.65 0.24 265);
+    --color-primary-foreground: oklch(0.97 0.005 260);
+    --color-secondary: oklch(0.20 0.02 260);
+    --color-secondary-foreground: oklch(0.97 0.005 260);
+    --color-muted: oklch(0.20 0.02 260);
+    --color-muted-foreground: oklch(0.60 0.015 260);
+    --color-accent: oklch(0.70 0.20 300);
+    --color-accent-foreground: oklch(0.97 0.005 260);
+    --color-destructive: oklch(0.58 0.22 25);
+    --color-border: oklch(0.24 0.015 260);
+    --color-input: oklch(0.24 0.015 260);
+    --color-ring: oklch(0.65 0.24 265);
+    --color-chart-1: oklch(0.65 0.24 265);
+    --color-chart-2: oklch(0.72 0.17 152);
+    --color-chart-3: oklch(0.75 0.18 85);
+    --color-chart-4: oklch(0.65 0.22 25);
+    --color-chart-5: oklch(0.7 0.20 300);
+
+    --color-sidebar: oklch(0.12 0.02 260);
+    --color-sidebar-foreground: oklch(0.97 0.005 260);
+    --color-sidebar-primary: oklch(0.65 0.24 265);
+    --color-sidebar-primary-foreground: oklch(0.97 0.005 260);
+    --color-sidebar-accent: oklch(0.20 0.03 260);
+    --color-sidebar-accent-foreground: oklch(0.97 0.005 260);
+    --color-sidebar-border: oklch(0.24 0.015 260);
+    --color-sidebar-ring: oklch(0.65 0.24 265);
+}
+
+/* ===================================================================
+   Base Styles
+   =================================================================== */
+
+* {
+    border-color: var(--color-border);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===================================================================
+   Premium Card System
+   =================================================================== */
+
+/* Base premium card — subtle border + hover glow */
+.card-premium {
+    background: var(--color-card);
+    border: 1px solid oklch(0.26 0.015 260 / 0.6);
+    border-radius: var(--radius);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-premium:hover {
+    border-color: oklch(0.65 0.24 265 / 0.3);
+    box-shadow:
+        0 0 0 1px oklch(0.65 0.24 265 / 0.05),
+        0 4px 24px oklch(0.65 0.24 265 / 0.08),
+        0 1px 3px oklch(0 0 0 / 0.3);
+    transform: translateY(-1px);
+}
+
+/* Elevated card — stands out for important content */
+.card-elevated {
+    background: oklch(0.17 0.015 260);
+    border: 1px solid oklch(0.30 0.02 260 / 0.5);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 16px oklch(0 0 0 / 0.2);
+}
+
+/* Featured card — gradient border for premium plans, highlighted items */
+.card-featured {
+    position: relative;
+    background: var(--color-card);
+    border-radius: calc(var(--radius) + 2px);
+    padding: 1px;
+}
+
+.card-featured::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, oklch(0.65 0.24 265), oklch(0.70 0.20 300), oklch(0.65 0.24 265));
+    background-size: 200% 200%;
+    animation: gradient-rotate 4s linear infinite;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+}
+
+/* ===================================================================
+   Glassmorphism v2
+   =================================================================== */
+
+.glassmorphism {
+    background: oklch(0.12 0.02 260 / 0.75);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border-bottom: 1px solid oklch(0.30 0.02 260 / 0.3);
+}
+
+/* ===================================================================
+   Gradient Utilities
+   =================================================================== */
+
+.gradient-text {
+    background: linear-gradient(135deg, oklch(0.65 0.24 265), oklch(0.70 0.20 300));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-text-safe {
+    background: linear-gradient(135deg, oklch(0.72 0.17 152), oklch(0.65 0.15 170));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-accent {
+    background: linear-gradient(135deg, oklch(0.65 0.24 265), oklch(0.70 0.20 300));
+}
+
+/* Subtle background gradient for sections */
+.bg-gradient-radial {
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, oklch(0.65 0.24 265 / 0.08), transparent);
+}
+
+/* ===================================================================
+   Glow Effects
+   =================================================================== */
+
+.glow-sm {
+    box-shadow: 0 0 12px oklch(0.65 0.24 265 / 0.12);
+}
+
+.glow-md {
+    box-shadow: 0 0 24px oklch(0.65 0.24 265 / 0.15);
+}
+
+.glow-safe {
+    box-shadow: 0 0 16px oklch(0.72 0.17 152 / 0.2);
+}
+
+.glow-value {
+    box-shadow: 0 0 16px oklch(0.75 0.18 85 / 0.2);
+}
+
+.glow-risky {
+    box-shadow: 0 0 16px oklch(0.65 0.22 25 / 0.2);
+}
+
+/* Dot indicators — replaces emojis for status */
+.dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dot-safe {
+    background: var(--color-safe);
+    box-shadow: 0 0 6px oklch(0.72 0.17 152 / 0.5);
+}
+
+.dot-value {
+    background: var(--color-value);
+    box-shadow: 0 0 6px oklch(0.75 0.18 85 / 0.5);
+}
+
+.dot-risky {
+    background: var(--color-risky);
+    box-shadow: 0 0 6px oklch(0.65 0.22 25 / 0.5);
+}
+
+.dot-live {
+    background: var(--color-live);
+    box-shadow: 0 0 6px oklch(0.65 0.25 25 / 0.5);
+    animation: pulse-live 2s ease-in-out infinite;
+}
+
+/* ===================================================================
+   Interactive Elements
+   =================================================================== */
+
+/* Focus glow on inputs */
+.input-glow:focus-within {
+    border-color: oklch(0.65 0.24 265 / 0.5);
+    box-shadow: 0 0 0 3px oklch(0.65 0.24 265 / 0.1);
+}
+
+/* Active tab indicator */
+.tab-active {
+    position: relative;
+}
+
+.tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, oklch(0.65 0.24 265), oklch(0.70 0.20 300));
+    border-radius: 1px;
+}
+
+/* ===================================================================
+   Animations
+   =================================================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse-live {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.15);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes gauge-fill {
+    from {
+        stroke-dashoffset: 283;
+    }
+}
+
+@keyframes gradient-rotate {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes glow-pulse {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Animation utilities */
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.4s ease-out forwards;
+}
+
+.animate-pulse-live {
+    animation: pulse-live 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+    background: linear-gradient(90deg,
+            oklch(0.20 0.02 260) 25%,
+            oklch(0.28 0.02 260) 50%,
+            oklch(0.20 0.02 260) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.animate-gauge-fill {
+    animation: gauge-fill 1s ease-out forwards;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-marquee {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+    animation-play-state: paused;
+}
+
+@keyframes scan {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}
+
+.animate-scan {
+    animation: scan 2s linear infinite;
+}
+
+/* Staggered fade-in for lists */
+.stagger-children>* {
+    opacity: 0;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.stagger-children>*:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.stagger-children>*:nth-child(2) {
+    animation-delay: 0.10s;
+}
+
+.stagger-children>*:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.stagger-children>*:nth-child(4) {
+    animation-delay: 0.20s;
+}
+
+.stagger-children>*:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.stagger-children>*:nth-child(6) {
+    animation-delay: 0.30s;
+}
+
+.stagger-children>*:nth-child(7) {
+    animation-delay: 0.35s;
+}
+
+.stagger-children>*:nth-child(8) {
+    animation-delay: 0.40s;
+}
+
+.stagger-children>*:nth-child(9) {
+    animation-delay: 0.45s;
+}
+
+/* ===================================================================
+   Scrollbar Custom (Dark themed)
+   =================================================================== */
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: oklch(0.30 0.02 260);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.40 0.02 260);
+}
+
+/* ===================================================================
+   Hero Background Effects
+   =================================================================== */
+
+.hero-grid {
+    background-image:
+        linear-gradient(oklch(0.24 0.015 260 / 0.3) 1px, transparent 1px),
+        linear-gradient(90deg, oklch(0.24 0.015 260 / 0.3) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 60% 60% at 50% 40%, black 20%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 40%, black 20%, transparent 70%);
+}
+
+.mask-linear-fade {
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+/* ===================================================================
+   Utilities
+   =================================================================== */
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+::selection {
+    background-color: oklch(0.65 0.24 265 / 0.3);
+    color: white;
+}

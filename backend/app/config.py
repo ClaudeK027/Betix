@@ -1,0 +1,61 @@
+"""
+BETIX Backend — Configuration
+Charge les variables d'environnement et expose la config globale.
+"""
+
+import os
+from functools import lru_cache
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    """Configuration de l'application BETIX."""
+
+    # --- App ---
+    APP_NAME: str = "BETIX API"
+    APP_VERSION: str = "0.1.0"
+    DEBUG: bool = True
+
+    # --- CORS ---
+    FRONTEND_URL: str = "http://localhost:3000"
+
+    # --- API-Sports (Football + Basketball) ---
+    API_SPORTS_KEY: str = ""
+    API_FOOTBALL_BASE_URL: str = "https://v3.football.api-sports.io"
+    API_BASKETBALL_BASE_URL: str = "https://v1.basketball.api-sports.io"
+
+    # --- API-Tennis ---
+    API_TENNIS_KEY: str = ""
+    API_TENNIS_BASE_URL: str = "https://api-tennis.com/api/tennis"
+
+    # --- Gemini (IA) ---
+    GEMINI_API_KEY: str = ""
+
+    # --- Supabase ---
+    SUPABASE_URL: str = ""
+    SUPABASE_ANON_KEY: str = ""
+    SUPABASE_SERVICE_ROLE_KEY: str = ""
+
+    # --- OpenWeatherMap ---
+    OPENWEATHER_KEY: str = ""
+
+    # --- Stripe ---
+    STRIPE_SECRET_KEY: str = ""
+    STRIPE_WEBHOOK_SECRET: str = ""
+
+    # --- Ingestion ---
+    CURRENT_SEASON: int = 2024
+
+    model_config = {
+        # Charge le .env relative à ce fichier (backend/.env)
+        "env_file": os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"),
+        "env_file_encoding": "utf-8",
+        "case_sensitive": True,
+        "extra": "ignore",
+    }
+
+
+@lru_cache()
+def get_settings() -> Settings:
+    """Retourne l'instance singleton des settings."""
+    return Settings()

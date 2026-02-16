@@ -1,0 +1,72 @@
+services:
+  # Backend Service (FastAPI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: betix-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+    restart: always
+    volumes:
+      - ./backend:/app # Hot reload for dev
+
+  # Orchestrator Service (Background workers)
+  orchestrator:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: betix-orchestrator
+    command: [ "python", "scripts/updates/orchestrator.py" ]
+    depends_on:
+      - backend
+    restart: always
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+
+  # Frontend Service (Next.js)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+        - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    container_name: betix-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+    depends_on:
+      - backend
+    restart: always
+
+  # ngrok Service (External Access)
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: betix-ngrok
+    ports:
+      - "4040:4040"
+    command:
+      - "http"
+      - "frontend:3000"
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    depends_on:
+      - frontend
+    restart: always
+
+networks:
+  default:
+    name: betix-network
+    driver: bridge

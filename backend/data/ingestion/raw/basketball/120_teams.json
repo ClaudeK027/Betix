@@ -1,0 +1,251 @@
+{
+  "get": "teams",
+  "parameters": {
+    "league": "120",
+    "season": "2025"
+  },
+  "errors": [],
+  "results": 20,
+  "response": [
+    {
+      "id": 1263,
+      "name": "Anadolu Efes",
+      "logo": "https://media.api-sports.io/basketball/teams/1263.png",
+      "nationnal": false,
+      "country": {
+        "id": 48,
+        "name": "Turkey",
+        "code": "TR",
+        "flag": "https://media.api-sports.io/flags/tr.svg"
+      }
+    },
+    {
+      "id": 2329,
+      "name": "Barcelona",
+      "logo": "https://media.api-sports.io/basketball/teams/2329.png",
+      "nationnal": false,
+      "country": {
+        "id": 45,
+        "name": "Spain",
+        "code": "ES",
+        "flag": "https://media.api-sports.io/flags/es.svg"
+      }
+    },
+    {
+      "id": 2331,
+      "name": "Baskonia",
+      "logo": "https://media.api-sports.io/basketball/teams/2331.png",
+      "nationnal": false,
+      "country": {
+        "id": 45,
+        "name": "Spain",
+        "code": "ES",
+        "flag": "https://media.api-sports.io/flags/es.svg"
+      }
+    },
+    {
+      "id": 522,
+      "name": "Bayern",
+      "logo": "https://media.api-sports.io/basketball/teams/522.png",
+      "nationnal": false,
+      "country": {
+        "id": 17,
+        "name": "Germany",
+        "code": "DE",
+        "flag": "https://media.api-sports.io/flags/de.svg"
+      }
+    },
+    {
+      "id": 1065,
+      "name": "Crvena zvezda",
+      "logo": "https://media.api-sports.io/basketball/teams/1065.png",
+      "nationnal": false,
+      "country": {
+        "id": 41,
+        "name": "Serbia",
+        "code": "RS",
+        "flag": "https://media.api-sports.io/flags/rs.svg"
+      }
+    },
+    {
+      "id": 6496,
+      "name": "Dubai",
+      "logo": "https://media.api-sports.io/basketball/teams/6496.png",
+      "nationnal": false,
+      "country": {
+        "id": null,
+        "name": "Dubai",
+        "code": null,
+        "flag": null
+      }
+    },
+    {
+      "id": 1270,
+      "name": "Fenerbahce",
+      "logo": "https://media.api-sports.io/basketball/teams/1270.png",
+      "nationnal": false,
+      "country": {
+        "id": 48,
+        "name": "Turkey",
+        "code": "TR",
+        "flag": "https://media.api-sports.io/flags/tr.svg"
+      }
+    },
+    {
+      "id": 682,
+      "name": "Hapoel Tel-Aviv",
+      "logo": "https://media.api-sports.io/basketball/teams/682.png",
+      "nationnal": false,
+      "country": {
+        "id": 22,
+        "name": "Israel",
+        "code": "IL",
+        "flag": "https://media.api-sports.io/flags/il.svg"
+      }
+    },
+    {
+      "id": 26,
+      "name": "Lyon-Villeurbanne",
+      "logo": "https://media.api-sports.io/basketball/teams/26.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 687,
+      "name": "Maccabi Tel Aviv",
+      "logo": "https://media.api-sports.io/basketball/teams/687.png",
+      "nationnal": false,
+      "country": {
+        "id": 22,
+        "name": "Israel",
+        "code": "IL",
+        "flag": "https://media.api-sports.io/flags/il.svg"
+      }
+    },
+    {
+      "id": 16,
+      "name": "Monaco",
+      "logo": "https://media.api-sports.io/basketball/teams/16.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 722,
+      "name": "Olimpia Milano",
+      "logo": "https://media.api-sports.io/basketball/teams/722.png",
+      "nationnal": false,
+      "country": {
+        "id": 23,
+        "name": "Italy",
+        "code": "IT",
+        "flag": "https://media.api-sports.io/flags/it.svg"
+      }
+    },
+    {
+      "id": 1542,
+      "name": "Olympiacos",
+      "logo": "https://media.api-sports.io/basketball/teams/1542.png",
+      "nationnal": false,
+      "country": {
+        "id": 18,
+        "name": "Greece",
+        "code": "GR",
+        "flag": "https://media.api-sports.io/flags/gr.svg"
+      }
+    },
+    {
+      "id": 614,
+      "name": "Panathinaikos",
+      "logo": "https://media.api-sports.io/basketball/teams/614.png",
+      "nationnal": false,
+      "country": {
+        "id": 18,
+        "name": "Greece",
+        "code": "GR",
+        "flag": "https://media.api-sports.io/flags/gr.svg"
+      }
+    },
+    {
+      "id": 108,
+      "name": "Paris",
+      "logo": "https://media.api-sports.io/basketball/teams/108.png",
+      "nationnal": false,
+      "country": {
+        "id": 4,
+        "name": "France",
+        "code": "FR",
+        "flag": "https://media.api-sports.io/flags/fr.svg"
+      }
+    },
+    {
+      "id": 1068,
+      "name": "Partizan",
+      "logo": "https://media.api-sports.io/basketball/teams/1068.png",
+      "nationnal": false,
+      "country": {
+        "id": 41,
+        "name": "Serbia",
+        "code": "RS",
+        "flag": "https://media.api-sports.io/flags/rs.svg"
+      }
+    },
+    {
+      "id": 2338,
+      "name": "Real Madrid",
+      "logo": "https://media.api-sports.io/basketball/teams/2338.png",
+      "nationnal": false,
+      "country": {
+        "id": 45,
+        "name": "Spain",
+        "code": "ES",
+        "flag": "https://media.api-sports.io/flags/es.svg"
+      }
+    },
+    {
+      "id": 2341,
+      "name": "Valencia",
+      "logo": "https://media.api-sports.io/basketball/teams/2341.png",
+      "nationnal": false,
+      "country": {
+        "id": 45,
+        "name": "Spain",
+        "code": "ES",
+        "flag": "https://media.api-sports.io/flags/es.svg"
+      }
+    },
+    {
+      "id": 732,
+      "name": "Virtus Bologna",
+      "logo": "https://media.api-sports.io/basketball/teams/732.png",
+      "nationnal": false,
+      "country": {
+        "id": 23,
+        "name": "Italy",
+        "code": "IT",
+        "flag": "https://media.api-sports.io/flags/it.svg"
+      }
+    },
+    {
+      "id": 796,
+      "name": "Zalgiris Kaunas",
+      "logo": "https://media.api-sports.io/basketball/teams/796.png",
+      "nationnal": false,
+      "country": {
+        "id": 27,
+        "name": "Lithuania",
+        "code": "LT",
+        "flag": "https://media.api-sports.io/flags/lt.svg"
+      }
+    }
+  ]
+}

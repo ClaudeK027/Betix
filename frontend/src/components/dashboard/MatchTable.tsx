@@ -1,0 +1,299 @@
+"use client";
+
+import { useState, Fragment } from "react";
+import Link from "next/link";
+import { Match } from "@/types/match";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp, ExternalLink, Activity, Trophy, Clock } from "lucide-react";
+import { SportIcon } from "@/components/icons/SportIcons";
+import { cn } from "@/lib/utils";
+
+interface MatchTableProps {
+    items: Match[];
+}
+
+export function MatchTable({ items }: MatchTableProps) {
+    const [expandedRows, setExpandedRows] = useState<string[]>([]);
+
+    const toggleRow = (id: string) => {
+        setExpandedRows(prev =>
+            prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]
+        );
+    };
+
+    return (
+        <div className="rounded-xl border border-white/10 bg-black/40 backdrop-blur-xl overflow-hidden">
+            <Table>
+                <TableHeader className="bg-white/5 hover:bg-white/5">
+                    <TableRow className="border-white/10 hover:bg-transparent">
+                        {/* Time: Visible */}
+                        <TableHead className="w-[80px] sm:w-[100px] text-xs uppercase tracking-wider font-semibold text-muted-foreground">Heure</TableHead>
+                        {/* League: Hidden on mobile */}
+                        <TableHead className="hidden md:table-cell w-[180px] text-xs uppercase tracking-wider font-semibold text-muted-foreground">Ligue</TableHead>
+                        {/* Match: Visible - Expanded on mobile */}
+                        <TableHead className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">Match</TableHead>
+                        {/* Score: Hidden on mobile (merged into Match) */}
+                        <TableHead className="hidden md:table-cell text-center w-[100px] text-xs uppercase tracking-wider font-semibold text-muted-foreground">Score</TableHead>
+                        {/* IA: Visible (compact mobile) */}
+                        <TableHead className="w-[80px] md:w-[140px] text-xs uppercase tracking-wider font-semibold text-muted-foreground text-right md:text-left">Confiance</TableHead>
+                        <TableHead className="w-[40px] md:w-[50px]"></TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {items.map((match) => {
+                        const isExpanded = expandedRows.includes(match.id);
+                        const isLive = match.status === "live";
+                        const isFinished = match.status === "finished";
+                        const topPrediction = match.predictions?.[0];
+
+                        return (
+                            <Fragment key={match.id}>
+                                <TableRow
+                                    className={cn(
+                                        "group border-white/5 hover:bg-white/5 transition-colors cursor-pointer",
+                                        isExpanded && "bg-white/[0.02]"
+                                    )}
+                                    onClick={() => toggleRow(match.id)}
+                                >
+                                    {/* 1. Time / Status */}
+                                    <TableCell className="font-mono text-xs sm:text-sm py-3 sm:py-4">
+                                        {isLive ? (
+                                            <span className="flex flex-col sm:flex-row items-center gap-1.5 text-red-500 font-bold animate-pulse">
+                                                <Activity className="size-3" />
+                                                <span className="text-[10px] sm:text-sm">LIVE</span>
+                                            </span>
+                                        ) : (
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-white font-medium group-hover:text-white transition-colors">
+                                                    {match.time}
+                                                </span>
+                                                {match.status === "upcoming" && (
+                                                    <Badge variant="outline" className="w-fit bg-blue-500/10 text-blue-400 border-blue-500/20 text-[9px] px-1 py-0 h-4 font-bold uppercase tracking-tighter">
+                                                        Next
+                                                    </Badge>
+                                                )}
+                                                <span className="text-[10px] text-muted-foreground md:hidden uppercase font-medium tracking-tighter">
+                                                    {(() => {
+                                                        const now = new Date();
+                                                        const matchDateStr = match.date;
+                                                        const todayStr = now.toISOString().split('T')[0];
+
+                                                        const tomorrowDate = new Date(now);
+                                                        tomorrowDate.setDate(now.getDate() + 1);
+                                                        const tomorrowStr = tomorrowDate.toISOString().split('T')[0];
+
+                                                        if (matchDateStr === todayStr) return "Aujourd'hui";
+                                                        if (matchDateStr === tomorrowStr) return "Demain";
+                                                        return new Date(matchDateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+                                                    })()}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </TableCell>
+
+                                    {/* 2. League (Hidden Mobile) */}
+                                    <TableCell className="hidden md:table-cell">
+                                        <div className="flex items-center gap-2">
+                                            <SportIcon sport={match.sport} size={14} className="text-muted-foreground" />
+                                            <span className="text-sm font-medium text-muted-foreground truncate max-w-[140px]" title={match.league?.name}>
+                                                {match.league?.name}
+                                            </span>
+                                        </div>
+                                    </TableCell>
+
+                                    {/* 3. Match (Teams + Score on Mobile) */}
+                                    <TableCell className="py-2 sm:py-4">
+                                        {/* Mobile Layout: Stacked Teams + Inline Scores */}
+                                        <div className="flex flex-col md:hidden gap-1.5">
+                                            {/* Home Row (Mobile) */}
+                                            <div className="flex justify-between items-center pr-2">
+                                                <div className="flex items-center gap-2 min-w-0">
+                                                    <div className="size-6 rounded-full bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                                                        {match.homeTeam.logo ? (
+                                                            <img src={match.homeTeam.logo} alt="" className="size-full object-contain p-1" />
+                                                        ) : (
+                                                            <span className="text-[8px] font-bold text-muted-foreground">{match.homeTeam.short}</span>
+                                                        )}
+                                                    </div>
+                                                    <span className={cn("text-xs font-medium truncate", isLive && (match.homeScore ?? 0) > (match.awayScore ?? 0) ? "text-white" : "text-neutral-300")}>
+                                                        {match.homeTeam.name}
+                                                    </span>
+                                                </div>
+                                                {(isLive || isFinished) && (
+                                                    <span className="font-mono text-xs font-bold text-white">{match.homeScore}</span>
+                                                )}
+                                            </div>
+                                            {/* Away Row (Mobile) */}
+                                            <div className="flex justify-between items-center pr-2">
+                                                <div className="flex items-center gap-2 min-w-0">
+                                                    <div className="size-6 rounded-full bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                                                        {match.awayTeam.logo ? (
+                                                            <img src={match.awayTeam.logo} alt="" className="size-full object-contain p-1" />
+                                                        ) : (
+                                                            <span className="text-[8px] font-bold text-muted-foreground">{match.awayTeam.short}</span>
+                                                        )}
+                                                    </div>
+                                                    <span className={cn("text-xs font-medium truncate", isLive && (match.awayScore ?? 0) > (match.homeScore ?? 0) ? "text-white" : "text-neutral-300")}>
+                                                        {match.awayTeam.name}
+                                                    </span>
+                                                </div>
+                                                {(isLive || isFinished) && (
+                                                    <span className="font-mono text-xs font-bold text-white">{match.awayScore}</span>
+                                                )}
+                                            </div>
+                                            {/* League Hint (Mobile) */}
+                                            <div className="flex items-center gap-1 mt-0.5 text-[10px] text-neutral-500">
+                                                <SportIcon sport={match.sport} size={10} />
+                                                <span className="truncate max-w-[180px]">{match.league?.name}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Desktop Layout: Side by Side */}
+                                        <div className="hidden md:flex items-center gap-4">
+                                            <div className="flex items-center gap-3 flex-1 justify-end">
+                                                <span className={cn("text-sm font-medium text-right", isLive && (match.homeScore ?? 0) > (match.awayScore ?? 0) ? "text-white" : "text-neutral-400")}>{match.homeTeam.name}</span>
+                                                <div className="size-10 rounded-full bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                                                    {match.homeTeam.logo ? (
+                                                        <img src={match.homeTeam.logo} alt="" className="size-full object-contain p-1.5" />
+                                                    ) : (
+                                                        <span className="text-[12px] font-bold text-muted-foreground">{match.homeTeam.short}</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <span className="text-xs text-muted-foreground font-mono">vs</span>
+                                            <div className="flex items-center gap-3 flex-1">
+                                                <div className="size-10 rounded-full bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                                                    {match.awayTeam.logo ? (
+                                                        <img src={match.awayTeam.logo} alt="" className="size-full object-contain p-1.5" />
+                                                    ) : (
+                                                        <span className="text-[12px] font-bold text-muted-foreground">{match.awayTeam.short}</span>
+                                                    )}
+                                                </div>
+                                                <span className={cn("text-sm font-medium", isLive && (match.awayScore ?? 0) > (match.homeScore ?? 0) ? "text-white" : "text-neutral-400")}>{match.awayTeam.name}</span>
+                                            </div>
+                                        </div>
+                                    </TableCell>
+
+                                    {/* 4. Score (Desktop Only) */}
+                                    <TableCell className="text-center hidden md:table-cell">
+                                        {isLive || match.status === "finished" ? (
+                                            <Badge variant="outline" className="font-mono bg-neutral-900 border-white/10 text-white">
+                                                {match.homeScore} - {match.awayScore}
+                                            </Badge>
+                                        ) : (
+                                            <span className="text-xs text-muted-foreground">-</span>
+                                        )}
+                                    </TableCell>
+
+                                    {/* 5. AI Confidence */}
+                                    <TableCell className="text-right md:text-left">
+                                        {topPrediction && (
+                                            <>
+                                                {/* Mobile: Simple Badge */}
+                                                <Badge className={cn(
+                                                    "md:hidden text-[10px] px-1.5 h-5 font-mono",
+                                                    topPrediction.level === "safe" && "bg-emerald-500/20 text-emerald-400 border-emerald-500/20",
+                                                    topPrediction.level === "value" && "bg-purple-500/20 text-purple-400 border-purple-500/20",
+                                                    topPrediction.level === "risky" && "bg-orange-500/20 text-orange-400 border-orange-500/20"
+                                                )}>
+                                                    {topPrediction.confidence}%
+                                                </Badge>
+
+                                                {/* Desktop: Full Badge */}
+                                                <Badge className={cn(
+                                                    "hidden md:inline-flex border font-normal font-mono text-[10px]",
+                                                    topPrediction.level === "safe" && "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+                                                    topPrediction.level === "value" && "bg-purple-500/10 text-purple-400 border-purple-500/20",
+                                                    topPrediction.level === "risky" && "bg-orange-500/10 text-orange-400 border-orange-500/20"
+                                                )}>
+                                                    {topPrediction.confidence}% {topPrediction.level.toUpperCase()}
+                                                </Badge>
+                                            </>
+                                        )}
+                                    </TableCell>
+
+                                    {/* 6. Action Toggle */}
+                                    <TableCell>
+                                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground">
+                                            {isExpanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+
+                                {/* Expanded Content (Accordion) - Keep as is, it's already responsive enough (grid-cols-1 md:grid-cols-3) */}
+                                {isExpanded && (
+                                    <TableRow className="border-white/5 bg-white/[0.02] hover:bg-white/[0.02]">
+                                        <TableCell colSpan={6} className="p-0">
+                                            <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-top-2 duration-200">
+
+                                                {/* Stats Column */}
+                                                <div className="space-y-3 md:border-r border-white/5 md:pr-6">
+                                                    <h4 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-2">
+                                                        <Trophy className="size-3" /> Forme & Stats
+                                                    </h4>
+                                                    <div className="space-y-2">
+                                                        <div className="flex justify-between text-xs">
+                                                            <span className="text-neutral-400">Classement</span>
+                                                            <span className="text-white">#{Math.floor(Math.random() * 20) + 1} vs #{Math.floor(Math.random() * 20) + 1}</span>
+                                                        </div>
+                                                        <div className="flex justify-between text-xs">
+                                                            <span className="text-neutral-400">Série (5 derniers)</span>
+                                                            <div className="flex gap-1 font-mono text-[10px]">
+                                                                <span className="text-emerald-500">W</span>
+                                                                <span className="text-emerald-500">W</span>
+                                                                <span className="text-neutral-500">D</span>
+                                                                <span className="text-red-500">L</span>
+                                                                <span className="text-emerald-500">W</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Prediction Detail */}
+                                                <div className="space-y-3 md:border-r border-white/5 md:pr-6">
+                                                    <h4 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-2">
+                                                        <Activity className="size-3" /> Analyse IA
+                                                    </h4>
+                                                    {topPrediction ? (
+                                                        <div className="space-y-2">
+                                                            <div className="text-sm text-white font-medium">
+                                                                Misez sur <span className="text-primary">{topPrediction.bet}</span>
+                                                            </div>
+                                                            <p className="text-xs text-neutral-400 line-clamp-2">
+                                                                L&apos;analyse suggère une forte probabilité basée sur la forme récente à domicile et les absences adverses.
+                                                            </p>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-xs text-muted-foreground">Analyse en cours...</span>
+                                                    )}
+                                                </div>
+
+                                                {/* Action */}
+                                                <div className="flex items-center justify-end">
+                                                    <Link href={`/dashboard/match/${match.id}`} className="w-full sm:w-auto">
+                                                        <Button className="w-full gap-2 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20" variant="outline">
+                                                            Voir l&apos;analyse complète <ExternalLink className="size-3.5" />
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </Fragment>
+                        );
+                    })}
+                </TableBody>
+            </Table>
+        </div>
+    );
+}

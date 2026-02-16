@@ -1,0 +1,113 @@
+"use client";
+
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { RadioTower, Bell, Mail, Smartphone, Volume2, Save } from "lucide-react";
+
+interface CommsConfigProps {
+    open: boolean;
+    onClose: () => void;
+}
+
+export function CommsConfig({ open, onClose }: CommsConfigProps) {
+    return (
+        <Sheet open={open} onOpenChange={onClose}>
+            <SheetContent className="w-full sm:max-w-md border-l border-white/10 bg-black/95 backdrop-blur-xl p-0 shadow-2xl">
+                <SheetHeader className="sr-only">
+                    <SheetTitle>Comms Configuration</SheetTitle>
+                    <SheetDescription>Paramètres de réception des alertes</SheetDescription>
+                </SheetHeader>
+
+                {/* Header */}
+                <div className="h-20 bg-neutral-900/50 relative overflow-hidden border-b border-white/10 flex items-center px-6">
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px] opacity-20" />
+                    <div className="flex items-center gap-3 relative z-10">
+                        <div className="size-10 rounded-lg bg-neutral-800 flex items-center justify-center border border-white/10">
+                            <RadioTower className="size-5 text-white animate-pulse" />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-black text-white uppercase tracking-widest">Comms Config</h2>
+                            <p className="text-[10px] font-mono text-neutral-500">SIGNAL_ROUTING_PROTOCOLS</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="p-6 space-y-8">
+
+                    {/* Channel Settings */}
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-bold text-neutral-500 uppercase flex items-center gap-2">
+                            <Bell className="size-3.5" /> Notification Channels
+                        </h3>
+
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between group">
+                                <div className="flex items-center gap-3">
+                                    <div className="size-8 rounded bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:bg-blue-500/20 transition-colors">
+                                        <Mail className="size-4" />
+                                    </div>
+                                    <div>
+                                        <Label className="text-sm font-bold text-white">Email Uplink</Label>
+                                        <p className="text-[10px] text-neutral-500">Critical alerts only</p>
+                                    </div>
+                                </div>
+                                <Switch defaultChecked />
+                            </div>
+
+                            <div className="flex items-center justify-between group">
+                                <div className="flex items-center gap-3">
+                                    <div className="size-8 rounded bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
+                                        <Smartphone className="size-4" />
+                                    </div>
+                                    <div>
+                                        <Label className="text-sm font-bold text-white">Push Notifications</Label>
+                                        <p className="text-[10px] text-neutral-500">Real-time signal feed</p>
+                                    </div>
+                                </div>
+                                <Switch defaultChecked />
+                            </div>
+                        </div>
+                    </div>
+
+                    <Separator className="bg-white/10" />
+
+                    {/* Alert Thresholds */}
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-bold text-neutral-500 uppercase flex items-center gap-2">
+                            <Volume2 className="size-3.5" /> Signal Intensity
+                        </h3>
+                        <div className="p-3 rounded-lg border border-white/10 bg-white/5 space-y-3">
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-mono text-neutral-400">INFO_LEVEL_LOGS</span>
+                                <Switch />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-mono text-neutral-400">WARNING_LEVEL_LOGS</span>
+                                <Switch defaultChecked />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-mono text-red-400 font-bold">CRITICAL_ALERTS</span>
+                                <Switch defaultChecked disabled className="opacity-50 cursor-not-allowed data-[state=checked]:bg-red-500" />
+                            </div>
+                        </div>
+                        <p className="text-[10px] text-neutral-600 italic">
+                            *Critical alerts cannot be disabled via this terminal. Contact SysAdmin for override.
+                        </p>
+                    </div>
+
+                </div>
+
+                {/* Footer Actions */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10 bg-black/90 backdrop-blur-md">
+                    <Button onClick={onClose} className="w-full bg-white text-black font-bold hover:bg-neutral-200">
+                        <Save className="size-4 mr-2" /> UPDATE PROTOCOLS
+                    </Button>
+                </div>
+
+            </SheetContent>
+        </Sheet>
+    );
+}

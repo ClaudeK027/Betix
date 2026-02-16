@@ -1,0 +1,47 @@
+export type SportType = "football" | "basketball" | "tennis";
+export type MatchStatus = "scheduled" | "upcoming" | "imminent" | "live" | "finished" | "postponed";
+export type PredictionLevel = "safe" | "value" | "risky";
+export type FactorImpact = "positive" | "negative" | "neutral";
+
+export interface Team {
+    name: string;
+    short: string;
+    logo?: string;
+}
+
+export interface League {
+    name: string;
+    country: string;
+    flag?: string;
+}
+
+export interface KeyFactor {
+    text: string;
+    impact: FactorImpact;
+}
+
+export interface Prediction {
+    type: string; // e.g., "1N2", "Over/Under"
+    bet: string;  // e.g., "Victoire Real"
+    odds: number;
+    confidence: number; // 0-100
+    level: PredictionLevel;
+    analysis: string;
+    keyFactors: KeyFactor[];
+}
+
+export interface Match {
+    id: string;
+    sport: SportType;
+    league: League;
+    homeTeam: Team;
+    awayTeam: Team;
+    date: string; // YYYY-MM-DD
+    time: string; // HH:mm
+    status: MatchStatus;
+    statusShort?: string;
+    homeScore?: number;
+    awayScore?: number;
+    venue?: string;
+    predictions?: Prediction[];
+}

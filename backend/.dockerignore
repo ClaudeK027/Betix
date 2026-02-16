@@ -1,0 +1,25 @@
+# Folders
+venv/
+__pycache__/
+.git/
+.pytest_cache/
+.vscode/
+data/
+
+# Files
+.env*
+*.log
+README.md
+*.pyc
+*.pyo
+*.pyd
+
+# Specific scripts to ignore if they still exist (maintenance/one-off)
+scripts/diagnostics/
+scripts/tools/
+scripts/*.sql
+scripts/debug_*.py
+scripts/ingest_*.py
+scripts/inspect_*.py
+scripts/run_ingestion.py
+scripts/validate_teams.py
