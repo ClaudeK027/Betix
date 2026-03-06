@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 import httpx
 
 logger = logging.getLogger("draft.fb_upsert")
@@ -95,7 +95,7 @@ class FBMatchUpserter:
             home_score = scores.get("home", {}).get("total") if scores.get("home") else None
             away_score = scores.get("away", {}).get("total") if scores.get("away") else None
             
-        new_status = self._normalize_status(sport, short_status, db_match.get("status"))
+        new_status = self._normalize_status(sport, short_status, db_match.get("status"), date_time or db_match.get("date_time"))
         
         # P2: Nettoyer status_short quand le match est reporté/annulé
         if new_status == "postponed":
@@ -117,21 +117,29 @@ class FBMatchUpserter:
             "away_score": away_score
         }
         
-    def _normalize_status(self, sport: str, short_status: str, current_db_status: str) -> str:
+    def _normalize_status(self, sport: str, short_status: str, current_db_status: str, date_time_str: str = None) -> str:
         """Mapped API short status to our DB status"""
         FT_FOOTBALL = ["FT", "AET", "PEN"]
         FT_BASKET = ["FT", "AOT"]
-        
+
         if sport == "football" and short_status in FT_FOOTBALL: return "finished"
         if sport == "basketball" and short_status in FT_BASKET: return "finished"
-        
+
         # P1: Ajout de POST, SUSP, INT aux statuts reportés
         if short_status in ["PST", "POST", "CANC", "ABD", "AWD", "WO", "SUSP", "INT"]: return "postponed"
-        
+
         if short_status in ["NS", "TBD"]:
-            if current_db_status == "imminent": return "imminent"
+            # Calculer dynamiquement si le match est imminent (dans les 3h)
+            if date_time_str:
+                try:
+                    dt = datetime.fromisoformat(date_time_str.replace("Z", "+00:00"))
+                    hours_until = (dt - datetime.now(timezone.utc)).total_seconds() / 3600
+                    if 0 <= hours_until <= 3:
+                        return "imminent"
+                except (ValueError, TypeError):
+                    pass
             return "scheduled"
-            
+
         return "live"
 
     def _apply_update_if_needed(self, sport: str, api_id: int, db_match: dict, parsed: dict) -> bool:

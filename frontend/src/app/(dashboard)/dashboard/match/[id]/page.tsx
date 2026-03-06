@@ -633,18 +633,22 @@ export default function MatchAnalysisPage({ params }: { params: Promise<{ id: st
 
                                     // Déterminer qui est A et B par rapport à Home/Away
                                     const isTennis = match.sport === 'tennis';
-                                    const homeId = isTennis ? (match as any).home_player_id : (match as any).home_team_id;
-                                    const isHomeA = (h2h.team_a_id || h2h.player_a_id) === homeId;
+                                    // Les IDs home/away sont injectés dans le h2h par le backend
+                                    const isHomeA = isTennis
+                                        ? (h2h.home_player_id != null && (h2h.summary?.player_a_id === h2h.home_player_id))
+                                        : (h2h.home_team_id != null && h2h.team_a_id === h2h.home_team_id);
+
+                                    const tennisH2h = isTennis ? (h2h.summary || {}) : null;
 
                                     const homeWins = Number(isTennis
-                                        ? (isHomeA ? h2h.total_wins_a : h2h.total_wins_b)
+                                        ? (isHomeA ? tennisH2h?.total_wins_a : tennisH2h?.total_wins_b)
                                         : (isHomeA ? h2h.team_a_wins : h2h.team_b_wins)) || 0;
 
                                     const awayWins = Number(isTennis
-                                        ? (!isHomeA ? h2h.total_wins_a : h2h.total_wins_b)
+                                        ? (!isHomeA ? tennisH2h?.total_wins_a : tennisH2h?.total_wins_b)
                                         : (!isHomeA ? h2h.team_a_wins : h2h.team_b_wins)) || 0;
 
-                                    const draws = Number(h2h.draws) || 0;
+                                    const draws = Number(isTennis ? 0 : h2h.draws) || 0;
                                     const rawTotal = isTennis ? (homeWins + awayWins) : (h2h.total_matches || (homeWins + awayWins + draws));
                                     const totalMatches = Number(rawTotal) || (homeWins + awayWins + draws) || 1;
 
@@ -713,12 +717,12 @@ export default function MatchAnalysisPage({ params }: { params: Promise<{ id: st
                                             )}
 
                                             {/* Plus de détails en texte si tennis */}
-                                            {isTennis && h2h.last_score && (
+                                            {isTennis && tennisH2h?.last_score && (
                                                 <div className="text-center p-6 bg-gradient-to-br from-white/[0.03] to-transparent rounded-2xl border border-white/10 mt-6 overflow-hidden relative">
                                                     <div className="absolute -top-10 -right-10 size-32 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
                                                     <span className="block text-[10px] uppercase tracking-widest text-white/40 mb-2 font-bold">Dernière Confrontation</span>
-                                                    <span className="text-2xl font-black text-white tracking-tight">{h2h.last_score}</span>
-                                                    <span className="block text-xs text-muted-foreground mt-2 uppercase tracking-wide">Gagné par {h2h.last_winner_id === homeId ? "Domicile" : "Extérieur"} ({h2h.last_meeting_date})</span>
+                                                    <span className="text-2xl font-black text-white tracking-tight">{tennisH2h.last_score}</span>
+                                                    <span className="block text-xs text-muted-foreground mt-2 uppercase tracking-wide">Gagné par {tennisH2h.last_winner_id === h2h.home_player_id ? "Domicile" : "Extérieur"} ({tennisH2h.last_meeting_date})</span>
                                                 </div>
                                             )}
                                         </div>

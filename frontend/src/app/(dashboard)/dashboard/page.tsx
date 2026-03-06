@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,11 +24,43 @@ export default function DashboardPage() {
     const searchParams = useSearchParams();
     const currentSport = searchParams.get("sport") || "all";
 
-    // Imports for Client Side Fetch
     const supabase = createClient();
 
-    const fetchMatches = async () => {
-        setLoading(true);
+    // Transform a single DB row into the UI Match type
+    const transformMatch = useCallback((m: any): Match => {
+        const dateObj = new Date(m.date_time);
+        return {
+            id: m.id,
+            sport: m.sport,
+            league: {
+                name: m.league_name,
+                country: "International"
+            },
+            homeTeam: {
+                name: m.home_team.name,
+                short: m.home_team.code || m.home_team.name.substring(0, 3).toUpperCase(),
+                logo: m.home_team.logo
+            },
+            awayTeam: {
+                name: m.away_team.name,
+                short: m.away_team.code || m.away_team.name.substring(0, 3).toUpperCase(),
+                logo: m.away_team.logo
+            },
+            date: dateObj.toISOString().split('T')[0],
+            time: dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            status: m.status,
+            statusShort: m.status_short,
+            homeScore: m.score?.home,
+            awayScore: m.score?.away,
+            scoreDisplay: m.score?.display,
+            scoreDetails: m.score?.details,
+            venue: m.venue || "Stadium",
+            predictions: []
+        };
+    }, []);
+
+    // Initial fetch — only shows loading skeleton on first load
+    const fetchMatches = useCallback(async () => {
         try {
             const { data, error } = await supabase
                 .from('matches')
@@ -41,65 +73,41 @@ export default function DashboardPage() {
             }
 
             if (data) {
-                // Transform DB shape to UI Type
-                const transformed: Match[] = data.map((m: any) => {
-                    const dateObj = new Date(m.date_time);
-                    return {
-                        id: m.id,
-                        sport: m.sport,
-                        league: {
-                            name: m.league_name,
-                            country: "International"
-                        },
-                        homeTeam: {
-                            name: m.home_team.name,
-                            short: m.home_team.code || m.home_team.name.substring(0, 3).toUpperCase(),
-                            logo: m.home_team.logo
-                        },
-                        awayTeam: {
-                            name: m.away_team.name,
-                            short: m.away_team.code || m.away_team.name.substring(0, 3).toUpperCase(),
-                            logo: m.away_team.logo
-                        },
-                        date: dateObj.toISOString().split('T')[0],
-                        time: dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                        status: m.status,
-                        statusShort: m.status_short,
-                        homeScore: m.score?.home,
-                        awayScore: m.score?.away,
-                        scoreDisplay: m.score?.display,
-                        scoreDetails: m.score?.details,
-                        venue: m.venue || "Stadium",
-                        predictions: []
-                    };
-                });
-                setMatches(transformed);
+                setMatches(data.map(transformMatch));
             }
         } finally {
             setLoading(false);
         }
-    };
+    }, [transformMatch]);
+
+    // Handle realtime events by surgically updating state
+    const handleRealtimeChange = useCallback((payload: any) => {
+        const { eventType, new: newRow, old: oldRow } = payload;
+
+        if (eventType === 'INSERT' && newRow) {
+            const match = transformMatch(newRow);
+            setMatches(prev => [...prev, match]);
+        } else if (eventType === 'UPDATE' && newRow) {
+            const match = transformMatch(newRow);
+            setMatches(prev => prev.map(m => m.id === match.id ? match : m));
+        } else if (eventType === 'DELETE' && oldRow) {
+            setMatches(prev => prev.filter(m => m.id !== oldRow.id));
+        }
+    }, [transformMatch]);
 
     useEffect(() => {
         fetchMatches();
 
-        // --- Activation Supabase Realtime ---
-        // On écoute tout changement sur la table 'matches' du schéma 'public'
         const channel = supabase
             .channel('realtime_matches')
             .on(
                 'postgres_changes',
                 {
-                    event: '*', // INSERT, UPDATE, DELETE
+                    event: '*',
                     schema: 'public',
                     table: 'matches'
                 },
-                (payload) => {
-                    console.log('Realtime change received:', payload);
-                    // On pourrait optimiser en injectant juste la ligne,
-                    // mais refetchMatches garantit la cohérence et le transform UI correct.
-                    fetchMatches();
-                }
+                handleRealtimeChange
             )
             .subscribe();
 

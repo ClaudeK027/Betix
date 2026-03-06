@@ -7,7 +7,7 @@
 
 export type Sport = "football" | "basketball" | "tennis";
 
-export type MatchStatus = "scheduled" | "live" | "finished" | "postponed";
+export type MatchStatus = "scheduled" | "live" | "finished" | "postponed" | "cancelled";
 
 export type ConfidenceLevel = "safe" | "intermediate" | "risky";
 

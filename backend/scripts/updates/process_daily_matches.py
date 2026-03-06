@@ -3,7 +3,7 @@ import os
 import sys
 import logging
 import httpx
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 # Configuration du chemin pour les imports
 backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
@@ -47,7 +47,7 @@ class DailyMatchOrchestrator:
             url = f"{self.db.base_url}/{table}"
             
             # Récupération des matchs qui ne sont pas 'finished' pour vérification
-            query_str = f"select=id,api_id,status,date_time&date_time=gte.{start_date}&date_time=lte.{end_date}&status=neq.finished&limit=10000"
+            query_str = f"select=id,api_id,status,date_time&date_time=gte.{start_date}&date_time=lte.{end_date}&status=not.in.(finished,cancelled)&limit=10000"
             full_url = f"{url}?{query_str}"
             
             try:
@@ -75,6 +75,9 @@ class DailyMatchOrchestrator:
             else:
                 logger.warning(f"⚠️ Séquence inconnue pour le sport : {sport_key}")
                 
+        # 4. Filet de sécurité : matchs bloqués depuis >12h → cancelled
+        await self.cleanup_stuck_matches()
+
         logger.info("🏁 Fin de l'orchestration quotidienne.")
 
     async def sequence_1(self, sport: str, matches: list):
@@ -146,6 +149,25 @@ class DailyMatchOrchestrator:
         # Déclenchement de la pipeline FB
         if missing_stats_targets:
             run_fb_pipeline(missing_stats_targets)
+
+    async def cleanup_stuck_matches(self):
+        """Filet de sécurité : force 'cancelled' pour tout match encore
+        scheduled/imminent dont le kick-off est dépassé de plus de 12 heures."""
+        cutoff = (datetime.now(timezone.utc) - timedelta(hours=12)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        for sport in self.sports:
+            table = f"{sport}_matches"
+            query = f"status=in.(scheduled,imminent)&date_time=lte.{cutoff}&select=id,api_id,status"
+            try:
+                stuck = self.db.select_raw(table, query)
+                if not stuck:
+                    continue
+                logger.warning(f"🧹 {sport.upper()} : {len(stuck)} matchs bloqués (>12h) → cancelled")
+                for m in stuck:
+                    self.db.update(table, {"status": "cancelled", "status_short": "Annulé"}, {"api_id": m["api_id"]})
+                    logger.info(f"   🔒 {sport} api_id={m['api_id']} → cancelled (bloqué >12h)")
+            except Exception as e:
+                logger.error(f"❌ Erreur cleanup {sport}: {e}")
 
 if __name__ == "__main__":
     orchestrator = DailyMatchOrchestrator()

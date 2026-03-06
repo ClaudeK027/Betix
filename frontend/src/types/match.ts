@@ -1,5 +1,5 @@
 export type SportType = "football" | "basketball" | "tennis";
-export type MatchStatus = "scheduled" | "upcoming" | "imminent" | "live" | "finished" | "postponed";
+export type MatchStatus = "scheduled" | "upcoming" | "imminent" | "live" | "finished" | "postponed" | "cancelled";
 export type PredictionLevel = "safe" | "value" | "risky";
 export type FactorImpact = "positive" | "negative" | "neutral";
 

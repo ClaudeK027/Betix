@@ -292,9 +292,9 @@ export default async function LandingPage() {
                                         <div className="size-2 rounded-full bg-green-500/50" />
                                     </div>
                                     {/* Terminal Content */}
-                                    <div className="relative flex-1 p-4 font-mono text-xs text-left text-neutral-400 overflow-hidden">
+                                    <div className="relative flex-1 font-mono text-xs text-left text-neutral-400 overflow-hidden min-h-0">
                                         <div className="absolute inset-0 pointer-events-none z-10 bg-gradient-to-b from-black/80 via-transparent to-black/80" />
-                                        <div className="flex flex-col" style={{ animation: 'terminal-scroll 15s linear infinite' }}>
+                                        <div className="absolute top-4 left-4 right-4 flex flex-col" style={{ animation: 'terminal-scroll 15s linear infinite' }}>
                                             <style dangerouslySetInnerHTML={{
                                                 __html: `
                                                 @keyframes terminal-scroll {

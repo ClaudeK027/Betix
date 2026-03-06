@@ -139,36 +139,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: error?.message || null };
     }, [supabase]);
 
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+
     const signInWithGoogle = useCallback(async () => {
         logger.info("[AuthProvider] Initiating Google OAuth...");
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: `${window.location.origin}/api/auth/callback`,
+                redirectTo: `${appUrl}/api/auth/callback`,
             },
         });
         if (error) logger.error("[AuthProvider] Google OAuth failed:", error.message);
         return { error: error?.message || null };
-    }, [supabase]);
+    }, [supabase, appUrl]);
 
     const signInWithMagicLink = useCallback(async (email: string) => {
         logger.info(`[AuthProvider] Sending Magic Link to: ${email}`);
         const { error } = await supabase.auth.signInWithOtp({
             email,
             options: {
-                emailRedirectTo: `${window.location.origin}/api/auth/callback`,
+                emailRedirectTo: `${appUrl}/api/auth/callback`,
             },
         });
         if (error) logger.error("[AuthProvider] Magic Link failed:", error.message);
         return { error: error?.message || null };
-    }, [supabase]);
+    }, [supabase, appUrl]);
 
     const signUp = useCallback(async (email: string, password: string) => {
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
-                emailRedirectTo: `${window.location.origin}/api/auth/callback`,
+                emailRedirectTo: `${appUrl}/api/auth/callback`,
             },
         });
 
