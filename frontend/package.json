@@ -22,33 +22,22 @@
     "mini-svg-data-uri": "^1.4.4",
     "next": "16.1.6",
     "next-themes": "^0.4.6",
-<<<<<<< HEAD
     "postcss": "^8.5.8",
-=======
-    "postcss": "^8.5.6",
->>>>>>> 3ac07cb9c136d428706ab0f5add1d69e97ffb034
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "recharts": "^3.7.0",
+    "recharts": "^3.7.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
-<<<<<<< HEAD
     "@tailwindcss/postcss": "^4.2.1",
-=======
->>>>>>> 3ac07cb9c136d428706ab0f5add1d69e97ffb034
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
-<<<<<<< HEAD
     "tailwindcss": "^4.2.1",
-=======
-    "tailwindcss": "^3.4.19",
->>>>>>> 3ac07cb9c136d428706ab0f5add1d69e97ffb034
     "typescript": "^5"
   }
 }
