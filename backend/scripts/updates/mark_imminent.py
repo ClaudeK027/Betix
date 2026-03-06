@@ -76,12 +76,26 @@ class ImminentRadar:
                 logger.info(f"🏁 Match {sport.upper()} {api_id} JUST FINISHED (very early!).")
                 return match
                 
-            # 2. Vérifier si le statut est toujours 'scheduled' après l'Upserter
-            updated_row = self.db.select_raw(table, f"select=status&api_id=eq.{api_id}")
+            # 2. Vérifier si le statut est toujours 'scheduled' ET la date toujours dans la fenêtre 3h
+            updated_row = self.db.select_raw(table, f"select=status,date_time&api_id=eq.{api_id}")
             if updated_row and updated_row[0].get("status") == "scheduled":
-                # Le match est confirmé pour bientôt et n'a pas été reporté
-                self.db.update(table, {"status": "imminent"}, {"api_id": api_id})
-                logger.info(f"   --> Forced {sport.upper()} {api_id} to IMMINENT.")
+                # Re-vérifier que la date mise à jour est toujours dans les 3 prochaines heures
+                new_dt_str = updated_row[0].get("date_time", "")
+                still_imminent = False
+                if new_dt_str:
+                    try:
+                        new_dt = datetime.fromisoformat(new_dt_str.replace("Z", "+00:00"))
+                        now_utc = datetime.now(timezone.utc)
+                        hours_until = (new_dt - now_utc).total_seconds() / 3600
+                        still_imminent = 0 <= hours_until <= 3
+                    except (ValueError, TypeError):
+                        pass
+
+                if still_imminent:
+                    self.db.update(table, {"status": "imminent"}, {"api_id": api_id})
+                    logger.info(f"   --> Forced {sport.upper()} {api_id} to IMMINENT.")
+                else:
+                    logger.info(f"   💤 {sport.upper()} {api_id}: date mise à jour hors fenêtre 3h, reste scheduled.")
                 
             return None
         except Exception as e:

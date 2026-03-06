@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 import httpx
 
 logger = logging.getLogger("draft.tennis_upsert")
@@ -33,8 +33,27 @@ class TennisMatchUpserter:
         # 1. FETCH API
         raw = await self._fetch_api_data(db_match)
         if not raw:
-            logger.warning(f"   ⚠️ Match {api_id} (DB: {db_id}) introuvable sur l'API.")
-            return db_match["status"] == "finished"
+            # Si le match est introuvable ET son heure est dépassée de >6h → cancelled
+            match_dt_str = db_match.get("date_time", "")
+            is_overdue = False
+            if match_dt_str:
+                try:
+                    dt = datetime.fromisoformat(match_dt_str.replace("Z", "+00:00"))
+                    hours_past = (datetime.now(timezone.utc) - dt).total_seconds() / 3600
+                    is_overdue = hours_past > 6
+                except (ValueError, TypeError):
+                    pass
+
+            if is_overdue and db_match["status"] not in ("finished", "cancelled"):
+                logger.warning(f"   ⚠️ Match {api_id} (DB: {db_id}) introuvable sur l'API et dépassé de >6h → cancelled.")
+                try:
+                    self.db.update("tennis_matches", {"status": "cancelled", "status_short": "Annulé"}, {"api_id": api_id})
+                except Exception as e:
+                    logger.error(f"   ❌ Erreur DB cancel {api_id}: {e}")
+                return False
+            else:
+                logger.warning(f"   ⚠️ Match {api_id} (DB: {db_id}) introuvable sur l'API.")
+                return db_match["status"] == "finished"
             
         # 2. PARSING ROBUSTE
         parsed_data = self._parse_api_payload(raw, db_match)
@@ -100,8 +119,17 @@ class TennisMatchUpserter:
         winner = raw.get("event_winner")
         final_res = raw.get("event_final_result", "")
         
-        current_db_status = db_match.get("status")
-        new_status = "imminent" if current_db_status == "imminent" else "scheduled"
+        # Calculer le status par défaut dynamiquement au lieu de préserver aveuglément
+        # Si le match est dans les 3 prochaines heures → imminent, sinon → scheduled
+        new_status = "scheduled"
+        if new_date_str:
+            try:
+                match_dt = datetime.fromisoformat(new_date_str.replace("Z", "+00:00"))
+                hours_until = (match_dt - datetime.now(timezone.utc)).total_seconds() / 3600
+                if 0 <= hours_until <= 3:
+                    new_status = "imminent"
+            except (ValueError, TypeError):
+                pass
 
         # Sets de statuts normalisés pour classification robuste
         FINISHED_STATUSES = {"finished"}
@@ -130,9 +158,20 @@ class TennisMatchUpserter:
         elif any(kw in normalized for kw in LIVE_KEYWORDS) or is_live:
             new_status = "live"
             
-        # Règle 6: Status inconnu → Warning pour détection future
+        # Règle 6: Status inconnu → Warning + force cancelled si match dépassé
         elif raw_status and normalized not in {"", "notstarted", "scheduled"}:
             logger.warning(f"   ⚠️ STATUS API NON RECONNU pour match {db_match.get('api_id')}: '{raw_status}' (normalisé: '{normalized}'). Vérifier la liste des statuts.")
+            # Si le match est dépassé de >6h avec un statut inconnu, on le force en cancelled
+            match_dt_str = db_match.get("date_time", "")
+            if match_dt_str:
+                try:
+                    dt = datetime.fromisoformat(match_dt_str.replace("Z", "+00:00"))
+                    hours_past = (datetime.now(timezone.utc) - dt).total_seconds() / 3600
+                    if hours_past > 6:
+                        new_status = "cancelled"
+                        logger.info(f"   🔒 Match {db_match.get('api_id')}: Status inconnu '{raw_status}' + dépassé >6h → forced cancelled.")
+                except (ValueError, TypeError):
+                    pass
             
         # --- C. SCORE & SETS ---
         score = None

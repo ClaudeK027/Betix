@@ -25,14 +25,17 @@ logger = logging.getLogger("betix.ingestion.tennis")
 TENNIS_STATUS_MAP = {
     "Finished": "finished",
     "Not Started": "scheduled",
-    "Cancelled": "postponed",
+    # Décidés (vainqueur désigné ou match annulé définitivement)
+    "Cancelled": "cancelled",
+    "Walkover": "finished",
+    "Retired": "finished",
+    "Abandoned": "finished",
+    "Defaulted": "finished",
+    # Reportés (match sera rejoué)
     "Postponed": "postponed",
-    "Abandoned": "postponed",
     "Delayed": "postponed",
     "Suspended": "postponed",
     "Interrupted": "postponed",
-    "Retired": "postponed",
-    "Walkover": "postponed",
     "Live": "live",
 }
 

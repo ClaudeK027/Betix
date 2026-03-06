@@ -578,14 +578,18 @@ class DataAggregator:
         
         h1, a1 = rows[0]["home_team_id"], rows[0]["away_team_id"]
         h2h_table = f"{sport}_h2h"
-        
+
         res = self.db.select(h2h_table, "*", {"team_a_id": h1, "team_b_id": a1})
         if not res:
             res = self.db.select(h2h_table, "*", {"team_a_id": a1, "team_b_id": h1})
-        
+
         if not res:
             return {"summary": "No H2H found"}
-        return res[0]
+        # Injecter les IDs home/away pour que le frontend puisse mapper A/B → Home/Away
+        result = res[0]
+        result["home_team_id"] = h1
+        result["away_team_id"] = a1
+        return result
 
     async def fetch_rolling_stats(self, sport: str, match_id: int) -> Dict[str, Any]:
         match_table = f"{sport}_matches"
@@ -738,7 +742,10 @@ class DataAggregator:
         
         return {
             "summary": summary,
-            "last_5_meetings": meetings
+            "last_5_meetings": meetings,
+            # IDs pour que le frontend mappe player_a/b → home/away
+            "home_player_id": p1,
+            "away_player_id": p2,
         }
 
     async def fetch_tennis_rolling(self, match_id: int) -> Dict[str, Any]:

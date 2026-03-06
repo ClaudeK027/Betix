@@ -23,6 +23,7 @@ class MatchStatus(str, Enum):
     LIVE = "live"
     FINISHED = "finished"
     POSTPONED = "postponed"
+    CANCELLED = "cancelled"
 
 
 class ConfidenceLevel(str, Enum):

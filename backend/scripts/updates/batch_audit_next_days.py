@@ -104,17 +104,23 @@ async def find_eligible_matches(db: SupabaseREST, sport: str, days: int = 3) -> 
         return []
 
     # Filtrer ceux qui ont des cotes
-    ids_str = ",".join(map(str, eligible_ids))
-    try:
-        odds_rows = db.select_raw(
-            "odds_snapshots",
-            f"sport=eq.{sport}&match_id=in.({ids_str})&select=match_id"
-        )
-        final_ids = list(set(row["match_id"] for row in odds_rows))
-        return final_ids
-    except Exception as e:
-        logger.error(f"Erreur lors du filtrage par cotes : {e}")
-        return []
+    # PostgREST limite a 1000 lignes par defaut et odds_snapshots a ~150 lignes/match.
+    # On verifie par petits lots de 5 matchs pour rester sous la limite.
+    final_ids = []
+    CHUNK = 5
+    for i in range(0, len(eligible_ids), CHUNK):
+        chunk = eligible_ids[i:i + CHUNK]
+        ids_str = ",".join(map(str, chunk))
+        try:
+            odds_rows = db.select_raw(
+                "odds_snapshots",
+                f"sport=eq.{sport}&match_id=in.({ids_str})&select=match_id&limit=1000"
+            )
+            found = set(row["match_id"] for row in odds_rows)
+            final_ids.extend(found)
+        except Exception as e:
+            logger.error(f"Erreur lors du filtrage par cotes (chunk {i}): {e}")
+    return list(set(final_ids))
 
 
 async def find_already_audited(db_public: SupabaseREST, sport: str, match_ids: List[int], run_id: str) -> set:
