@@ -84,7 +84,7 @@ export function ProfileEditDialog({ profile, trigger }: ProfileEditDialogProps) 
                     .getPublicUrl(fileName);
 
                 finalAvatarUrl = publicUrl;
-            } else if (avatarKey !== profile.avatar && !profile.avatar.startsWith('http')) {
+            } else if (avatarKey !== profile.avatar && (!profile.avatar || !profile.avatar.startsWith('http'))) {
                 // If checking "Dicebear" logic: if avatarKey changed and it's not a URL, it's a seed
                 // But if we want to support both, we need to know if avatarKey is a seed or URL.
                 // Simplified: If no file selected, we generate the dicebear URL using the key/seed.
@@ -116,7 +116,7 @@ export function ProfileEditDialog({ profile, trigger }: ProfileEditDialogProps) 
     };
 
     const currentAvatar = previewUrl
-        || (profile.avatar.startsWith('http') ? profile.avatar : `https://api.dicebear.com/9.x/avataaars/svg?seed=${avatarKey}`);
+        || (profile.avatar?.startsWith('http') ? profile.avatar : `https://api.dicebear.com/9.x/avataaars/svg?seed=${avatarKey}`);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

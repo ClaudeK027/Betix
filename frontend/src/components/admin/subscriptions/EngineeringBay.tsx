@@ -47,7 +47,12 @@ export function EngineeringBay({ plan, definitions, open, onClose, onSuccess }: 
                     features: JSON.parse(JSON.stringify(plan.features)), // Deep copy
                     is_active: plan.is_active,
                     position: plan.position,
-                    promo: plan.promo ? { ...plan.promo } : null
+                    promo: plan.promo ? { ...plan.promo } : null,
+                    trial_price: plan.trial_price,
+                    trial_days: plan.trial_days,
+                    strikethrough_price: plan.strikethrough_price,
+                    badge_text: plan.badge_text,
+                    badge_color: plan.badge_color
                 });
             } else {
                 // Reset for creation
@@ -60,7 +65,12 @@ export function EngineeringBay({ plan, definitions, open, onClose, onSuccess }: 
                     features: { core: {}, advanced: {}, vip: {} },
                     is_active: false,
                     position: 0,
-                    promo: null
+                    promo: null,
+                    trial_price: null,
+                    trial_days: null,
+                    strikethrough_price: null,
+                    badge_text: null,
+                    badge_color: null
                 });
             }
         }
@@ -184,6 +194,28 @@ export function EngineeringBay({ plan, definitions, open, onClose, onSuccess }: 
                                     onCheckedChange={(c) => setFormData({ ...formData, is_active: c })}
                                 />
                             </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-mono text-neutral-400">BADGE_TEXT</Label>
+                                    <Input
+                                        value={formData.badge_text || ''}
+                                        onChange={(e) => setFormData({ ...formData, badge_text: e.target.value || null })}
+                                        className="bg-white/5 border-white/10 text-white text-xs"
+                                        placeholder="ex: POPULAIRE"
+                                    />
+                                    <p className="text-[9px] text-neutral-600">Texte du badge marketing (vide = pas de badge)</p>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-mono text-neutral-400">BADGE_COLOR</Label>
+                                    <Input
+                                        value={formData.badge_color || ''}
+                                        onChange={(e) => setFormData({ ...formData, badge_color: e.target.value || null })}
+                                        className="bg-white/5 border-white/10 text-white text-xs"
+                                        placeholder="ex: bg-amber-500 text-black"
+                                    />
+                                    <p className="text-[9px] text-neutral-600">Classes Tailwind pour le style du badge</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -222,74 +254,97 @@ export function EngineeringBay({ plan, definitions, open, onClose, onSuccess }: 
                                         <SelectItem value="daily">Daily</SelectItem>
                                         <SelectItem value="weekly">Weekly</SelectItem>
                                         <SelectItem value="monthly">Monthly</SelectItem>
-                                        <SelectItem value="yearly">Yearly</SelectItem>
+                                        <SelectItem value="quarterly">Quarterly (3 mois)</SelectItem>
+                                        <SelectItem value="semi_annual">Semi-Annual (6 mois)</SelectItem>
+                                        <SelectItem value="yearly">Yearly (12 mois)</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
+                        </div>
+                        <div className="space-y-2 relative">
+                            <Label className="text-xs font-mono text-neutral-400">PRIX_BARRÉ (optionnel)</Label>
+                            <Input
+                                type="number"
+                                step="0.01"
+                                value={formData.strikethrough_price ?? ''}
+                                onChange={(e) => {
+                                    const val = e.target.value === '' ? null : parseFloat(e.target.value);
+                                    setFormData({ ...formData, strikethrough_price: val != null && isNaN(val) ? null : val });
+                                }}
+                                className="bg-white/5 border-white/10 text-white font-mono pl-8"
+                                placeholder="ex: 99.99"
+                            />
+                            <span className="absolute left-3 top-[29px] text-neutral-500 text-xs">€</span>
+                            <p className="text-[9px] text-neutral-600">Ancien prix affiché barré à côté du vrai prix (marketing)</p>
                         </div>
                     </div>
 
                     <Separator className="bg-white/5" />
 
-                    {/* Promotional Application */}
-                    <div className="space-y-4">
+                    {/* Offre de Lancement (Composite Subscription) */}
+                    <div className="space-y-4 p-4 rounded-xl border border-white/10 bg-white/[0.02]">
                         <div className="flex items-center justify-between">
                             <h3 className="text-xs font-bold text-neutral-500 uppercase flex items-center gap-2">
-                                <Percent className="size-3.5" /> Promotional Application
+                                <Percent className="size-3.5" /> Offre de Lancement
                             </h3>
                             <Switch
-                                checked={!!formData.promo}
+                                checked={formData.trial_price != null && formData.trial_days != null}
                                 onCheckedChange={(checked) => {
                                     if (checked) {
                                         setFormData({
                                             ...formData,
-                                            promo: { price: formData.price ? Math.floor(formData.price * 0.8) : 0, savings: '20% OFF', duration: 'Limited Time' }
+                                            trial_price: formData.price ? Math.floor(formData.price * 0.5) : 0,
+                                            trial_days: 7
                                         });
                                     } else {
-                                        setFormData({ ...formData, promo: null });
+                                        setFormData({ ...formData, trial_price: null, trial_days: null });
                                     }
                                 }}
+                                className="data-[state=checked]:bg-amber-500 data-[state=unchecked]:bg-neutral-700"
                             />
                         </div>
 
-                        {formData.promo && (
-                            <div className="grid grid-cols-3 gap-3 p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 animate-in slide-in-from-top-2">
+                        {formData.trial_price != null && formData.trial_days != null && (
+                            <div className="grid grid-cols-2 gap-3 p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 animate-in slide-in-from-top-2">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-mono text-amber-500/70">PROMO_PRICE</Label>
+                                    <Label className="text-[10px] font-mono text-amber-500/70">TRIAL_PRICE (€)</Label>
                                     <Input
                                         type="number"
-                                        value={formData.promo?.price ?? ''}
+                                        step="0.01"
+                                        value={formData.trial_price ?? ''}
                                         onChange={(e) => {
                                             const val = parseFloat(e.target.value);
                                             setFormData({
                                                 ...formData,
-                                                promo: { ...formData.promo!, price: isNaN(val) ? 0 : val }
+                                                trial_price: isNaN(val) ? 0 : val
                                             })
                                         }}
                                         className="bg-black/50 border-amber-500/20 text-amber-500 font-bold h-8 text-xs"
+                                        placeholder="ex: 14.99"
                                     />
+                                    <p className="text-[9px] text-neutral-600">Prix facturé au 1er paiement</p>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-mono text-amber-500/70">SAVINGS_TAG</Label>
+                                    <Label className="text-[10px] font-mono text-amber-500/70">TRIAL_DAYS (jours)</Label>
                                     <Input
-                                        value={formData.promo.savings}
-                                        onChange={(e) => setFormData({
-                                            ...formData,
-                                            promo: { ...formData.promo!, savings: e.target.value }
-                                        })}
+                                        type="number"
+                                        value={formData.trial_days ?? ''}
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value);
+                                            setFormData({
+                                                ...formData,
+                                                trial_days: isNaN(val) ? 0 : val
+                                            })
+                                        }}
                                         className="bg-black/50 border-amber-500/20 text-amber-500 font-bold h-8 text-xs"
+                                        placeholder="ex: 7"
                                     />
+                                    <p className="text-[9px] text-neutral-600">Durée avant le prix normal</p>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-mono text-amber-500/70">DURATION</Label>
-                                    <Input
-                                        value={formData.promo.duration}
-                                        onChange={(e) => setFormData({
-                                            ...formData,
-                                            promo: { ...formData.promo!, duration: e.target.value }
-                                        })}
-                                        className="bg-black/50 border-amber-500/20 text-amber-500 font-bold h-8 text-xs"
-                                    />
+                                <div className="col-span-2 pt-2 border-t border-amber-500/10">
+                                    <p className="text-[10px] text-amber-500/60 font-mono">
+                                        PREVIEW: {formData.trial_price}€ pendant {formData.trial_days}j → puis {formData.price}€/{formData.frequency === 'monthly' ? 'mois' : formData.frequency === 'yearly' ? 'an' : formData.frequency}
+                                    </p>
                                 </div>
                             </div>
                         )}

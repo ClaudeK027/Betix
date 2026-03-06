@@ -50,13 +50,21 @@ export function MatchHero({ match }: MatchHeroProps) {
                     {/* Home Team */}
                     <div className="flex flex-col items-center gap-4 sm:gap-6 group">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-white/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                            <div className="relative size-24 sm:size-32 flex items-center justify-center rounded-full bg-neutral-900/50 border border-white/10 shadow-2xl group-hover:scale-105 transition-all duration-500 backdrop-blur-sm overflow-hidden">
+                            <div className={cn("absolute inset-0 bg-white/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700", match.sport === 'tennis' ? 'rounded-xl' : 'rounded-full')} />
+                            <div className={cn(
+                                "relative flex items-center justify-center bg-neutral-900/50 border border-white/10 shadow-2xl group-hover:scale-105 transition-all duration-500 backdrop-blur-sm overflow-hidden",
+                                match.sport === 'tennis'
+                                    ? 'size-28 sm:size-32 rounded-xl'
+                                    : 'size-24 sm:size-32 rounded-full'
+                            )}>
                                 {match.homeTeam.logo ? (
                                     <img
                                         src={match.homeTeam.logo}
                                         alt={match.homeTeam.name}
-                                        className="size-full object-contain p-4 sm:p-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                                        className={cn(
+                                            "size-full drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]",
+                                            match.sport === 'tennis' ? 'object-cover' : 'object-contain p-4 sm:p-6'
+                                        )}
                                         onError={(e) => {
                                             (e.target as HTMLImageElement).style.display = 'none';
                                             const fallback = (e.target as HTMLImageElement).nextElementSibling as HTMLSpanElement;
@@ -90,9 +98,17 @@ export function MatchHero({ match }: MatchHeroProps) {
                             </div>
                         ) : (
                             <div className="flex flex-col items-center gap-4">
-                                <div className="text-6xl sm:text-8xl font-black text-white tracking-tighter tabular-nums drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
-                                    {match.homeScore}<span className="text-neutral-700 mx-2 sm:mx-4">:</span>{match.awayScore}
-                                </div>
+                                {/* Tennis: text set score */}
+                                {match.sport === "tennis" && match.scoreDisplay ? (
+                                    <div className="text-3xl sm:text-5xl font-black text-white tracking-tight tabular-nums drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] text-center leading-tight">
+                                        {match.scoreDisplay}
+                                    </div>
+                                ) : (
+                                    /* Football & Basketball: numeric */
+                                    <div className="text-6xl sm:text-8xl font-black text-white tracking-tighter tabular-nums drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                                        {match.homeScore ?? 0}<span className="text-neutral-700 mx-2 sm:mx-4">:</span>{match.awayScore ?? 0}
+                                    </div>
+                                )}
                                 {isLive && (
                                     <Badge className="bg-red-500/10 text-red-500 border border-red-500/20 animate-pulse px-4 py-1 font-bold tracking-widest uppercase text-[10px]">
                                         Live • {match.statusShort || "0'"}
@@ -105,13 +121,21 @@ export function MatchHero({ match }: MatchHeroProps) {
                     {/* Away Team */}
                     <div className="flex flex-col items-center gap-4 sm:gap-6 group">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-white/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                            <div className="relative size-24 sm:size-32 flex items-center justify-center rounded-full bg-neutral-900/50 border border-white/10 shadow-2xl group-hover:scale-105 transition-all duration-500 backdrop-blur-sm overflow-hidden">
+                            <div className={cn("absolute inset-0 bg-white/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700", match.sport === 'tennis' ? 'rounded-xl' : 'rounded-full')} />
+                            <div className={cn(
+                                "relative flex items-center justify-center bg-neutral-900/50 border border-white/10 shadow-2xl group-hover:scale-105 transition-all duration-500 backdrop-blur-sm overflow-hidden",
+                                match.sport === 'tennis'
+                                    ? 'size-28 sm:size-32 rounded-xl'
+                                    : 'size-24 sm:size-32 rounded-full'
+                            )}>
                                 {match.awayTeam.logo ? (
                                     <img
                                         src={match.awayTeam.logo}
                                         alt={match.awayTeam.name}
-                                        className="size-full object-contain p-4 sm:p-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                                        className={cn(
+                                            "size-full drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]",
+                                            match.sport === 'tennis' ? 'object-cover' : 'object-contain p-4 sm:p-6'
+                                        )}
                                         onError={(e) => {
                                             (e.target as HTMLImageElement).style.display = 'none';
                                             const fallback = (e.target as HTMLImageElement).nextElementSibling as HTMLSpanElement;

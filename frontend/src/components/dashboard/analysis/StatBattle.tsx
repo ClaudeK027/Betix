@@ -15,35 +15,51 @@ export function StatBattle({ label, homeValue, awayValue, showPercent = false }:
     const awayPercent = total > 0 ? (awayValue / total) * 100 : 50;
 
     return (
-        <div className="space-y-2 py-2">
-            <div className="flex justify-between text-sm font-medium text-neutral-400">
-                <span className={cn(homeValue > awayValue ? "text-white font-bold" : "")}>
+        <div className="space-y-3 py-3 group">
+            <div className="flex justify-between items-end text-sm font-medium">
+                <span className={cn(
+                    "text-[16px] transition-all duration-300 tracking-tight",
+                    homeValue > awayValue ? "text-white font-black drop-shadow-[0_0_12px_rgba(6,182,212,0.4)] scale-110 origin-left" : "text-white/20 font-medium"
+                )}>
                     {homeValue} {showPercent && "%"}
                 </span>
-                <span className="uppercase text-xs tracking-widest opacity-60">{label}</span>
-                <span className={cn(awayValue > homeValue ? "text-white font-bold" : "")}>
+                <span className="uppercase text-[9px] tracking-[0.3em] font-black text-white/20 group-hover:text-primary/60 transition-colors duration-300 mb-0.5">{label}</span>
+                <span className={cn(
+                    "text-[16px] transition-all duration-300 tracking-tight",
+                    awayValue > homeValue ? "text-white font-black drop-shadow-[0_0_12px_rgba(244,63,94,0.4)] scale-110 origin-right" : "text-white/20 font-medium"
+                )}>
                     {awayValue} {showPercent && "%"}
                 </span>
             </div>
 
-            <div className="flex h-2.5 bg-white/5 rounded-full overflow-hidden relative">
-                {/* Home Bar */}
+            <div className="flex h-1.5 bg-white/[0.03] rounded-sm overflow-hidden relative shadow-inner ring-1 ring-white/5">
+                {/* Home Bar (Electric Cyan/Indigo) */}
                 <div
-                    className="h-full bg-linear-to-r from-blue-600/50 to-blue-500 transition-all duration-1000 ease-out flex items-center justify-end pr-1 relative"
+                    className={cn(
+                        "h-full transition-all duration-1000 ease-out flex items-center justify-end relative rounded-sm",
+                        homeValue > awayValue ? "bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_15px_rgba(34,211,238,0.5)] z-10" : "bg-white/5"
+                    )}
                     style={{ width: `${homePercent}%` }}
                 >
-                    {homeValue > awayValue && <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-white/50 shadow-[0_0_10px_white]" />}
+                    {homeValue > awayValue && (
+                        <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-white rounded-sm shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                    )}
                 </div>
 
                 {/* Gap */}
-                <div className="w-[2px] bg-black/80 z-10" />
+                <div className="w-[4px] bg-transparent z-20 shrink-0" />
 
-                {/* Away Bar */}
+                {/* Away Bar (Neon Rose/Magenta) */}
                 <div
-                    className="h-full bg-linear-to-r from-red-500 to-red-600/50 transition-all duration-1000 ease-out flex items-center justify-start pl-1 relative"
+                    className={cn(
+                        "h-full transition-all duration-1000 ease-out flex items-center justify-start relative rounded-sm",
+                        awayValue > homeValue ? "bg-gradient-to-r from-rose-500 to-pink-500 shadow-[0_0_15px_rgba(244,63,94,0.5)] z-10" : "bg-white/5"
+                    )}
                     style={{ width: `${awayPercent}%` }}
                 >
-                    {awayValue > homeValue && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-white/50 shadow-[0_0_10px_white]" />}
+                    {awayValue > homeValue && (
+                        <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-white rounded-sm shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                    )}
                 </div>
             </div>
         </div>

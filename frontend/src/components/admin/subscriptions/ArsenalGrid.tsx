@@ -78,9 +78,14 @@ export function ArsenalGrid({ plans, definitions, onEditPlan }: ArsenalGridProps
                             <div className="mt-6 flex flex-col">
                                 <div className="flex items-baseline gap-2">
                                     <span className={cn("text-4xl font-black tracking-tighter", theme.iconColor)}>
-                                        {plan.promo ? plan.promo.price : plan.price}€
+                                        {plan.trial_price != null ? plan.trial_price : plan.price}€
                                     </span>
-                                    {plan.promo && (
+                                    {plan.strikethrough_price != null && (
+                                        <span className="text-lg font-bold text-neutral-600 line-through">
+                                            {plan.strikethrough_price}€
+                                        </span>
+                                    )}
+                                    {plan.trial_price != null && plan.strikethrough_price == null && (
                                         <span className="text-lg font-bold text-neutral-600 line-through">
                                             {plan.price}€
                                         </span>
@@ -89,16 +94,18 @@ export function ArsenalGrid({ plans, definitions, onEditPlan }: ArsenalGridProps
                                         {plan.frequency === 'daily' ? '/jour' :
                                             plan.frequency === 'weekly' ? '/semaine' :
                                                 plan.frequency === 'monthly' ? '/mois' :
-                                                    plan.frequency === 'yearly' ? '/an' : '/forever'}
+                                                    plan.frequency === 'quarterly' ? '/trimestre' :
+                                                        plan.frequency === 'semi_annual' ? '/semestre' :
+                                                            plan.frequency === 'yearly' ? '/an' : '/forever'}
                                     </span>
                                 </div>
-                                {plan.promo && (
+                                {plan.trial_price != null && plan.trial_days != null && (
                                     <div className="mt-1 flex items-center gap-2">
                                         <Badge variant="outline" className="border-emerald-500/50 text-emerald-500 bg-emerald-500/10 text-[10px] font-bold uppercase">
-                                            {plan.promo.savings}
+                                            OFFRE LANCEMENT
                                         </Badge>
                                         <span className="text-[10px] font-mono text-neutral-400">
-                                            {plan.promo.duration}
+                                            {plan.trial_price}€ × {plan.trial_days}j → puis {plan.price}€
                                         </span>
                                     </div>
                                 )}

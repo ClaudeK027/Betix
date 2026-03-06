@@ -9,6 +9,7 @@ import {
     Menu,
 } from "lucide-react";
 import { UserNav } from "@/components/auth/UserNav";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 export function AdminHeader({ onMenuClick }: { onMenuClick?: () => void }) {
     const pathname = usePathname();
@@ -40,10 +41,7 @@ export function AdminHeader({ onMenuClick }: { onMenuClick?: () => void }) {
             </div>
 
             <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon-sm" className="relative group">
-                    <Bell className="size-4" />
-                    <span className="absolute top-1 right-1 size-2 bg-primary rounded-full border-2 border-background" />
-                </Button>
+                <NotificationBell />
 
                 <Separator orientation="vertical" className="h-6 mx-1" />
 

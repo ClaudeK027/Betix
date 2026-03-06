@@ -10,7 +10,10 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
 import { DeleteAccountDialog } from "./DeleteAccountDialog";
 import { SportsSelectionDialog } from "./SportsSelectionDialog";
+import { ContactSupportDialog } from "./ContactSupportDialog";
 import { cn } from "@/lib/utils";
+
+import { MFASettings } from "./MFASettings";
 
 interface ControlDeckProps {
     profile: UserProfile;
@@ -123,8 +126,12 @@ export function ControlDeck({ profile }: ControlDeckProps) {
                 </div>
             </div>
 
-            {/* Sports & Account Column */}
+            {/* Sports & Security Column */}
             <div className="space-y-6">
+                {/* Security Clearance (MFA) */}
+                {/* TODO: Restore Security Clearance in future version */}
+                {false && <MFASettings />}
+
                 {/* Sports Interests */}
                 <div className="p-6 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-xl">
                     <div className="flex items-center justify-between mb-6">
@@ -161,6 +168,20 @@ export function ControlDeck({ profile }: ControlDeckProps) {
                             }
                         />
                     </div>
+                </div >
+
+                {/* Support & Assistance */}
+                <div className="p-6 rounded-3xl bg-blue-500/5 border border-blue-500/10 backdrop-blur-xl">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-blue-400 mb-4 flex items-center gap-2">
+                        Assistance
+                    </h3>
+                    <ContactSupportDialog
+                        trigger={
+                            <Button variant="outline" className="w-full border-blue-500/20 text-blue-400 hover:bg-blue-500/10 hover:text-blue-300 gap-2 h-12">
+                                <Mail className="size-4" /> Contacter le Support
+                            </Button>
+                        }
+                    />
                 </div>
 
                 {/* Account Actions */}
@@ -186,7 +207,6 @@ export function ControlDeck({ profile }: ControlDeckProps) {
                         />
                     </div>
                 </div>
-
             </div>
         </div>
     );

@@ -12,16 +12,12 @@ import { HelpCircle } from "lucide-react";
 export function FAQSection() {
     const faqs = [
         {
-            q: "Pourquoi seulement 1€/mois ?",
-            a: "Nous croyons que l'accès à des analyses de qualité ne devrait pas coûter une fortune. Notre modèle économique repose sur le volume d'abonnés, pas sur des prix exorbitants. C'est un 'No-Brainer'."
-        },
-        {
             q: "Puis-je changer de plan quand je veux ?",
             a: "Oui, absolument. Vous pouvez passer du mensuel à l'annuel ou revenir au gratuit à tout moment depuis votre dashboard. Aucun frais caché, aucune pénalité."
         },
         {
             q: "Quels moyens de paiement acceptez-vous ?",
-            a: "Nous acceptons toutes les cartes bancaires majeures (Visa, Mastercard, Amex) via Stripe, la plateforme de paiement la plus sécurisée au monde. Vos données sont chiffrées et protégées."
+            a: "Nous acceptons toutes les cartes bancaires majeures (Visa, Mastercard, Amex) via Mollie, une plateforme de paiement européenne certifiée et sécurisée. Vos données sont chiffrées et protégées."
         },
         {
             q: "Y a-t-il une garantie de résultats ?",

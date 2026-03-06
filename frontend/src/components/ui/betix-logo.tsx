@@ -26,28 +26,14 @@ export function BetixLogo({ className, variant = "default" }: BetixLogoProps) {
     }
 
     return (
-        <div className={cn("relative flex items-center", className)}>
-            {/* Mobile: Icon Only (if variant is default, show icon on small screens) */}
-            <div className="block md:hidden relative size-8">
-                <Image
-                    src={logoIcon}
-                    alt="Betix Logo"
-                    fill
-                    className="object-contain"
-                    priority
-                />
-            </div>
-
-            {/* Desktop: Full Logo */}
-            <div className="hidden md:block relative w-32 h-10">
-                <Image
-                    src={logoFull}
-                    alt="Betix Logo"
-                    fill
-                    className="object-contain object-left"
-                    priority
-                />
-            </div>
+        <div className={cn("relative flex items-center h-8 md:h-10 w-24 md:w-32", className)}>
+            <Image
+                src={logoFull}
+                alt="Betix Logo"
+                fill
+                className="object-contain object-left"
+                priority
+            />
         </div>
     );
 }

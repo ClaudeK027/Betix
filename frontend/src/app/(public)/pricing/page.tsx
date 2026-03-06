@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { PricingCard } from "@/components/pricing/PricingCard";
+import type { PricingVariant } from "@/components/pricing/PricingCard";
+import { SwipeCarousel } from "@/components/pricing/SwipeCarousel";
 import { TrustBadge } from "@/components/pricing/TrustBadge";
 import { FeatureMatrix } from "@/components/pricing/FeatureMatrix";
 import { FAQSection } from "@/components/pricing/FAQSection";
@@ -28,7 +30,8 @@ export default function PricingPage() {
                 const { data: plansData, error: plansError } = await supabase
                     .from('plans')
                     .select('*')
-                    .eq('is_active', true) // Only active plans
+                    .eq('is_active', true)
+                    .neq('id', 'no_subscription') // Masquer le plan de restriction
                     .order('position', { ascending: true });
 
                 if (plansError) throw plansError;
@@ -40,7 +43,9 @@ export default function PricingPage() {
 
                 if (defsError) throw defsError;
 
-                setPlans(plansData || []);
+                // Sort by ascending price
+                const sortedPlans = (plansData || []).sort((a: Plan, b: Plan) => a.price - b.price);
+                setPlans(sortedPlans);
                 setDefinitions(defsData || []);
             } catch (err) {
                 console.error("Error fetching pricing data:", err);
@@ -74,11 +79,11 @@ export default function PricingPage() {
 
         // Visual Logic & Period Mapping
         let period = "/mois";
-        let variant: "free" | "premium" | "annual" = "premium";
+        let variant: PricingVariant = "monthly";
         let badge: string | undefined = undefined;
         let badgeColor: string | undefined = undefined;
         let priceDisplay = dbPlan.price.toString();
-        let cta = "Choisir";
+        let cta = "S'abonner";
 
         switch (dbPlan.frequency) {
             case 'free':
@@ -88,26 +93,27 @@ export default function PricingPage() {
                 break;
             case 'daily':
                 period = "/jour";
-                variant = "premium";
-                cta = "Débuter maintenant";
+                variant = "monthly";
                 break;
             case 'weekly':
                 period = "/semaine";
-                variant = "premium";
-                cta = "Débuter maintenant";
+                variant = "monthly";
                 break;
             case 'monthly':
                 period = "/mois";
-                variant = "premium";
-                badge = "POPULAIRE";
-                cta = "Débuter maintenant";
+                variant = "monthly";
+                break;
+            case 'quarterly':
+                period = "/trimestre";
+                variant = "semi_annual";
+                break;
+            case 'semi_annual':
+                period = "/semestre";
+                variant = "semi_annual";
                 break;
             case 'yearly':
                 period = "/an";
-                variant = "annual";
-                badge = "BEST VALUE";
-                badgeColor = "bg-amber-500 text-black";
-                cta = "Débuter maintenant";
+                variant = "yearly";
 
                 // If toggle is ON, show monthly equivalent
                 if (isAnnual) {
@@ -116,6 +122,10 @@ export default function PricingPage() {
                 }
                 break;
         }
+
+        // Badge from DB (admin-configurable)
+        badge = dbPlan.badge_text || undefined;
+        badgeColor = dbPlan.badge_color || undefined;
 
         return {
             id: dbPlan.id,
@@ -128,11 +138,10 @@ export default function PricingPage() {
             features: featuresList,
             cta,
             ctaLink: `/signup?plan=${dbPlan.id}`,
-            promo: dbPlan.promo ? {
-                price: dbPlan.promo.price,
-                duration: dbPlan.promo.duration,
-                savings: dbPlan.promo.savings
-            } : undefined
+            trial_price: dbPlan.trial_price ?? undefined,
+            trial_days: dbPlan.trial_days ?? undefined,
+            strikethrough_price: dbPlan.strikethrough_price ?? undefined,
+            variant,
         };
     });
 
@@ -147,16 +156,16 @@ export default function PricingPage() {
                 {/* Hero Section */}
                 <div className="text-center space-y-6 max-w-3xl mx-auto">
                     <Badge variant="outline" className="border-blue-500/30 text-blue-400 bg-blue-500/10 px-4 py-1 uppercase tracking-widest text-xs font-bold animate-fade-in">
-                        <Zap className="size-3 mr-2 fill-blue-500" /> Unlock Your Edge
+                        <Zap className="size-3 mr-2 fill-blue-500" /> Prends l&apos;avantage
                     </Badge>
 
                     <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white animate-fade-in-up">
-                        Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Weapon</span>
+                        Choisis ton <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">abonnement</span>
                     </h1>
 
                     <p className="text-lg text-neutral-400 max-w-xl mx-auto leading-relaxed animate-fade-in-up delay-100">
                         Accédez aux données que les bookmakers préféreraient garder secrètes.
-                        Rejoignez l'élite des parieurs dès aujourd'hui.
+                        Rejoignez l&apos;élite des parieurs dès aujourd&apos;hui.
                     </p>
 
                     {/* Toggle */}
@@ -176,31 +185,19 @@ export default function PricingPage() {
                 </div>
 
                 {/* Pricing Cards */}
-                <div className="flex flex-wrap justify-center gap-10 items-stretch">
-                    {displayPlans.map((plan) => {
-                        const count = displayPlans.length;
-
-                        // Drastic size mapping for high visibility
-                        const maxWidthClass =
-                            count === 1 ? "md:max-w-[42rem] scale-110" :
-                                count === 2 ? "md:max-w-[34rem] scale-105" :
-                                    count === 3 ? "md:max-w-[26rem]" :
-                                        "md:max-w-[22rem]";
-
-                        return (
-                            <div key={plan.id} className={cn(
-                                "w-full flex justify-center transition-all duration-700 ease-out",
-                                maxWidthClass,
-                                count <= 2 ? "my-8" : "" // Add vertical spacing if scaled up
-                            )}>
-                                <PricingCard
-                                    plan={plan}
-                                    variant={plan.id.includes('free') ? 'free' : plan.id.includes('annual') ? 'annual' : 'premium'}
-                                />
-                            </div>
-                        );
-                    })}
-                </div>
+                <SwipeCarousel
+                    itemCount={displayPlans.length}
+                    className="gap-6 lg:gap-10 pb-6 lg:pb-0 pt-4 -mx-4 px-4 lg:mx-0 lg:px-0"
+                >
+                    {displayPlans.map((plan) => (
+                        <div key={plan.id} className="w-[75vw] sm:w-[22rem] shrink-0 snap-center lg:w-full lg:max-w-[26rem] lg:flex-1 lg:flex lg:justify-center transition-all duration-700 ease-out relative">
+                            <PricingCard
+                                plan={plan}
+                                variant={plan.variant}
+                            />
+                        </div>
+                    ))}
+                </SwipeCarousel>
 
                 {/* Trust Badge */}
                 <div className="py-12">
@@ -210,7 +207,7 @@ export default function PricingPage() {
                 {/* Comparison Matrix */}
                 <div className="max-w-5xl mx-auto space-y-8">
                     <div className="text-center space-y-2">
-                        <h2 className="text-3xl font-black text-white tracking-tight">The Data Advantage</h2>
+                        <h2 className="text-3xl font-black text-white tracking-tight">L&apos;avantage par la donnée</h2>
                         <p className="text-neutral-500">Comparatif détaillé des fonctionnalités</p>
                     </div>
                     {/* Matrix would require similar refactor to be dynamic, keeping static for now to focus on cards */}

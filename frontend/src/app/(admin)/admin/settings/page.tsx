@@ -1,9 +1,9 @@
 "use client";
 
-import { NeuralUplinks } from "@/components/admin/settings/NeuralUplinks";
 import { CortexConfig } from "@/components/admin/settings/CortexConfig";
 import { SystemBreakers } from "@/components/admin/settings/SystemBreakers";
-import { AlgorithmicControl } from "@/components/admin/settings/AlgorithmicControl";
+import { OrchestratorControl } from "@/components/admin/settings/OrchestratorControl";
+import { VisualConfig } from "@/components/admin/settings/VisualConfig";
 import { Button } from "@/components/ui/button";
 import { Terminal, Save } from "lucide-react";
 
@@ -29,28 +29,14 @@ export default function AdminSettingsPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-
-                {/* 1. Algorithmic Control (Left) */}
-                <section className="space-y-4">
-                    <h2 className="text-xs font-bold uppercase tracking-widest text-neutral-600 px-2 flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse" />
-                        Algorithmic Control
-                    </h2>
-                    <AlgorithmicControl />
-                </section>
-
-                {/* 2. Neural Uplinks (Right) */}
-                <section className="space-y-4">
-                    <h2 className="text-xs font-bold uppercase tracking-widest text-neutral-600 px-2 flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                        Neural Uplinks
-                    </h2>
-                    <div className="opacity-90 hover:opacity-100 transition-opacity">
-                        <NeuralUplinks />
-                    </div>
-                </section>
-            </div>
+            {/* 1. Visual Configuration */}
+            <section className="space-y-4">
+                <h2 className="text-xs font-bold uppercase tracking-widest text-neutral-600 px-2 flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-pulse" />
+                    Visual Configuration
+                </h2>
+                <VisualConfig />
+            </section>
 
             {/* 3. Cortex Configuration (IA) */}
             <section className="space-y-4">
@@ -61,7 +47,16 @@ export default function AdminSettingsPage() {
                 <CortexConfig />
             </section>
 
-            {/* 4. System Breakers (App Settings) */}
+            {/* 4. Orchestrator Control */}
+            <section className="space-y-4">
+                <h2 className="text-xs font-bold uppercase tracking-widest text-neutral-600 px-2 flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse" />
+                    Orchestrator Control
+                </h2>
+                <OrchestratorControl />
+            </section>
+
+            {/* 5. System Breakers (App Settings) */}
             <section className="space-y-4">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-neutral-600 px-2 flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />

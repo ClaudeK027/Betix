@@ -5,7 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { RadioTower, Bell, Mail, Smartphone, Volume2, Save } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { adminSendNotificationAction } from "@/app/actions/notifications";
 
 interface CommsConfigProps {
     open: boolean;
@@ -13,6 +18,35 @@ interface CommsConfigProps {
 }
 
 export function CommsConfig({ open, onClose }: CommsConfigProps) {
+    const [isSending, setIsSending] = useState(false);
+    const [sendForm, setSendForm] = useState({ title: "", message: "", targetUserId: "" });
+
+    const handleSendMessage = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!sendForm.title.trim() || !sendForm.message.trim()) return;
+
+        setIsSending(true);
+        try {
+            const result = await adminSendNotificationAction({
+                title: sendForm.title,
+                message: sendForm.message,
+                targetUserId: sendForm.targetUserId.trim() || null,
+                severity: 'info'
+            });
+
+            if (result.success) {
+                toast.success("Signal transmis avec succès.");
+                setSendForm({ title: "", message: "", targetUserId: "" });
+            } else {
+                toast.error(result.error || "Échec de transmission.");
+            }
+        } catch (error) {
+            toast.error("Erreur système.");
+        } finally {
+            setIsSending(false);
+        }
+    };
+
     return (
         <Sheet open={open} onOpenChange={onClose}>
             <SheetContent className="w-full sm:max-w-md border-l border-white/10 bg-black/95 backdrop-blur-xl p-0 shadow-2xl">
@@ -96,6 +130,57 @@ export function CommsConfig({ open, onClose }: CommsConfigProps) {
                         <p className="text-[10px] text-neutral-600 italic">
                             *Critical alerts cannot be disabled via this terminal. Contact SysAdmin for override.
                         </p>
+                    </div>
+
+                    {/* Broadcast Channel */}
+                    <Separator className="bg-white/10" />
+
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-bold text-neutral-500 uppercase flex items-center gap-2">
+                            <RadioTower className="size-3.5" /> Broadcast Channel
+                        </h3>
+
+                        <form onSubmit={handleSendMessage} className="space-y-3 p-4 rounded-xl border border-white/10 bg-white/5">
+                            <div className="space-y-1">
+                                <Label className="text-[10px] text-neutral-400 uppercase tracking-widest">Titre</Label>
+                                <Input
+                                    placeholder="Titre de l'alerte"
+                                    className="h-8 text-xs bg-black/50 border-white/10"
+                                    value={sendForm.title}
+                                    onChange={e => setSendForm(prev => ({ ...prev, title: e.target.value }))}
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label className="text-[10px] text-neutral-400 uppercase tracking-widest">Message</Label>
+                                <Textarea
+                                    placeholder="Contenu..."
+                                    className="min-h-[60px] text-xs bg-black/50 border-white/10 resize-none"
+                                    value={sendForm.message}
+                                    onChange={e => setSendForm(prev => ({ ...prev, message: e.target.value }))}
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label className="text-[10px] text-neutral-400 uppercase tracking-widest">Cible (Optionnel)</Label>
+                                <Input
+                                    placeholder="ID Utilisateur (laisser vide pour TOUS)"
+                                    className="h-8 text-xs bg-black/50 border-white/10"
+                                    value={sendForm.targetUserId}
+                                    onChange={e => setSendForm(prev => ({ ...prev, targetUserId: e.target.value }))}
+                                />
+                            </div>
+
+                            <Button
+                                type="submit"
+                                disabled={isSending}
+                                className="w-full h-8 text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white mt-2"
+                            >
+                                {isSending ? "Transmission..." : "Envoyer Signal"}
+                            </Button>
+                        </form>
                     </div>
 
                 </div>

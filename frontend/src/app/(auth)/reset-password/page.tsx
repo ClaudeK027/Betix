@@ -3,43 +3,73 @@
 import { AccessTerminal } from "@/components/auth/AccessTerminal";
 import { BiometricInput } from "@/components/auth/BiometricInput";
 import { SecurityScanner } from "@/components/auth/SecurityScanner";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mail } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { toast } from "sonner";
 
 export default function ResetPasswordPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState("");
+    const [emailSent, setEmailSent] = useState(false);
+    const { resetPasswordForEmail } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        // Simulate auth delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        const { error } = await resetPasswordForEmail(email);
+
+        if (error) {
+            toast.error("Échec de l'envoi", {
+                description: error,
+            });
+            setIsLoading(false);
+            return;
+        }
+
+        setEmailSent(true);
         setIsLoading(false);
     };
 
     return (
         <AccessTerminal type="reset">
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <BiometricInput
-                    label="Recovery Email"
-                    type="email"
-                    icon={Mail}
-                    placeholder="agent@betix.gg"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
+            {emailSent ? (
+                <div className="text-center space-y-4 py-4">
+                    <div className="flex justify-center">
+                        <div className="size-16 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                            <CheckCircle className="size-8 text-emerald-400" />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <h3 className="text-lg font-semibold text-white">E-mail envoyé !</h3>
+                        <p className="text-sm text-neutral-400 leading-relaxed">
+                            Si un compte existe avec l&apos;adresse <span className="text-white font-medium">{email}</span>,
+                            vous recevrez un lien pour réinitialiser votre mot de passe.
+                        </p>
+                    </div>
+                    <p className="text-xs text-neutral-500 mt-4">Vérifiez aussi vos spams.</p>
+                </div>
+            ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <BiometricInput
+                        label="Adresse e-mail"
+                        type="email"
+                        placeholder="votre@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
 
-                <SecurityScanner type="submit" isLoading={isLoading} label="INITIATE RECOVERY" />
-            </form>
+                    <SecurityScanner type="submit" isLoading={isLoading} label="Envoyer le lien" />
+                </form>
+            )}
 
             <div className="text-center mt-8">
-                <Link href="/login" className="text-xs text-neutral-500 hover:text-white flex items-center justify-center gap-2 font-mono uppercase tracking-wide group transition-colors">
-                    <ArrowLeft className="size-3 group-hover:-translate-x-1 transition-transform" />
-                    Return to Login Terminal
+                <Link href="/login" className="text-sm text-neutral-400 hover:text-white flex items-center justify-center gap-2 transition-colors">
+                    <ArrowLeft className="size-4" />
+                    Retour à la connexion
                 </Link>
             </div>
         </AccessTerminal>
