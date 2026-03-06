@@ -113,12 +113,8 @@ export function SeasonPass({ subscription: propSub }: SeasonPassProps) {
                 <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                     <Button
                         onClick={handleAction}
-                        className={cn("w-full md:w-auto font-bold tracking-wide",
-                            isPremium
-                                ? "bg-white/5 border border-white/10 hover:bg-white/10 text-white"
-                                : "bg-amber-500 hover:bg-amber-600 text-black shadow-[0_0_20px_-5px_rgba(245,158,11,0.5)]"
-                        )}>
-                        {isPremium ? "Gérer l'abonnement" : "Passer Premium"}
+                        className="w-full md:w-auto font-bold tracking-wide bg-white/5 border border-white/10 hover:bg-white/10 text-white">
+                        Gérer l'abonnement
                     </Button>
                 </div>
 
