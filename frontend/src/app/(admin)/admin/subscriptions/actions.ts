@@ -59,8 +59,13 @@ export interface UpdatePlanData {
     frequency?: string;
     features?: PlanFeatures; // Full JSONB structure
     promo?: PlanPromo | null;
+    trial_price?: number | null;
+    trial_days?: number | null;
+    strikethrough_price?: number | null;
     is_active?: boolean;
     position?: number;
+    badge_text?: string | null;
+    badge_color?: string | null;
 }
 
 export async function updatePlanAction(planId: string, data: UpdatePlanData) {
@@ -74,8 +79,13 @@ export async function updatePlanAction(planId: string, data: UpdatePlanData) {
         if (data.frequency !== undefined) updates.frequency = data.frequency;
         if (data.features !== undefined) updates.features = data.features;
         if (data.promo !== undefined) updates.promo = data.promo;
+        if (data.trial_price !== undefined) updates.trial_price = data.trial_price;
+        if (data.trial_days !== undefined) updates.trial_days = data.trial_days;
+        if (data.strikethrough_price !== undefined) updates.strikethrough_price = data.strikethrough_price;
         if (data.is_active !== undefined) updates.is_active = data.is_active;
         if (data.position !== undefined) updates.position = data.position;
+        if (data.badge_text !== undefined) updates.badge_text = data.badge_text;
+        if (data.badge_color !== undefined) updates.badge_color = data.badge_color;
 
         const { error } = await supabaseAdmin
             .from('plans')
@@ -86,7 +96,7 @@ export async function updatePlanAction(planId: string, data: UpdatePlanData) {
 
         revalidatePath('/admin/subscriptions');
         revalidatePath('/pricing'); // Revalidate public pages too
-        revalidatePath('/dashboard/subscription'); // And dashboard
+        revalidatePath('/profile/subscription'); // And dashboard
 
         return { success: true };
     } catch (error: any) {
@@ -123,7 +133,12 @@ export async function createPlanAction(data: UpdatePlanData) {
                 features: data.features || { core: {}, advanced: {}, vip: {} }, // Default empty structure
                 is_active: false, // Always inactive by default
                 position: nextPosition,
-                promo: data.promo
+                promo: data.promo,
+                trial_price: data.trial_price ?? null,
+                trial_days: data.trial_days ?? null,
+                strikethrough_price: data.strikethrough_price ?? null,
+                badge_text: data.badge_text ?? null,
+                badge_color: data.badge_color ?? null
             })
             .select()
             .single();
@@ -131,12 +146,119 @@ export async function createPlanAction(data: UpdatePlanData) {
         if (error) throw new Error(`Plan creation failed: ${error.message}`);
 
         revalidatePath('/pricing');
-        revalidatePath('/dashboard/subscription');
+        revalidatePath('/profile/subscription');
         revalidatePath('/admin/subscriptions');
 
         return { success: true, data: newPlan };
     } catch (error: any) {
         console.error("[Admin Action] Create Error:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+// =========================================================================
+// Feature Definitions CRUD
+// =========================================================================
+
+export async function createFeatureDefinitionAction(data: {
+    id: string;
+    label: string;
+    description?: string;
+    type: 'text' | 'boolean' | 'number';
+}) {
+    console.log("[Admin Action] Creating feature definition:", data.id);
+    try {
+        if (!data.id || !data.label || !data.type) {
+            return { success: false, error: "Champs obligatoires : ID, Label, Type" };
+        }
+
+        // Sanitize ID: lowercase, underscores only
+        const cleanId = data.id.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+
+        const { error } = await supabaseAdmin
+            .from('feature_definitions')
+            .insert({
+                id: cleanId,
+                label: data.label,
+                description: data.description || null,
+                type: data.type,
+            });
+
+        if (error) throw new Error(`Feature creation failed: ${error.message}`);
+
+        revalidatePath('/admin/subscriptions');
+        return { success: true };
+    } catch (error: any) {
+        console.error("[Admin Action] Create Feature Error:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+export async function updateFeatureDefinitionAction(
+    id: string,
+    data: { label?: string; description?: string; type?: 'text' | 'boolean' | 'number' }
+) {
+    console.log(`[Admin Action] Updating feature definition: ${id}`, data);
+    try {
+        const updates: any = {};
+        if (data.label !== undefined) updates.label = data.label;
+        if (data.description !== undefined) updates.description = data.description;
+        if (data.type !== undefined) updates.type = data.type;
+
+        const { error } = await supabaseAdmin
+            .from('feature_definitions')
+            .update(updates)
+            .eq('id', id);
+
+        if (error) throw new Error(`Feature update failed: ${error.message}`);
+
+        revalidatePath('/admin/subscriptions');
+        return { success: true };
+    } catch (error: any) {
+        console.error("[Admin Action] Update Feature Error:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+export async function deleteFeatureDefinitionAction(id: string) {
+    console.log(`[Admin Action] Deleting feature definition: ${id}`);
+    try {
+        // Safety check: verify no plan uses this feature
+        const { data: plans } = await supabaseAdmin
+            .from('plans')
+            .select('id, name, features');
+
+        if (plans) {
+            const usedBy: string[] = [];
+            for (const plan of plans) {
+                const features = plan.features as any;
+                if (!features) continue;
+                for (const category of ['core', 'advanced', 'vip']) {
+                    if (features[category] && id in features[category]) {
+                        usedBy.push(plan.name);
+                        break;
+                    }
+                }
+            }
+            if (usedBy.length > 0) {
+                return {
+                    success: false,
+                    error: `Impossible de supprimer : cette feature est utilisée par ${usedBy.join(', ')}`
+                };
+            }
+        }
+
+        const { error } = await supabaseAdmin
+            .from('feature_definitions')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw new Error(`Feature deletion failed: ${error.message}`);
+
+        revalidatePath('/admin/subscriptions');
+        return { success: true };
+    } catch (error: any) {
+        console.error("[Admin Action] Delete Feature Error:", error);
         return { success: false, error: error.message };
     }
 }

@@ -1,0 +1,2055 @@
+{
+    "tables":  [
+                   {
+                       "table_name":  "football_match_stats",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "football_injuries",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "football_h2h",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "football_team_rolling",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "basketball_match_stats",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "basketball_matches",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "basketball_injuries",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "basketball_team_rolling",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "tennis_tournaments",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "tennis_matches",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "tennis_match_stats",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "odds_snapshots",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "football_matches",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "basketball_team_elo",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "football_referee_stats",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "players",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "tennis_player_rolling",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "tennis_h2h",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "tennis_rankings",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "confidence_factors",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "teams",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "football_team_elo",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "basketball_h2h",
+                       "table_type":  "BASE TABLE"
+                   },
+                   {
+                       "table_name":  "leagues",
+                       "table_type":  "BASE TABLE"
+                   }
+               ],
+    "columns":  [
+                    {
+                        "table_name":  "basketball_h2h",
+                        "column_name":  "team_a_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_h2h",
+                        "column_name":  "team_b_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_h2h",
+                        "column_name":  "season",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_h2h",
+                        "column_name":  "games_played",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "basketball_h2h",
+                        "column_name":  "team_a_wins",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "basketball_h2h",
+                        "column_name":  "avg_margin",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_h2h",
+                        "column_name":  "last_results",
+                        "data_type":  "jsonb",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_h2h",
+                        "column_name":  "updated_at",
+                        "data_type":  "timestamp with time zone",
+                        "is_nullable":  "NO",
+                        "column_default":  "now()"
+                    },
+                    {
+                        "table_name":  "basketball_injuries",
+                        "column_name":  "id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "nextval(\u0027analytics.basketball_injuries_id_seq\u0027::regclass)"
+                    },
+                    {
+                        "table_name":  "basketball_injuries",
+                        "column_name":  "player_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_injuries",
+                        "column_name":  "team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_injuries",
+                        "column_name":  "status",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_injuries",
+                        "column_name":  "reason",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_injuries",
+                        "column_name":  "ppg_impact",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_injuries",
+                        "column_name":  "usg_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_injuries",
+                        "column_name":  "reported_at",
+                        "data_type":  "date",
+                        "is_nullable":  "NO",
+                        "column_default":  "CURRENT_DATE"
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "match_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "fga",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "fgm",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "tpa",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "tpm",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "fta",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "ftm",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "off_rebounds",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "def_rebounds",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "assists",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "turnovers",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "steals",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "blocks",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "fouls",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "possessions",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "ortg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "drtg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "efg_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "tov_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "orb_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_match_stats",
+                        "column_name":  "ftr",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "nextval(\u0027analytics.basketball_matches_id_seq\u0027::regclass)"
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "api_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "league_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "date_time",
+                        "data_type":  "timestamp with time zone",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "home_team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "away_team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "home_score",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "away_score",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "score_q1",
+                        "data_type":  "jsonb",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "score_q2",
+                        "data_type":  "jsonb",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "score_q3",
+                        "data_type":  "jsonb",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "score_q4",
+                        "data_type":  "jsonb",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "score_ot",
+                        "data_type":  "jsonb",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "status",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  "\u0027scheduled\u0027::text"
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "stadium",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "status_short",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_matches",
+                        "column_name":  "venue",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_elo",
+                        "column_name":  "team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_elo",
+                        "column_name":  "date",
+                        "data_type":  "date",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_elo",
+                        "column_name":  "elo_rating",
+                        "data_type":  "numeric",
+                        "is_nullable":  "NO",
+                        "column_default":  "1500.0"
+                    },
+                    {
+                        "table_name":  "basketball_team_elo",
+                        "column_name":  "elo_change_1m",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "date",
+                        "data_type":  "date",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "venue",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_ortg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_drtg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_net_rtg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_pace",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_efg_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l10_ortg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l10_drtg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l10_net_rtg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "season_ortg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "season_drtg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "rest_days",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "is_b2b",
+                        "data_type":  "boolean",
+                        "is_nullable":  "NO",
+                        "column_default":  "false"
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "games_in_7_days",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_form",
+                        "data_type":  "jsonb",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_streak",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_win_rate",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_avg_margin",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_tov_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_orb_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_ftr",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "basketball_team_rolling",
+                        "column_name":  "l5_3pt_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "confidence_factors",
+                        "column_name":  "id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "nextval(\u0027analytics.confidence_factors_id_seq\u0027::regclass)"
+                    },
+                    {
+                        "table_name":  "confidence_factors",
+                        "column_name":  "match_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "confidence_factors",
+                        "column_name":  "sport",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "confidence_factors",
+                        "column_name":  "base_score",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "100"
+                    },
+                    {
+                        "table_name":  "confidence_factors",
+                        "column_name":  "league_tier_malus",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "confidence_factors",
+                        "column_name":  "missing_data_malus",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "confidence_factors",
+                        "column_name":  "h2h_malus",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "confidence_factors",
+                        "column_name":  "injury_uncertainty_malus",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "confidence_factors",
+                        "column_name":  "final_score",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "100"
+                    },
+                    {
+                        "table_name":  "confidence_factors",
+                        "column_name":  "computed_at",
+                        "data_type":  "timestamp with time zone",
+                        "is_nullable":  "NO",
+                        "column_default":  "now()"
+                    },
+                    {
+                        "table_name":  "football_h2h",
+                        "column_name":  "team_a_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_h2h",
+                        "column_name":  "team_b_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_h2h",
+                        "column_name":  "total_matches",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "football_h2h",
+                        "column_name":  "team_a_wins",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "football_h2h",
+                        "column_name":  "draws",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "football_h2h",
+                        "column_name":  "team_b_wins",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "football_h2h",
+                        "column_name":  "avg_goals_a",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_h2h",
+                        "column_name":  "avg_goals_b",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_h2h",
+                        "column_name":  "last_5_results",
+                        "data_type":  "jsonb",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_h2h",
+                        "column_name":  "updated_at",
+                        "data_type":  "timestamp with time zone",
+                        "is_nullable":  "NO",
+                        "column_default":  "now()"
+                    },
+                    {
+                        "table_name":  "football_injuries",
+                        "column_name":  "id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "nextval(\u0027analytics.football_injuries_id_seq\u0027::regclass)"
+                    },
+                    {
+                        "table_name":  "football_injuries",
+                        "column_name":  "player_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_injuries",
+                        "column_name":  "team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_injuries",
+                        "column_name":  "match_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_injuries",
+                        "column_name":  "type",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_injuries",
+                        "column_name":  "reason",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_injuries",
+                        "column_name":  "status",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_injuries",
+                        "column_name":  "reported_at",
+                        "data_type":  "date",
+                        "is_nullable":  "NO",
+                        "column_default":  "CURRENT_DATE"
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "match_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "possession_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "shots_on_goal",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "shots_total",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "passes_total",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "passes_accurate",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "fouls",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "corners",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "yellow_cards",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "red_cards",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_match_stats",
+                        "column_name":  "expected_goals",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "nextval(\u0027analytics.football_matches_id_seq\u0027::regclass)"
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "api_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "league_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "round",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "date_time",
+                        "data_type":  "timestamp with time zone",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "home_team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "away_team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "home_score",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "away_score",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "status",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  "\u0027scheduled\u0027::text"
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "referee_name",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "weather",
+                        "data_type":  "jsonb",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "stadium",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "status_short",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_matches",
+                        "column_name":  "venue",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_referee_stats",
+                        "column_name":  "referee_name",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_referee_stats",
+                        "column_name":  "season",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_referee_stats",
+                        "column_name":  "matches_officiated",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "football_referee_stats",
+                        "column_name":  "avg_yellow_cards",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_referee_stats",
+                        "column_name":  "avg_red_cards",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_referee_stats",
+                        "column_name":  "avg_fouls",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_referee_stats",
+                        "column_name":  "avg_penalties",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_elo",
+                        "column_name":  "team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_elo",
+                        "column_name":  "date",
+                        "data_type":  "date",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_elo",
+                        "column_name":  "elo_rating",
+                        "data_type":  "numeric",
+                        "is_nullable":  "NO",
+                        "column_default":  "1500.0"
+                    },
+                    {
+                        "table_name":  "football_team_elo",
+                        "column_name":  "elo_change_1m",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "date",
+                        "data_type":  "date",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "venue",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_points",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_ppm",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_goals_for",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_goals_against",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_clean_sheets",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_xg_for",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_xg_against",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_possession_avg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_pass_accuracy",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_shots_avg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_form",
+                        "data_type":  "jsonb",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_streak",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_win_rate",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_btts_rate",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_over25_rate",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_corners_avg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_cards_avg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "football_team_rolling",
+                        "column_name":  "l5_xg_diff",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "leagues",
+                        "column_name":  "id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "nextval(\u0027analytics.leagues_id_seq\u0027::regclass)"
+                    },
+                    {
+                        "table_name":  "leagues",
+                        "column_name":  "api_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "leagues",
+                        "column_name":  "sport",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "leagues",
+                        "column_name":  "name",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "leagues",
+                        "column_name":  "country",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "leagues",
+                        "column_name":  "tier",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  "\u0027major\u0027::text"
+                    },
+                    {
+                        "table_name":  "leagues",
+                        "column_name":  "season_start",
+                        "data_type":  "date",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "leagues",
+                        "column_name":  "season_end",
+                        "data_type":  "date",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "odds_snapshots",
+                        "column_name":  "id",
+                        "data_type":  "bigint",
+                        "is_nullable":  "NO",
+                        "column_default":  "nextval(\u0027analytics.odds_snapshots_id_seq\u0027::regclass)"
+                    },
+                    {
+                        "table_name":  "odds_snapshots",
+                        "column_name":  "match_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "odds_snapshots",
+                        "column_name":  "sport",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "odds_snapshots",
+                        "column_name":  "bookmaker",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "odds_snapshots",
+                        "column_name":  "snapshot_at",
+                        "data_type":  "timestamp with time zone",
+                        "is_nullable":  "NO",
+                        "column_default":  "now()"
+                    },
+                    {
+                        "table_name":  "odds_snapshots",
+                        "column_name":  "home_win",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "odds_snapshots",
+                        "column_name":  "draw",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "odds_snapshots",
+                        "column_name":  "away_win",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "odds_snapshots",
+                        "column_name":  "over_under_line",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "odds_snapshots",
+                        "column_name":  "over_odds",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "odds_snapshots",
+                        "column_name":  "under_odds",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "players",
+                        "column_name":  "id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "nextval(\u0027analytics.players_id_seq\u0027::regclass)"
+                    },
+                    {
+                        "table_name":  "players",
+                        "column_name":  "api_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "players",
+                        "column_name":  "sport",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "players",
+                        "column_name":  "name",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "players",
+                        "column_name":  "team_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "players",
+                        "column_name":  "position",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "teams",
+                        "column_name":  "id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "nextval(\u0027analytics.teams_id_seq\u0027::regclass)"
+                    },
+                    {
+                        "table_name":  "teams",
+                        "column_name":  "api_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "teams",
+                        "column_name":  "sport",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "teams",
+                        "column_name":  "name",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "teams",
+                        "column_name":  "short_name",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "teams",
+                        "column_name":  "logo_url",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "teams",
+                        "column_name":  "league_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "teams",
+                        "column_name":  "stadium_city",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "teams",
+                        "column_name":  "stadium_lat",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "teams",
+                        "column_name":  "stadium_lon",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "player_a_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "player_b_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "total_wins_a",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "total_wins_b",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "clay_wins_a",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "clay_wins_b",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "hard_wins_a",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "hard_wins_b",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "grass_wins_a",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "grass_wins_b",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "indoor_wins_a",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "indoor_wins_b",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "0"
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "last_meeting_date",
+                        "data_type":  "date",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "last_winner_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "last_score",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_h2h",
+                        "column_name":  "updated_at",
+                        "data_type":  "timestamp with time zone",
+                        "is_nullable":  "NO",
+                        "column_default":  "now()"
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "match_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "player_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "aces",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "double_faults",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "first_serve_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "first_serve_won_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "second_serve_won_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "bp_saved_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "bp_converted_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "total_points_won",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "return_won_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "service_games_held",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_match_stats",
+                        "column_name":  "return_games_won",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "nextval(\u0027analytics.tennis_matches_id_seq\u0027::regclass)"
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "api_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "tournament_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "round",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "date_time",
+                        "data_type":  "timestamp with time zone",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "player1_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "player2_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "winner_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "score",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "duration_minutes",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "sets_played",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "status",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  "\u0027scheduled\u0027::text"
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "surface",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "indoor_outdoor",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_matches",
+                        "column_name":  "venue",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "player_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "surface",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "date",
+                        "data_type":  "date",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "l5_win_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "l10_win_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "season_win_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "l10_aces_avg",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "l10_first_serve_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "l10_first_serve_won",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "l10_bp_saved_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "l10_return_won_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "l10_bp_converted_pct",
+                        "data_type":  "numeric",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "days_since_last_match",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "sets_played_l7",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "minutes_played_l7",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_player_rolling",
+                        "column_name":  "fatigue_score",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_rankings",
+                        "column_name":  "player_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_rankings",
+                        "column_name":  "date",
+                        "data_type":  "date",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_rankings",
+                        "column_name":  "rank",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_rankings",
+                        "column_name":  "points",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_rankings",
+                        "column_name":  "rank_change_1m",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_rankings",
+                        "column_name":  "rank_change_3m",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_rankings",
+                        "column_name":  "trend",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_tournaments",
+                        "column_name":  "id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  "nextval(\u0027analytics.tennis_tournaments_id_seq\u0027::regclass)"
+                    },
+                    {
+                        "table_name":  "tennis_tournaments",
+                        "column_name":  "api_id",
+                        "data_type":  "integer",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_tournaments",
+                        "column_name":  "name",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_tournaments",
+                        "column_name":  "category",
+                        "data_type":  "text",
+                        "is_nullable":  "NO",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_tournaments",
+                        "column_name":  "surface",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_tournaments",
+                        "column_name":  "indoor_outdoor",
+                        "data_type":  "text",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    },
+                    {
+                        "table_name":  "tennis_tournaments",
+                        "column_name":  "prize_money_usd",
+                        "data_type":  "integer",
+                        "is_nullable":  "YES",
+                        "column_default":  null
+                    }
+                ]
+}

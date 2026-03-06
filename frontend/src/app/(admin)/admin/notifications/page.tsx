@@ -1,39 +1,102 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { SystemNotification } from "@/types/admin";
 import { SignalProcessor } from "@/components/admin/notifications/SignalProcessor";
 import { HolographicStream } from "@/components/admin/notifications/HolographicStream";
 import { CommsConfig } from "@/components/admin/notifications/CommsConfig";
 import { Button } from "@/components/ui/button";
 import { Check, Settings, Shield, Radio } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { adminMarkNotificationAsReadAction } from "@/app/actions/notifications";
+import { toast } from "sonner";
+import { AppNotification } from "@/types/notifications";
 
 export default function AdminNotificationsPage() {
     const [filter, setFilter] = useState<"all" | "system" | "user" | "critical">("all");
     const [isConfigOpen, setIsConfigOpen] = useState(false);
-    const [notifications, setNotifications] = useState<SystemNotification[]>([]);
+    // Use AppNotification instead of the fake SystemNotification
+    const [notifications, setNotifications] = useState<AppNotification[]>([]);
+    const supabase = createClient();
 
-    // Calculate counts for badges
+    const fetchAdminNotifications = useCallback(async () => {
+        try {
+            const { data, error } = await supabase
+                .from('notifications')
+                .select('*')
+                .eq('is_for_admin', true)
+                .order('created_at', { ascending: false })
+                .limit(50);
+
+            if (error) throw error;
+            setNotifications(data as AppNotification[]);
+        } catch (error) {
+            console.error("Error fetching admin comms:", error);
+        }
+    }, [supabase]);
+
+    useEffect(() => {
+        fetchAdminNotifications();
+
+        // Setup Realtime subscription for incoming admin comms
+        const channel = supabase
+            .channel('admin-comms-changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'notifications',
+                    filter: `is_for_admin=eq.true`,
+                },
+                () => {
+                    fetchAdminNotifications();
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [fetchAdminNotifications, supabase]);
+
+    // Calculate counts for badges based on AppNotification mapping
+    // We map severity to the filter tabs: 'critical' is critical, 'user' is where sender_id is not null?
+    // Actually the tabs were based on type previously. Let's adapt to AppNotification fields.
     const counts = {
-        all: notifications.filter(n => !n.read).length,
-        system: notifications.filter(n => n.type === "system" && !n.read).length,
-        user: notifications.filter(n => n.type === "user" && !n.read).length,
-        critical: notifications.filter(n => n.severity === "critical" && !n.read).length
+        all: notifications.filter(n => !n.is_read).length,
+        system: notifications.filter(n => (n.type === "system" || n.type === "broadcast") && !n.is_read).length,
+        user: notifications.filter(n => (n.type === "cancellation_request" || n.type === "support_message") && !n.is_read).length,
+        critical: notifications.filter(n => n.severity === "critical" && !n.is_read).length
     };
 
     const filtered = notifications.filter(n => {
         if (filter === "all") return true;
         if (filter === "critical") return n.severity === "critical";
-        return n.type === filter;
+        if (filter === "system") return n.type === "system" || n.type === "broadcast";
+        if (filter === "user") return n.type === "cancellation_request" || n.type === "support_message";
+        return true;
     });
 
-    const handleMarkRead = (id: string | "all") => {
+    const handleMarkRead = async (id: string | "all") => {
+        // Optimistic Update
         if (id === "all") {
-            setNotifications(current => current.map(n => ({ ...n, read: true })));
+            setNotifications(current => current.map(n => ({ ...n, is_read: true })));
         } else {
             setNotifications(current => current.map(n =>
-                n.id === id ? { ...n, read: true } : n
+                n.id === id ? { ...n, is_read: true } : n
             ));
+        }
+
+        try {
+            const result = await adminMarkNotificationAsReadAction(id);
+            if (!result.success) {
+                toast.error("Erreur de synchronisation.");
+                fetchAdminNotifications(); // Revert
+            }
+        } catch (error) {
+            toast.error("Erreur réseau.");
+            fetchAdminNotifications();
         }
     };
 

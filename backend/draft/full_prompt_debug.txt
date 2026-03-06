@@ -1,0 +1,139 @@
+=== SYSTEM PROMPT ===
+Tu es un analyste expert en football, pédagogue et passionné. Ton rôle est d'expliquer la physionomie d'un match à un parieur amateur en rendant les données vivantes et compréhensibles.
+ 
+ ## DIRECTIVES DE RÉDACTION (TON "GRAND PUBLIC")
+- **PAS DE JARGON TECHNIQUE** : Interdiction absolue d'utiliser des termes comme "xG", "xGA", "PPM" ou "Ratio". Si tu veux dire qu'une équipe devrait marquer, dis qu'elle est "très dangereuse devant le but" ou qu'elle "se crée énormément d'occasions franches".
+- **NE PARLE PAS COMME UN ALGORITHME** : Évite les pourcentages bruts (ex: "42.9%"). Préfère "une chance sur deux", "presque systématiquement", "rarement". 
+- **STYLE NARRATIF** : Raconte la dynamique du match.
+-  *Mauvais* : "Augsburg a un xGA de 1.4 ce qui est mauvais."
+-  *Bon* : "La défense d'Augsburg est actuellement aux abois, concédant des opportunités trop facilement à cause d'un manque de rigueur dans le replacement."
+- **VOCABULAIRE CLAIR** : Utilise des expressions simples comme "dynamique positive", "équipe en pleine confiance", "solidité défensive", "problèmes de finition", "match à sens unique".
+- **FLUIDITÉ** : Ton texte doit être fluide et captivant. Pas de parenthèses techniques qui coupent la lecture.
+ 
+ ## DONNÉES QUE TU REÇOIS
+ Tu reçois un rapport structuré (Match, Teams, H2H, Odds, Elo).
+ 
+ ## TON ANALYSE DOIT COUVRIR
+ 1. **Rapport de force** : Qui semble dominer la rencontre ? 
+ 2. **Physionomie probable** : Est-ce qu'on s'attend à un festival offensif ou un match très fermé et tactique ?
+ 3. **Le poids de l'histoire (H2H)** : Existe-t-il un ascendant psychologique historique ?
+ 
+ ## CLASSIFICATION DE CONFIANCE (TOP 9)
+ Sélectionne EXACTEMENT 3 évènements par catégorie (HIGH, MEDIUM, RISKY) :
+ - **HIGH** : Les évidences de la journée. (Score de confiance estimé : 80 à 99)
+ - **MEDIUM** : De bonnes opportunités avec un petit bémol à surveiller. (Score de confiance estimé : 60 à 79)
+ - **RISKY** : Les paris audacieux à belle cote. (Score de confiance estimé : 30 à 59)
+ 
+ **RÈGLES POUR LE SCORE DE CONFIANCE (`confidence_score`) :**
+ 1. **Fondé sur la DATA** : Le score doit être calculé en fonction de la solidité des statistiques (Forme, H2H, Elo). Ne le base pas uniquement sur la cote. Un pari avec une cote élevée peut avoir un score de 58 (Risky) si les stats le soutiennent fortement.
+ 2. **Ordre Strict** : Dans chaque catégorie, le pari avec le `rank: 1` DOIT être celui qui a le plus haut `confidence_score`. Le `rank: 2` est le 2ème plus haut, et le `rank: 3` le plus bas. L'ordre des éléments dans le tableau JSON doit respecter ce classement décroissant.
+ 
+  ## GARDE-FOU DE COHÉRENCE ET PRÉCISION (CRITIQUE)
+- **ALIGNEMENT SÉLECTION-ANALYSE** : Ton texte d'analyse doit justifier DIRECTEMENT et UNIQUEMENT la sélection choisie. Si tu proposes "Plus de 2.5 buts", ton analyse doit porter sur les capacités offensives ou les faiblesses défensives menant à des buts, et non sur un autre sujet.
+- **ZÉRO CONTRADICTION** : Il est interdit de décrire une équipe comme "à bout de souffle" tout en recommandant sa victoire. Ton analyse et ton choix de pari doivent être parfaitement synchronisés.
+- **PAS D'INVERSION** : Vérifie minutieusement que tu n'attribues pas les statistiques ou la forme de l'équipe A à l'équipe B.
+
+ ## RÈGLES CRITIQUES
+ - Rédige en français naturel et impeccable.
+ - Ne recommande JAMAIS un marché dont les odds ne sont pas fournies.
+ - Réponds UNIQUEMENT en JSON valide.
+
+=== USER PROMPT ===
+Analyse ce match à partir du rapport suivant et produis ton audit JSON :
+
+[MATCH] 2026-05-24T16:00:00+00:00 | Unknown Venue | Regular Season - 38 | Ref: None
+
+[HOME TEAM: Celta Vigo]
+Form Global (Last 5):
+- 2026-03-01 | Pts:5 (PPM:1.0) | xG(F:1.9, A:0.7, D:1.18) | G(F:1.2, A:1.4) | WR:20.0% | BTTS:60.0% | O2.5:60.0% | Poss:59.4% | Shots:14.8 | Cor:5.6 | Crd:1.2 | CS:2 | Pass:88.0% | Stk:1W
+- 2026-02-22 | Pts:5 (PPM:1.0) | xG(F:1.7, A:0.9, D:0.82) | G(F:1.4, A:1.4) | WR:20.0% | BTTS:60.0% | O2.5:80.0% | Poss:57.8% | Shots:13.0 | Cor:5.2 | Crd:1.8 | CS:2 | Pass:87.9% | Stk:1D
+- 2026-02-14 | Pts:7 (PPM:1.4) | xG(F:1.5, A:0.8, D:0.69) | G(F:1.2, A:1.0) | WR:40.0% | BTTS:40.0% | O2.5:60.0% | Poss:54.6% | Shots:12.0 | Cor:5.0 | Crd:2.4 | CS:3 | Pass:86.7% | Stk:1L
+- 2026-02-06 | Pts:7 (PPM:1.4) | xG(F:1.5, A:0.8, D:0.3) | G(F:1.2, A:1.0) | WR:40.0% | BTTS:40.0% | O2.5:60.0% | Poss:54.6% | Shots:12.0 | Cor:5.0 | Crd:2.4 | CS:3 | Pass:86.0% | Stk:1L
+- 2026-02-01 | Pts:10 (PPM:2.0) | xG(F:1.6, A:1.1, D:-0.2) | G(F:1.8, A:0.8) | WR:60.0% | BTTS:40.0% | O2.5:60.0% | Poss:51.2% | Shots:10.8 | Cor:4.0 | Crd:2.2 | CS:3 | Pass:85.1% | Stk:1D
+Form Home (Last 5):
+- 2026-02-22 | Pts:9 (PPM:1.8) | xG(F:1.7, A:1.1, D:0.6) | G(F:2.0, A:0.8) | WR:60.0% | BTTS:40.0% | O2.5:60.0% | Poss:51.4% | Shots:11.4 | Cor:3.8 | Crd:2.2 | CS:2 | Pass:86.4% | Stk:1L
+- 2026-02-06 | Pts:9 (PPM:1.8) | xG(F:1.7, A:1.1, D:-0.3) | G(F:2.0, A:0.8) | WR:60.0% | BTTS:40.0% | O2.5:60.0% | Poss:51.4% | Shots:11.4 | Cor:3.8 | Crd:2.2 | CS:2 | Pass:86.3% | Stk:1L
+- 2026-01-18 | Pts:9 (PPM:1.8) | xG(F:1.4, A:1.7, D:-0.8) | G(F:2.2, A:1.2) | WR:60.0% | BTTS:40.0% | O2.5:60.0% | Poss:47.8% | Shots:8.8 | Cor:2.8 | Crd:2.0 | CS:2 | Pass:84.9% | Stk:3W
+- 2026-01-03 | Pts:7 (PPM:1.4) | xG(F:1.2, A:1.8, D:-0.6) | G(F:1.8, A:1.4) | WR:40.0% | BTTS:60.0% | O2.5:40.0% | Poss:46.2% | Shots:7.4 | Cor:2.0 | Crd:2.2 | CS:1 | Pass:83.0% | Stk:2W
+- 2025-12-14 | Pts:5 (PPM:1.0) | xG(F:1.1, A:1.4, D:-0.1) | G(F:1.2, A:1.4) | WR:20.0% | BTTS:60.0% | O2.5:20.0% | Poss:50.0% | Shots:8.6 | Cor:2.8 | Crd:2.2 | CS:1 | Pass:84.0% | Stk:1W
+Form Away (Last 5):
+- 2026-03-01 | Pts:6 (PPM:1.2) | xG(F:1.4, A:0.7, D:0.65) | G(F:0.8, A:1.0) | WR:20.0% | BTTS:40.0% | O2.5:40.0% | Poss:53.6% | Shots:10.2 | Cor:3.6 | Crd:1.4 | CS:3 | Pass:85.5% | Stk:2D
+- 2026-02-14 | Pts:8 (PPM:1.6) | xG(F:1.1, A:1.1, D:0.06) | G(F:0.8, A:0.6) | WR:40.0% | BTTS:20.0% | O2.5:20.0% | Poss:50.6% | Shots:8.8 | Cor:3.4 | Crd:1.6 | CS:4 | Pass:85.0% | Stk:1D
+- 2026-02-01 | Pts:8 (PPM:1.6) | xG(F:1.1, A:1.1, D:0.3) | G(F:0.8, A:0.6) | WR:40.0% | BTTS:20.0% | O2.5:20.0% | Poss:50.6% | Shots:8.8 | Cor:3.4 | Crd:1.6 | CS:4 | Pass:84.3% | Stk:1D
+- 2026-01-25 | Pts:10 (PPM:2.0) | xG(F:1.4, A:1.1, D:0.4) | G(F:1.0, A:0.6) | WR:60.0% | BTTS:20.0% | O2.5:20.0% | Poss:47.8% | Shots:9.2 | Cor:3.2 | Crd:1.6 | CS:4 | Pass:83.8% | Stk:1L
+- 2026-01-12 | Pts:13 (PPM:2.6) | xG(F:1.4, A:1.0, D:0.2) | G(F:1.2, A:0.2) | WR:80.0% | BTTS:20.0% | O2.5:20.0% | Poss:47.8% | Shots:9.8 | Cor:2.2 | Crd:2.0 | CS:4 | Pass:83.9% | Stk:1W
+Injuries: None
+
+[AWAY TEAM: Sevilla]
+Form Global (Last 5):
+- 2026-03-01 | Pts:8 (PPM:1.6) | xG(F:0.9, A:1.8, D:-0.84) | G(F:1.2, A:1.4) | WR:40.0% | BTTS:80.0% | O2.5:40.0% | Poss:52.8% | Shots:9.2 | Cor:4.0 | Crd:2.8 | CS:1 | Pass:80.9% | Stk:1W
+- 2026-02-22 | Pts:6 (PPM:1.2) | xG(F:1.5, A:2.0, D:-0.55) | G(F:1.4, A:1.8) | WR:20.0% | BTTS:100.0% | O2.5:60.0% | Poss:48.8% | Shots:13.0 | Cor:5.0 | Crd:2.8 | CS:0 | Pass:79.8% | Stk:2D
+- 2026-02-14 | Pts:5 (PPM:1.0) | xG(F:1.5, A:2.1, D:-0.65) | G(F:1.2, A:1.8) | WR:20.0% | BTTS:80.0% | O2.5:60.0% | Poss:55.4% | Shots:13.6 | Cor:6.2 | Crd:2.0 | CS:0 | Pass:82.9% | Stk:1D
+- 2026-02-08 | Pts:5 (PPM:1.0) | xG(F:1.4, A:2.1, D:0.2) | G(F:1.2, A:1.8) | WR:20.0% | BTTS:80.0% | O2.5:60.0% | Poss:55.4% | Shots:13.6 | Cor:6.2 | Crd:2.0 | CS:0 | Pass:82.4% | Stk:1D
+- 2026-02-02 | Pts:4 (PPM:0.8) | xG(F:1.6, A:1.8, D:0.6) | G(F:1.0, A:2.2) | WR:20.0% | BTTS:60.0% | O2.5:80.0% | Poss:58.0% | Shots:14.4 | Cor:6.2 | Crd:2.0 | CS:0 | Pass:82.4% | Stk:1L
+Form Home (Last 5):
+- 2026-02-14 | Pts:7 (PPM:1.4) | xG(F:1.4, A:1.6, D:-0.23) | G(F:1.4, A:1.2) | WR:40.0% | BTTS:40.0% | O2.5:60.0% | Poss:56.0% | Shots:11.2 | Cor:5.2 | Crd:2.4 | CS:1 | Pass:83.9% | Stk:1D
+- 2026-02-08 | Pts:7 (PPM:1.4) | xG(F:1.4, A:1.6, D:0.0) | G(F:1.4, A:1.2) | WR:40.0% | BTTS:40.0% | O2.5:60.0% | Poss:56.0% | Shots:11.2 | Cor:5.2 | Crd:2.4 | CS:1 | Pass:83.5% | Stk:1D
+- 2026-01-24 | Pts:6 (PPM:1.2) | xG(F:1.3, A:1.3, D:0.1) | G(F:1.2, A:1.4) | WR:40.0% | BTTS:20.0% | O2.5:60.0% | Poss:58.8% | Shots:10.8 | Cor:5.4 | Crd:2.2 | CS:1 | Pass:81.9% | Stk:1W
+- 2026-01-12 | Pts:6 (PPM:1.2) | xG(F:1.2, A:1.1, D:0.2) | G(F:1.0, A:1.2) | WR:40.0% | BTTS:0.0% | O2.5:40.0% | Poss:58.2% | Shots:10.8 | Cor:5.4 | Crd:2.8 | CS:2 | Pass:82.7% | Stk:2L
+- 2026-01-04 | Pts:6 (PPM:1.2) | xG(F:1.4, A:1.2, D:0.2) | G(F:1.2, A:1.6) | WR:40.0% | BTTS:20.0% | O2.5:60.0% | Poss:58.0% | Shots:12.0 | Cor:6.0 | Crd:2.6 | CS:2 | Pass:81.8% | Stk:1L
+Form Away (Last 5):
+- 2026-03-01 | Pts:5 (PPM:1.0) | xG(F:1.3, A:1.6, D:-0.33) | G(F:1.0, A:1.8) | WR:20.0% | BTTS:60.0% | O2.5:40.0% | Poss:57.2% | Shots:12.8 | Cor:4.8 | Crd:3.0 | CS:1 | Pass:83.0% | Stk:1W
+- 2026-02-22 | Pts:2 (PPM:0.4) | xG(F:1.6, A:1.8, D:-0.19) | G(F:1.0, A:2.2) | WR:0.0% | BTTS:80.0% | O2.5:60.0% | Poss:56.6% | Shots:16.0 | Cor:7.0 | Crd:3.0 | CS:0 | Pass:83.1% | Stk:1L
+- 2026-02-02 | Pts:2 (PPM:0.4) | xG(F:1.6, A:1.8, D:0.6) | G(F:1.0, A:2.2) | WR:0.0% | BTTS:80.0% | O2.5:60.0% | Poss:56.6% | Shots:16.0 | Cor:7.0 | Crd:3.0 | CS:0 | Pass:82.8% | Stk:1L
+- 2026-01-19 | Pts:2 (PPM:0.4) | xG(F:1.4, A:1.9, D:0.6) | G(F:0.8, A:2.0) | WR:0.0% | BTTS:60.0% | O2.5:60.0% | Poss:53.8% | Shots:15.0 | Cor:6.2 | Crd:3.4 | CS:0 | Pass:82.9% | Stk:1D
+- 2025-12-20 | Pts:1 (PPM:0.2) | xG(F:0.9, A:1.9, D:0.3) | G(F:0.6, A:2.0) | WR:0.0% | BTTS:60.0% | O2.5:60.0% | Poss:55.8% | Shots:11.2 | Cor:6.6 | Crd:3.8 | CS:0 | Pass:82.5% | Stk:1L
+Injuries: None
+
+[H2H] Total: 27 | W_H: 10 | D: 7 | W_A: 10
+Avg Score: 1.4 - 1.4 | Last 5: L, L, W, L, D
+
+[ODDS]
+No data available.
+
+[ELO]
+Home: 1516.3 (Trend: -1.5 1M)
+Away: 1440.9 (Trend: 1.9 1M)
+
+Réponds avec ce format JSON exact :
+{
+  "match_summary": "Résumé analytique concis de la rencontre",
+  "data_quality": "HIGH | MEDIUM | LOW",
+  "categories": {
+    "high_confidence": [
+      {
+        "market": "Nom du marché",
+        "selection": "Choix spécifique recommandé",
+        "odds": 1.50,
+        "rank": 1,
+        "confidence_score": 85,
+        "analysis": "Analyse rédigée en français naturel et fluide (3-4 phrases min), justifiant précisément cette sélection et expliquant pourquoi elle rentre dans cette catégorie (croise les stats, ELO, forme, etc.)."
+      }
+    ],
+    "medium_confidence": [
+      {
+        "market": "Nom du marché",
+        "selection": "Choix spécifique suggéré",
+        "odds": 2.10,
+        "rank": 1,
+        "confidence_score": 68,
+        "analysis": "Analyse rédigée en français naturel et fluide (3-4 phrases min)..."
+      }
+    ],
+    "risky": [
+      {
+        "market": "Nom du marché",
+        "selection": "Choix spécifique avec fort potentiel",
+        "odds": 3.80,
+        "rank": 1,
+        "confidence_score": 42,
+        "analysis": "Analyse rédigée en français naturel et fluide (3-4 phrases min)..."
+      }
+    ]
+  },
+  "_meta": {
+    "sport": "football|basketball|tennis",
+    "match_id": 1234
+  }
+}
+RAPPEL IMPORTANT : Le JSON de sortie DOIT contenir exactement 3 éléments dans `high_confidence`, 3 éléments dans `medium_confidence` et 3 éléments dans `risky`, chacun numéroté par son `rank` de 1 à 3.

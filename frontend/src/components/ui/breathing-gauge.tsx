@@ -20,9 +20,9 @@ export const BreathingGauge = ({ value = 72, label = "Confiance IA" }: { value?:
 
     // Color based on value
     const getColor = (val: number) => {
-        if (val >= 80) return "#22c55e"; // safe
-        if (val >= 60) return "#3b82f6"; // value
-        return "#ef4444"; // risky
+        if (val >= 80) return "#10b981"; // emerald-500 (safe)
+        if (val >= 60) return "#3b82f6"; // blue-500 (value)
+        return "#f43f5e"; // rose-500 (risky)
     };
 
     const color = getColor(value);
@@ -70,14 +70,14 @@ export const BreathingGauge = ({ value = 72, label = "Confiance IA" }: { value?:
                     <motion.span
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-2xl font-bold font-mono tracking-tighter"
-                        style={{ color }}
+                        className="text-2xl font-black tracking-tighter font-sans"
+                        style={{ color, textShadow: `0 0 20px ${color}` }}
                     >
                         {value}%
                     </motion.span>
                 </div>
             </motion.div>
-            <p className="mt-3 text-xs font-medium text-muted-foreground uppercase tracking-widest">{label}</p>
+            <p className="mt-4 text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">{label}</p>
         </div>
     );
 };

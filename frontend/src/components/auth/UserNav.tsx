@@ -12,7 +12,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { LogOut, Shield, User, Settings } from "lucide-react";
+import { LogOut, Shield, User } from "lucide-react";
 
 export function UserNav() {
     const { profile, isAdmin, signOut } = useAuth();
@@ -73,7 +73,7 @@ export function UserNav() {
                 <DropdownMenuSeparator className="bg-white/5 my-2" />
 
                 {!isAdmin && (
-                    <Link href="/dashboard/profile">
+                    <Link href="/profile">
                         <DropdownMenuItem className="gap-2 cursor-pointer py-2.5">
                             <User className="size-4 text-neutral-400" />
                             <span className="font-medium">Mon Profil</span>
@@ -90,12 +90,7 @@ export function UserNav() {
                     </Link>
                 )}
 
-                <DropdownMenuItem className="gap-2 cursor-pointer py-2.5">
-                    <Settings className="size-4 text-neutral-400" />
-                    <span className="font-medium">Paramètres</span>
-                </DropdownMenuItem>
 
-                <DropdownMenuSeparator className="bg-white/5 my-2" />
 
                 <DropdownMenuItem
                     className="text-destructive gap-2 cursor-pointer py-2.5 focus:bg-destructive/10 focus:text-destructive"

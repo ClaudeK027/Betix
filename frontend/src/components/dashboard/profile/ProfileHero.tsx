@@ -49,7 +49,7 @@ export function ProfileHero({ profile }: ProfileHeroProps) {
                                 />
                             ) : (
                                 <span className={cn("text-3xl sm:text-5xl font-black tracking-tighter", rankConfig.color)}>
-                                    {profile.avatar}
+                                    {profile.avatar || profile.username.charAt(0).toUpperCase()}
                                 </span>
                             )}
 
@@ -67,9 +67,6 @@ export function ProfileHero({ profile }: ProfileHeroProps) {
                                 <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight uppercase">
                                     {profile.username}
                                 </h1>
-                                <p className="text-sm text-neutral-400 font-medium">
-                                    Membre depuis {profile.memberSince} • <span className={cn(rankConfig.color)}>{profile.rank} Member</span>
-                                </p>
                             </div>
                             <ProfileEditDialog
                                 profile={profile}
@@ -82,13 +79,16 @@ export function ProfileHero({ profile }: ProfileHeroProps) {
                         </div>
 
                         {/* XP Progress */}
-                        <div className="space-y-2 max-w-md mx-auto sm:mx-0">
-                            <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
-                                <span className={cn(rankConfig.color)}>Niveau {profile.level}</span>
-                                <span className="text-white/40">{profile.xp} / {profile.nextLevelXp} XP</span>
+                        {/* TODO: Restore Level/XP in future version */}
+                        {false && (
+                            <div className="space-y-2 max-w-md mx-auto sm:mx-0">
+                                <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
+                                    <span className={cn(rankConfig.color)}>Niveau {profile.level}</span>
+                                    <span className="text-white/40">{profile.xp} / {profile.nextLevelXp} XP</span>
+                                </div>
+                                <Progress value={progressPercent} className="h-2 bg-white/5" indicatorClassName={cn(rankConfig.bg)} />
                             </div>
-                            <Progress value={progressPercent} className="h-2 bg-white/5" indicatorClassName={cn(rankConfig.bg)} />
-                        </div>
+                        )}
 
                         {/* Recent Badges */}
                         <div className="flex flex-wrap justify-center sm:justify-start gap-2 pt-2">

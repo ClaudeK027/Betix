@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, ExternalLink, Activity, Trophy, Clock } from "lucide-react";
+import { ChevronDown, ChevronUp, ExternalLink, Activity, Clock } from "lucide-react";
 import { SportIcon } from "@/components/icons/SportIcons";
 import { cn } from "@/lib/utils";
 
@@ -81,6 +81,11 @@ export function MatchTable({ items }: MatchTableProps) {
                                                         Next
                                                     </Badge>
                                                 )}
+                                                {match.status === "imminent" && (
+                                                    <Badge variant="outline" className="w-fit bg-amber-500/10 text-amber-500 border-amber-500/20 text-[9px] px-1 py-0 h-4 font-bold uppercase tracking-tighter animate-pulse">
+                                                        Imminent
+                                                    </Badge>
+                                                )}
                                                 <span className="text-[10px] text-muted-foreground md:hidden uppercase font-medium tracking-tighter">
                                                     {(() => {
                                                         const now = new Date();
@@ -128,8 +133,8 @@ export function MatchTable({ items }: MatchTableProps) {
                                                         {match.homeTeam.name}
                                                     </span>
                                                 </div>
-                                                {(isLive || isFinished) && (
-                                                    <span className="font-mono text-xs font-bold text-white">{match.homeScore}</span>
+                                                {(isLive || isFinished) && match.sport !== "tennis" && (
+                                                    <span className="font-mono text-xs font-bold text-white">{match.homeScore ?? 0}</span>
                                                 )}
                                             </div>
                                             {/* Away Row (Mobile) */}
@@ -146,10 +151,16 @@ export function MatchTable({ items }: MatchTableProps) {
                                                         {match.awayTeam.name}
                                                     </span>
                                                 </div>
-                                                {(isLive || isFinished) && (
-                                                    <span className="font-mono text-xs font-bold text-white">{match.awayScore}</span>
+                                                {(isLive || isFinished) && match.sport !== "tennis" && (
+                                                    <span className="font-mono text-xs font-bold text-white">{match.awayScore ?? 0}</span>
                                                 )}
                                             </div>
+                                            {/* Tennis Score (Mobile) */}
+                                            {(isLive || isFinished) && match.sport === "tennis" && match.scoreDisplay && (
+                                                <div className="text-[10px] font-mono font-bold text-white text-center bg-white/5 rounded px-2 py-0.5 mt-0.5">
+                                                    {match.scoreDisplay}
+                                                </div>
+                                            )}
                                             {/* League Hint (Mobile) */}
                                             <div className="flex items-center gap-1 mt-0.5 text-[10px] text-neutral-500">
                                                 <SportIcon sport={match.sport} size={10} />
@@ -187,7 +198,10 @@ export function MatchTable({ items }: MatchTableProps) {
                                     <TableCell className="text-center hidden md:table-cell">
                                         {isLive || match.status === "finished" ? (
                                             <Badge variant="outline" className="font-mono bg-neutral-900 border-white/10 text-white">
-                                                {match.homeScore} - {match.awayScore}
+                                                {match.sport === "tennis" && match.scoreDisplay
+                                                    ? match.scoreDisplay
+                                                    : `${match.homeScore ?? 0} - ${match.awayScore ?? 0}`
+                                                }
                                             </Badge>
                                         ) : (
                                             <span className="text-xs text-muted-foreground">-</span>
@@ -229,53 +243,37 @@ export function MatchTable({ items }: MatchTableProps) {
                                     </TableCell>
                                 </TableRow>
 
-                                {/* Expanded Content (Accordion) - Keep as is, it's already responsive enough (grid-cols-1 md:grid-cols-3) */}
+                                {/* Expanded Content (Accordion) */}
                                 {isExpanded && (
                                     <TableRow className="border-white/5 bg-white/[0.02] hover:bg-white/[0.02]">
                                         <TableCell colSpan={6} className="p-0">
-                                            <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-top-2 duration-200">
+                                            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-top-2 duration-200">
 
-                                                {/* Stats Column */}
-                                                <div className="space-y-3 md:border-r border-white/5 md:pr-6">
-                                                    <h4 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-2">
-                                                        <Trophy className="size-3" /> Forme & Stats
-                                                    </h4>
-                                                    <div className="space-y-2">
-                                                        <div className="flex justify-between text-xs">
-                                                            <span className="text-neutral-400">Classement</span>
-                                                            <span className="text-white">#{Math.floor(Math.random() * 20) + 1} vs #{Math.floor(Math.random() * 20) + 1}</span>
-                                                        </div>
-                                                        <div className="flex justify-between text-xs">
-                                                            <span className="text-neutral-400">Série (5 derniers)</span>
-                                                            <div className="flex gap-1 font-mono text-[10px]">
-                                                                <span className="text-emerald-500">W</span>
-                                                                <span className="text-emerald-500">W</span>
-                                                                <span className="text-neutral-500">D</span>
-                                                                <span className="text-red-500">L</span>
-                                                                <span className="text-emerald-500">W</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {/* Prediction Detail */}
-                                                <div className="space-y-3 md:border-r border-white/5 md:pr-6">
-                                                    <h4 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-2">
-                                                        <Activity className="size-3" /> Analyse IA
-                                                    </h4>
-                                                    {topPrediction ? (
+                                                {/* Prediction Detail (Real data only) */}
+                                                {topPrediction ? (
+                                                    <div className="space-y-3 md:border-r border-white/5 md:pr-6">
+                                                        <h4 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-2">
+                                                            <Activity className="size-3" /> Analyse IA
+                                                        </h4>
                                                         <div className="space-y-2">
                                                             <div className="text-sm text-white font-medium">
                                                                 Misez sur <span className="text-primary">{topPrediction.bet}</span>
                                                             </div>
-                                                            <p className="text-xs text-neutral-400 line-clamp-2">
-                                                                L&apos;analyse suggère une forte probabilité basée sur la forme récente à domicile et les absences adverses.
-                                                            </p>
+                                                            {topPrediction.analysis && (
+                                                                <p className="text-xs text-neutral-400 line-clamp-2">
+                                                                    {topPrediction.analysis}
+                                                                </p>
+                                                            )}
                                                         </div>
-                                                    ) : (
+                                                    </div>
+                                                ) : (
+                                                    <div className="space-y-3 md:border-r border-white/5 md:pr-6">
+                                                        <h4 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-2">
+                                                            <Activity className="size-3" /> Analyse IA
+                                                        </h4>
                                                         <span className="text-xs text-muted-foreground">Analyse en cours...</span>
-                                                    )}
-                                                </div>
+                                                    </div>
+                                                )}
 
                                                 {/* Action */}
                                                 <div className="flex items-center justify-end">

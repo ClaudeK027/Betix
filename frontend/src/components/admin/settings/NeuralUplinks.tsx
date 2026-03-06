@@ -19,7 +19,7 @@ interface APIKeyConfig {
 const initialKeys: APIKeyConfig[] = [
     { id: "api-sports", name: "API-Sports (Data Feed)", value: "sk_live_aBcDeFg1234567890", status: "error", type: "core" },
     { id: "gemini", name: "Google Gemini (Neural Engine)", value: "AIzaSyA_xYzAbCdEfGhIjKlMnO", status: "connected", type: "core" },
-    { id: "stripe", name: "Stripe (Payment Gateway)", value: "sk_live_51KjH8qR...", status: "connected", type: "financial" },
+    { id: "mollie", name: "Mollie (Payment Gateway)", value: "test_cDhABAkf2x...", status: "connected", type: "financial" },
     { id: "supabase", name: "Supabase (Data Core)", value: "eyJhbGciOiJIUzI1NiIs...", status: "connected", type: "external" },
 ];
 

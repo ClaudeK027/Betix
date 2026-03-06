@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Bot } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Bot, Sparkles } from "lucide-react";
 import { SportIcon } from "@/components/icons/SportIcons";
 import { Match } from "@/types/match";
+import { cn } from "@/lib/utils";
 
 interface MatchCardProps {
     match: Match;
@@ -25,143 +27,195 @@ export function MatchCard({ match }: MatchCardProps) {
             : { border: "border-l-yellow-500", glow: "shadow-[0_0_20px_-10px_rgba(234,179,8,0.3)]", text: "text-yellow-500" };
 
     return (
-        <Link href={`/dashboard/match/${match.id}`}>
-            <Card className={`
-                relative overflow-hidden
-                bg-black/40 backdrop-blur-xl border-white/10
-                border-l-[3px] ${sportDetails.border}
-                hover:border-white/20 hover:scale-[1.02] hover:${sportDetails.glow}
-                transition-all duration-300 group cursor-pointer h-full
-            `}>
-                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none" />
+        <Card className={cn(
+            "relative overflow-hidden bg-black/40 backdrop-blur-xl border-white/10 border-l-[3px]",
+            sportDetails.border,
+            "hover:border-white/20 transition-all duration-300 group h-full flex flex-col justify-between",
+            sportDetails.glow
+        )}>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none" />
 
-                <CardContent className="p-5 relative z-10 space-y-5">
-                    {/* Header: League & Status */}
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                            <SportIcon sport={match.sport} size={14} className={sportDetails.text} />
-                            <span>{league?.name}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            {/* Status Badge */}
-                            <div className="absolute top-2 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-20">
-                                {isLive ? (
-                                    <Badge className="bg-red-500/90 hover:bg-red-500 text-white border-0 px-2 py-0.5 text-[10px] sm:text-[11px] font-bold shadow-lg shadow-red-500/20 backdrop-blur-md animate-pulse">
-                                        LIVE
-                                    </Badge>
-                                ) : match.status === "imminent" ? (
-                                    <Badge className="bg-amber-500/90 hover:bg-amber-500 text-white border-0 px-2 py-0.5 text-[10px] sm:text-[11px] font-bold shadow-lg shadow-amber-500/20 backdrop-blur-md animate-pulse">
-                                        IMMINENT
-                                    </Badge>
-                                ) : isFinished ? (
-                                    <Badge variant="outline" className="bg-neutral-900/60 border-white/10 text-neutral-400 px-2 py-0.5 text-[10px] sm:text-[11px] backdrop-blur-md">
-                                        TERMINÉ
-                                    </Badge>
-                                ) : ( // This covers "upcoming"
-                                    <Badge className="bg-blue-600/90 hover:bg-blue-600 text-white border-0 px-2 py-0.5 text-[10px] sm:text-[11px] font-bold shadow-lg shadow-blue-500/20 backdrop-blur-md">
-                                        PROCHAINEMENT
-                                    </Badge>
-                                )}
-                            </div>
-                            {topPrediction && (
-                                <Badge className={`
-                                    text-[10px] px-2 py-0.5 h-5 border
+            <CardContent className="p-5 relative z-10 space-y-5">
+                {/* Header: League & Status */}
+                <div className="flex items-start justify-between mb-3 relative">
+                    {/* League Name - Reduced size to fit long names */}
+                    <div className="flex items-start gap-1.5 sm:gap-2 text-[8px] min-[400px]:text-[9px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-widest leading-tight w-[40%] sm:w-auto">
+                        <SportIcon sport={match.sport} size={12} className={cn("shrink-0 sm:size-[14px] mt-0.5 sm:mt-0", sportDetails.text)} />
+                        <span>{league?.name}</span>
+                    </div>
+
+                    {/* Status Badge (Centered, Elevated higher than before) */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-20">
+                        {isLive ? (
+                            <Badge className="bg-red-500/90 hover:bg-red-500 text-white border-0 px-2 py-0 text-[8px] sm:text-[10px] font-black tracking-widest shadow-lg shadow-red-500/20 backdrop-blur-md animate-pulse">
+                                LIVE
+                            </Badge>
+                        ) : match.status === "imminent" ? (
+                            <Badge className="bg-amber-500/90 hover:bg-amber-500 text-white border-0 px-2 py-0 text-[8px] sm:text-[10px] font-black tracking-widest shadow-lg shadow-amber-500/20 backdrop-blur-md animate-pulse">
+                                IMMINENT
+                            </Badge>
+                        ) : isFinished ? (
+                            <Badge variant="outline" className="bg-neutral-900/60 border-white/10 text-neutral-400 px-2 py-0 text-[8px] sm:text-[10px] font-black tracking-widest backdrop-blur-md">
+                                TERMINÉ
+                            </Badge>
+                        ) : (
+                            <Badge className="bg-blue-600/90 hover:bg-blue-600 text-white border-0 px-2 py-0 text-[8px] sm:text-[10px] font-black tracking-widest shadow-lg shadow-blue-500/20 backdrop-blur-md">
+                                PROCHAINEMENT
+                            </Badge>
+                        )}
+                    </div>
+
+                    {/* Prediction Badge (Right) */}
+                    <div className="flex items-center justify-end max-w-[35%] sm:max-w-[40%]">
+                        {topPrediction && (
+                            <Badge className={`
+                                    text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 h-5 border truncate
                                     ${topPrediction.level === "safe"
-                                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_10px_-4px_rgba(16,185,129,0.5)]"
-                                        : topPrediction.level === "value"
-                                            ? "bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-[0_0_10px_-4px_rgba(168,85,247,0.5)]"
-                                            : "bg-orange-500/10 text-orange-400 border-orange-500/20 shadow-[0_0_10px_-4px_rgba(249,115,22,0.5)]"
-                                    }
+                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_10px_-4px_rgba(16,185,129,0.5)]"
+                                    : topPrediction.level === "value"
+                                        ? "bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-[0_0_10px_-4px_rgba(168,85,247,0.5)]"
+                                        : "bg-orange-500/10 text-orange-400 border-orange-500/20 shadow-[0_0_10px_-4px_rgba(249,115,22,0.5)]"
+                                }
                                 `}>
-                                    {topPrediction.level.toUpperCase()} {topPrediction.confidence}%
-                                </Badge>
-                            )}
-                        </div>
+                                <span className="hidden sm:inline mr-1">{topPrediction.level.toUpperCase()}</span>
+                                {topPrediction.confidence}%
+                            </Badge>
+                        )}
                     </div>
+                </div>
 
-                    {/* Match Content */}
-                    <div className="flex items-center justify-between gap-2 sm:gap-4">
-                        {/* Home */}
-                        <div className="flex-1 flex items-center gap-2 sm:gap-4 min-w-0">
-                            <div className="size-12 sm:size-16 rounded-full bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
-                                {match.homeTeam.logo ? (
-                                    <img
-                                        src={match.homeTeam.logo}
-                                        alt={match.homeTeam.name}
-                                        className="size-full object-contain p-2 sm:p-2.5"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).style.display = 'none';
-                                            (e.target as HTMLImageElement).parentElement!.innerHTML = `<span class="text-[10px] sm:text-xs font-bold text-muted-foreground">${match.homeTeam.short}</span>`;
-                                        }}
-                                    />
-                                ) : (
-                                    <span className="text-[10px] sm:text-xs font-bold text-muted-foreground">{match.homeTeam.short}</span>
-                                )}
-                            </div>
-                            <span className="text-xs sm:text-sm font-semibold truncate text-white">{match.homeTeam.name}</span>
-                        </div>
-
-                        {/* Score / Time */}
-                        <div className="flex flex-col items-center justify-center min-w-[50px] sm:min-w-[60px]">
-                            {isLive || isFinished ? (
-                                <div className="text-lg sm:text-xl font-bold font-mono tracking-tighter text-white whitespace-nowrap">
-                                    {match.homeScore} - {match.awayScore}
-                                </div>
+                {/* Match Content */}
+                <div className="flex items-center justify-between gap-2 sm:gap-4">
+                    {/* Home */}
+                    <div className="flex-1 flex items-center gap-2 sm:gap-4 min-w-0">
+                        <div className={cn(
+                            "size-12 sm:size-16 bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-inner transition-all duration-500",
+                            match.sport === 'tennis' ? "rounded-xl" : "rounded-full"
+                        )}>
+                            {match.homeTeam.logo ? (
+                                <img
+                                    src={match.homeTeam.logo}
+                                    alt={match.homeTeam.name}
+                                    className={cn(
+                                        "size-full transition-transform duration-500 group-hover:scale-110",
+                                        match.sport === 'tennis' ? "object-cover" : "object-contain p-2 sm:p-2.5"
+                                    )}
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).style.display = 'none';
+                                        (e.target as HTMLImageElement).parentElement!.innerHTML = `<span class="text-[10px] sm:text-xs font-bold text-muted-foreground">${match.homeTeam.short}</span>`;
+                                    }}
+                                />
                             ) : (
-                                <div className="flex flex-col items-center gap-1">
-                                    <div className="text-base sm:text-lg font-bold font-mono text-white">{match.time}</div>
-                                    <div className="text-[11px] text-muted-foreground font-medium uppercase tracking-tighter">
-                                        {(() => {
-                                            const now = new Date();
-                                            const matchDateStr = match.date;
-                                            const todayStr = now.toISOString().split('T')[0];
-
-                                            const tomorrowDate = new Date(now);
-                                            tomorrowDate.setDate(now.getDate() + 1);
-                                            const tomorrowStr = tomorrowDate.toISOString().split('T')[0];
-
-                                            if (matchDateStr === todayStr) return "Aujourd'hui";
-                                            if (matchDateStr === tomorrowStr) return "Demain";
-                                            return new Date(matchDateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-                                        })()}
-                                    </div>
-                                </div>
+                                <span className="text-[10px] sm:text-xs font-bold text-muted-foreground">{match.homeTeam.short}</span>
                             )}
                         </div>
-
-                        {/* Away */}
-                        <div className="flex-1 flex items-center justify-end gap-2 sm:gap-4 min-w-0">
-                            <span className="text-xs sm:text-sm font-semibold truncate text-white text-right">{match.awayTeam.name}</span>
-                            <div className="size-12 sm:size-16 rounded-full bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
-                                {match.awayTeam.logo ? (
-                                    <img
-                                        src={match.awayTeam.logo}
-                                        alt={match.awayTeam.name}
-                                        className="size-full object-contain p-2 sm:p-2.5"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).style.display = 'none';
-                                            (e.target as HTMLImageElement).parentElement!.innerHTML = `<span class="text-[10px] sm:text-xs font-bold text-muted-foreground">${match.awayTeam.short}</span>`;
-                                        }}
-                                    />
-                                ) : (
-                                    <span className="text-[10px] sm:text-xs font-bold text-muted-foreground">{match.awayTeam.short}</span>
-                                )}
-                            </div>
-                        </div>
+                        <span className="text-xs sm:text-sm font-semibold truncate text-white">{match.homeTeam.name}</span>
                     </div>
 
-                    {/* Footer: AI Analysis Call to Action */}
-                    {topPrediction && (
-                        <div className="pt-4 border-t border-white/5 flex items-center justify-between group-hover:border-white/10 transition-colors">
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground group-hover:text-white transition-colors">
-                                <Bot className="size-3.5 text-primary shrink-0" />
-                                <span>Analyse par Betix AI</span>
+                    {/* Score / Time */}
+                    <div className="flex flex-col items-center justify-center min-w-[50px] sm:min-w-[60px]">
+                        {isLive || isFinished ? (
+                            <div className="flex flex-col items-center gap-0.5">
+                                {/* Tennis: text score (e.g. "6-3, 7-5") */}
+                                {match.sport === "tennis" && match.scoreDisplay ? (
+                                    <div className="text-sm sm:text-base font-bold font-mono tracking-tight text-white text-center leading-tight">
+                                        {match.scoreDisplay}
+                                    </div>
+                                ) : (
+                                    /* Football & Basketball: numeric score */
+                                    <div className="text-lg sm:text-xl font-bold font-mono tracking-tighter text-white whitespace-nowrap">
+                                        {match.homeScore ?? 0} - {match.awayScore ?? 0}
+                                    </div>
+                                )}
+                                {/* Live status indicator (e.g. "45'" for football, "Q3" for basketball, "Set 2" for tennis) */}
+                                {isLive && match.statusShort && (
+                                    <span className="text-[9px] font-bold text-red-400 uppercase tracking-wider">
+                                        {match.statusShort}
+                                    </span>
+                                )}
                             </div>
-                            <ArrowRight className="size-3.5 text-primary -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                        ) : (
+                            <div className="flex flex-col items-center gap-1">
+                                <div className="text-base sm:text-lg font-bold font-mono text-white">{match.time}</div>
+                                <div className="text-[11px] text-muted-foreground font-medium uppercase tracking-tighter">
+                                    {(() => {
+                                        const now = new Date();
+                                        const matchDateStr = match.date;
+                                        const todayStr = now.toISOString().split('T')[0];
+
+                                        const tomorrowDate = new Date(now);
+                                        tomorrowDate.setDate(now.getDate() + 1);
+                                        const tomorrowStr = tomorrowDate.toISOString().split('T')[0];
+
+                                        if (matchDateStr === todayStr) return "Aujourd'hui";
+                                        if (matchDateStr === tomorrowStr) return "Demain";
+                                        return new Date(matchDateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+                                    })()}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Away */}
+                    <div className="flex-1 flex items-center justify-end gap-2 sm:gap-4 min-w-0">
+                        <span className="text-xs sm:text-sm font-semibold truncate text-white text-right">{match.awayTeam.name}</span>
+                        <div className={cn(
+                            "size-12 sm:size-16 bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-inner transition-all duration-500",
+                            match.sport === 'tennis' ? "rounded-xl" : "rounded-full"
+                        )}>
+                            {match.awayTeam.logo ? (
+                                <img
+                                    src={match.awayTeam.logo}
+                                    alt={match.awayTeam.name}
+                                    className={cn(
+                                        "size-full transition-transform duration-500 group-hover:scale-110",
+                                        match.sport === 'tennis' ? "object-cover" : "object-contain p-2 sm:p-2.5"
+                                    )}
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).style.display = 'none';
+                                        (e.target as HTMLImageElement).parentElement!.innerHTML = `<span class="text-[10px] sm:text-xs font-bold text-muted-foreground">${match.awayTeam.short}</span>`;
+                                    }}
+                                />
+                            ) : (
+                                <span className="text-[10px] sm:text-xs font-bold text-muted-foreground">{match.awayTeam.short}</span>
+                            )}
                         </div>
-                    )}
-                </CardContent>
-            </Card>
-        </Link>
+                    </div>
+                </div>
+            </CardContent>
+
+            <CardContent className="p-5 pt-2 relative z-10 flex-shrink-0 border-t border-white/10 bg-white/[0.02]">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground group-hover:text-white transition-colors">
+                        <Bot className="size-3.5 text-primary shrink-0" />
+                        <span className="font-medium">Analyse par Betix AI</span>
+                    </div>
+                    <div className="relative group/btn p-[1px] rounded-lg overflow-hidden transition-all duration-500">
+                        {/* Animated gradient border background */}
+                        <div className="absolute inset-[-100%] animate-[spin_3s_linear_infinite]"
+                            style={{
+                                background: 'conic-gradient(from 90deg at 50% 50%, transparent 0%, transparent 50%, #9333ea 70%, #a855f7 100%)'
+                            }}
+                        />
+                        {/* Outward Glow Blur Base (Static) */}
+                        <div className="absolute inset-0 bg-blue-600/10 blur-sm group-hover/btn:bg-blue-600/30 transition-colors duration-500 rounded-lg" />
+
+                        <Button
+                            asChild
+                            size="sm"
+                            className={cn(
+                                "h-full w-full rounded-[inherit] bg-neutral-950/90 backdrop-blur-sm border-transparent transition-all duration-500 px-4",
+                                "relative z-10 hover:bg-neutral-950/80"
+                            )}
+                        >
+                            <Link href={`/dashboard/match/${match.id}`} className="gap-2 flex items-center">
+                                <span className="font-bold text-[11px] uppercase tracking-wider text-white/50 group-hover/btn:text-white transition-colors">Voir l'analyse</span>
+                                <Sparkles className="size-3.5 text-primary animate-pulse group-hover/btn:scale-110 transition-transform" />
+                            </Link>
+                        </Button>
+                    </div>
+                </div>
+            </CardContent>
+        </Card >
     );
 }

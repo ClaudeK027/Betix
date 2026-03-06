@@ -18,6 +18,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 
 from app.services.ingestion.football_client import FootballClient
 from app.services.ingestion.basketball_client import BasketballClient
+from app.services.ingestion.tennis_client import TennisClient
 
 # Désactivation des logs verbeux
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -34,7 +35,13 @@ async def get_missing_items(client, table: str, api_items: list[dict], sport: st
     # Mapping api_id -> full_item
     id_map = {}
     for item in api_items:
-        mid = item.get("fixture", {}).get("id") if sport == "football" else item.get("id")
+        if sport == "football":
+            mid = item.get("fixture", {}).get("id")
+        elif sport == "tennis":
+            mid = item.get("event_key")
+        else:
+            mid = item.get("id")
+            
         if mid:
             id_map[mid] = item
             
@@ -72,17 +79,11 @@ async def ingest_missing(client, missing_items: list[dict]):
         row = client._transform_match(item)
         if row:
             analytics_rows.append(row)
-            pub_row = client._build_public_match(row)
-            if pub_row:
-                public_rows.append(pub_row)
                 
     if analytics_rows:
         try:
-            # Upsert Analytics
+            # Upsert Analytics (Triggers handle public sync)
             client.analytics.upsert(client._get_analytics_matches_table(), analytics_rows, on_conflict="api_id")
-            # Upsert Public
-            if public_rows:
-                client.public.upsert("matches", public_rows, on_conflict="api_sport_id,sport")
             return len(analytics_rows)
         except Exception as e:
             logger.error(f"   ❌ Ingestion error: {e}")
@@ -117,7 +118,8 @@ async def discovery_basketball(start_date_obj, days: int):
     try:
         all_api_items = []
         target_leagues = set(client.league_ids.keys())
-        for i in range(days):
+        total_days = days * 2 # -10 to +10 is 20 days
+        for i in range(total_days):
             date_str = (start_date_obj + timedelta(days=i)).strftime("%Y-%m-%d")
             data = await client._api_get("/games", {"date": date_str})
             items = data.get("response", [])
@@ -135,21 +137,66 @@ async def discovery_basketball(start_date_obj, days: int):
     finally:
         await client.close()
 
+
+async def discovery_tennis(start_date_obj, days: int):
+    logger.info(f"🎾 [TENNIS] Scanning {days * 2} days...")
+    client = TennisClient()
+    try:
+        # Load caches for valid matches filtering
+        client._load_team_id_map()
+        client._load_league_id_map()
+
+        all_api_items = []
+        total_days = days * 2
+        for i in range(total_days):
+            date_str = (start_date_obj + timedelta(days=i)).strftime("%Y-%m-%d")
+            data = await client._api_get("", {"method": "get_fixtures", "date_start": date_str, "date_stop": date_str})
+            items = data.get("result", [])
+            
+            for it in items:
+                # Exclure les doubles (simplifié)
+                if "/" in it.get("event_first_player", "") or "&" in it.get("event_first_player", ""):
+                    continue
+                all_api_items.append(it)
+                    
+            await asyncio.sleep(0.05)
+
+        missing = await get_missing_items(client, "tennis_matches", all_api_items, "tennis")
+        if missing:
+            logger.info(f"   🚨 Found {len(missing)} missing Tennis matches. Ingesting...")
+            count = await ingest_missing(client, missing)
+            logger.info(f"   ✅ Ingested {count} Tennis matches.")
+        else:
+            logger.info("   ✅ Tennis is up to date.")
+        return len(all_api_items), len(missing)
+    finally:
+        await client.close()
+
+class MatchDiscoverer:
+    def __init__(self, days: int = 10):
+        self.days = days
+        
+    async def run(self):
+        now = datetime.now(timezone.utc)
+        start_date_obj = now - timedelta(days=self.days)
+        start_date_str = start_date_obj.strftime("%Y-%m-%d")
+        end_date_str = (now + timedelta(days=self.days-1)).strftime("%Y-%m-%d")
+
+        logger.info(f"🚀 Starting Auto-Ingest from {self.days} days ago to {self.days} days future")
+
+        await discovery_football(start_date_str, end_date_str)
+        await discovery_basketball(start_date_obj, self.days)
+        await discovery_tennis(start_date_obj, self.days)
+
+        logger.info("🏁 Discovery and Ingestion completed.")
+
 async def main():
     parser = argparse.ArgumentParser(description="BETIX Auto-Ingest Discovery")
-    parser.add_argument("--days", type=int, default=10)
+    parser.add_argument("--days", type=int, default=10, help="Days to look backward and forward")
     args = parser.parse_args()
-
-    now = datetime.now(timezone.utc)
-    start_date = now.strftime("%Y-%m-%d")
-    end_date = (now + timedelta(days=args.days-1)).strftime("%Y-%m-%d")
-
-    logger.info(f"🚀 Starting Auto-Ingest for the next {args.days} days")
-
-    await discovery_football(start_date, end_date)
-    await discovery_basketball(now, args.days)
-
-    logger.info("🏁 Discovery and Ingestion completed.")
+    
+    discoverer = MatchDiscoverer(days=args.days)
+    await discoverer.run()
 
 if __name__ == "__main__":
     asyncio.run(main())

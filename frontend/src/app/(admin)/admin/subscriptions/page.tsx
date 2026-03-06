@@ -5,6 +5,7 @@ import { Plan, FeatureDefinition } from "@/types/plans";
 import { getAdminPlansAction } from "@/app/(admin)/admin/subscriptions/actions";
 import { ResourceMonitor } from "@/components/admin/subscriptions/ResourceMonitor";
 import { ArsenalGrid } from "@/components/admin/subscriptions/ArsenalGrid";
+import { FeatureDefinitionsManager } from "@/components/admin/subscriptions/FeatureDefinitionsManager";
 import { EngineeringBay } from "@/components/admin/subscriptions/EngineeringBay";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Plus } from "lucide-react";
@@ -93,6 +94,15 @@ export default function AdminSubscriptionsPage() {
                         onEditPlan={handleEditPlan}
                     />
                 )}
+            </section>
+
+            {/* 3. Feature Definitions Registry */}
+            <section className="space-y-2">
+                <h2 className="text-xs font-bold uppercase tracking-widest text-neutral-600 px-2">Feature Registry</h2>
+                <FeatureDefinitionsManager
+                    definitions={definitions}
+                    onUpdate={fetchPlans}
+                />
             </section>
 
             {/* Side Panel */}

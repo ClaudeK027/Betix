@@ -26,10 +26,12 @@ class Settings(BaseSettings):
 
     # --- API-Tennis ---
     API_TENNIS_KEY: str = ""
-    API_TENNIS_BASE_URL: str = "https://api-tennis.com/api/tennis"
+    API_TENNIS_BASE_URL: str = "https://api.api-tennis.com/tennis/"
 
     # --- Gemini (IA) ---
     GEMINI_API_KEY: str = ""
+    OPENAI_API_KEY: str = ""
+    ANTHROPIC_API_KEY: str = ""
 
     # --- Supabase ---
     SUPABASE_URL: str = ""
@@ -39,9 +41,8 @@ class Settings(BaseSettings):
     # --- OpenWeatherMap ---
     OPENWEATHER_KEY: str = ""
 
-    # --- Stripe ---
-    STRIPE_SECRET_KEY: str = ""
-    STRIPE_WEBHOOK_SECRET: str = ""
+    # --- Mollie ---
+    MOLLIE_API_KEY: str = ""
 
     # --- Ingestion ---
     CURRENT_SEASON: int = 2024

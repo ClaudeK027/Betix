@@ -1,0 +1,247 @@
+{
+  "meta": {
+    "sport": "tennis",
+    "match_id": 3082,
+    "fetched_at": "2026-02-26T15:17:33.339020"
+  },
+  "match": {
+    "date_time": "2026-02-26T17:30:00+00:00",
+    "surface": null,
+    "indoor_outdoor": null,
+    "round": "ATP Dubai - Quarter-finals",
+    "status": "scheduled",
+    "sets_played": 0,
+    "score": null
+  },
+  "player1": {
+    "name": "Jakub Mensik",
+    "id": 220,
+    "country": "Czech Republic",
+    "form": {
+      "on_surface": [],
+      "overall": [
+        {
+          "player_id": 220,
+          "surface": "all",
+          "date": "2026-02-25",
+          "l5_win_pct": 40.0,
+          "l10_win_pct": 60.0,
+          "season_win_pct": 58.3,
+          "l10_aces_avg": 12.2,
+          "l10_first_serve_pct": 59.3,
+          "l10_first_serve_won": 82.0,
+          "l10_bp_saved_pct": 46.9,
+          "l10_return_won_pct": 38.0,
+          "l10_bp_converted_pct": 40.8,
+          "days_since_last_match": 0,
+          "sets_played_l7": 5,
+          "minutes_played_l7": null,
+          "fatigue_score": 66
+        },
+        {
+          "player_id": 220,
+          "surface": "all",
+          "date": "2026-02-24",
+          "l5_win_pct": 60.0,
+          "l10_win_pct": 60.0,
+          "season_win_pct": 63.6,
+          "l10_aces_avg": 11.3,
+          "l10_first_serve_pct": 59.5,
+          "l10_first_serve_won": 80.1,
+          "l10_bp_saved_pct": 50.6,
+          "l10_return_won_pct": 38.3,
+          "l10_bp_converted_pct": 37.1,
+          "days_since_last_match": 3,
+          "sets_played_l7": 5,
+          "minutes_played_l7": null,
+          "fatigue_score": 16
+        },
+        {
+          "player_id": 220,
+          "surface": "all",
+          "date": "2026-02-20",
+          "l5_win_pct": 60.0,
+          "l10_win_pct": 60.0,
+          "season_win_pct": 63.6,
+          "l10_aces_avg": 11.3,
+          "l10_first_serve_pct": 59.5,
+          "l10_first_serve_won": 80.1,
+          "l10_bp_saved_pct": 50.6,
+          "l10_return_won_pct": 38.3,
+          "l10_bp_converted_pct": 37.1,
+          "days_since_last_match": 0,
+          "sets_played_l7": 0,
+          "minutes_played_l7": null,
+          "fatigue_score": 50
+        },
+        {
+          "player_id": 220,
+          "surface": "all",
+          "date": "2026-02-19",
+          "l5_win_pct": 80.0,
+          "l10_win_pct": 70.0,
+          "season_win_pct": 70.0,
+          "l10_aces_avg": 12.2,
+          "l10_first_serve_pct": 59.6,
+          "l10_first_serve_won": 80.0,
+          "l10_bp_saved_pct": 51.8,
+          "l10_return_won_pct": 39.3,
+          "l10_bp_converted_pct": 41.2,
+          "days_since_last_match": 24,
+          "sets_played_l7": 0,
+          "minutes_played_l7": null,
+          "fatigue_score": 0
+        },
+        {
+          "player_id": 220,
+          "surface": "all",
+          "date": "2026-01-26",
+          "l5_win_pct": 80.0,
+          "l10_win_pct": 66.7,
+          "season_win_pct": 66.7,
+          "l10_aces_avg": 12.4,
+          "l10_first_serve_pct": 57.7,
+          "l10_first_serve_won": 79.7,
+          "l10_bp_saved_pct": 49.4,
+          "l10_return_won_pct": 40.4,
+          "l10_bp_converted_pct": 40.1,
+          "days_since_last_match": 1,
+          "sets_played_l7": 3,
+          "minutes_played_l7": null,
+          "fatigue_score": 43
+        }
+      ]
+    }
+  },
+  "player2": {
+    "name": "Tallon Griekspoor",
+    "id": 229,
+    "country": "Netherlands",
+    "form": {
+      "on_surface": [],
+      "overall": [
+        {
+          "player_id": 229,
+          "surface": "all",
+          "date": "2026-02-25",
+          "l5_win_pct": 40.0,
+          "l10_win_pct": 28.6,
+          "season_win_pct": 28.6,
+          "l10_aces_avg": 6.3,
+          "l10_first_serve_pct": 67.8,
+          "l10_first_serve_won": 69.4,
+          "l10_bp_saved_pct": 38.6,
+          "l10_return_won_pct": 26.0,
+          "l10_bp_converted_pct": 26.1,
+          "days_since_last_match": 11,
+          "sets_played_l7": 0,
+          "minutes_played_l7": null,
+          "fatigue_score": 0
+        },
+        {
+          "player_id": 229,
+          "surface": "all",
+          "date": "2026-02-13",
+          "l5_win_pct": 40.0,
+          "l10_win_pct": 28.6,
+          "season_win_pct": 28.6,
+          "l10_aces_avg": 6.3,
+          "l10_first_serve_pct": 67.8,
+          "l10_first_serve_won": 69.4,
+          "l10_bp_saved_pct": 38.6,
+          "l10_return_won_pct": 26.0,
+          "l10_bp_converted_pct": 26.1,
+          "days_since_last_match": 1,
+          "sets_played_l7": 4,
+          "minutes_played_l7": null,
+          "fatigue_score": 46
+        },
+        {
+          "player_id": 229,
+          "surface": "all",
+          "date": "2026-02-11",
+          "l5_win_pct": 40.0,
+          "l10_win_pct": 33.3,
+          "season_win_pct": 33.3,
+          "l10_aces_avg": 6.8,
+          "l10_first_serve_pct": 67.8,
+          "l10_first_serve_won": 69.2,
+          "l10_bp_saved_pct": 33.8,
+          "l10_return_won_pct": 26.3,
+          "l10_bp_converted_pct": 30.5,
+          "days_since_last_match": 1,
+          "sets_played_l7": 2,
+          "minutes_played_l7": null,
+          "fatigue_score": 40
+        },
+        {
+          "player_id": 229,
+          "surface": "all",
+          "date": "2026-02-10",
+          "l5_win_pct": 20.0,
+          "l10_win_pct": 20.0,
+          "season_win_pct": 20.0,
+          "l10_aces_avg": 5.0,
+          "l10_first_serve_pct": 66.7,
+          "l10_first_serve_won": 63.7,
+          "l10_bp_saved_pct": 40.6,
+          "l10_return_won_pct": 24.4,
+          "l10_bp_converted_pct": 34.0,
+          "days_since_last_match": 21,
+          "sets_played_l7": 0,
+          "minutes_played_l7": null,
+          "fatigue_score": 0
+        },
+        {
+          "player_id": 229,
+          "surface": "all",
+          "date": "2026-01-20",
+          "l5_win_pct": 0.0,
+          "l10_win_pct": 0.0,
+          "season_win_pct": 0.0,
+          "l10_aces_avg": 3.8,
+          "l10_first_serve_pct": 69.0,
+          "l10_first_serve_won": 54.5,
+          "l10_bp_saved_pct": 25.8,
+          "l10_return_won_pct": 21.8,
+          "l10_bp_converted_pct": 30.0,
+          "days_since_last_match": 5,
+          "sets_played_l7": 2,
+          "minutes_played_l7": null,
+          "fatigue_score": 6
+        }
+      ]
+    }
+  },
+  "h2h": {
+    "summary": {},
+    "last_5_meetings": []
+  },
+  "odds": {
+    "Home/Away": {
+      "bookmaker": "bet365",
+      "snapshot_at": "2026-02-26T13:02:13.076618+00:00",
+      "odds_data": "[{\"label\": \"Home\", \"odds\": 1.33}, {\"label\": \"Away\", \"odds\": 3.4}]"
+    },
+    "Set Betting": {
+      "bookmaker": "bet365",
+      "snapshot_at": "2026-02-26T13:02:13.076618+00:00",
+      "odds_data": "[{\"label\": \"2:0\", \"odds\": 1.9}, {\"label\": \"2:1\", \"odds\": 3.6}, {\"label\": \"0:2\", \"odds\": 6.0}, {\"label\": \"1:2\", \"odds\": 6.0}]"
+    },
+    "Over/Under": {
+      "bookmaker": "bet365",
+      "snapshot_at": "2026-02-26T13:02:13.076618+00:00",
+      "odds_data": "[{\"label\": \"Over/Under Over 2.5\", \"odds\": 2.38}, {\"label\": \"Over/Under Under 2.5\", \"odds\": 1.53}]"
+    },
+    "Home/Away (1st Set)": {
+      "bookmaker": "bet365",
+      "snapshot_at": "2026-02-26T13:02:13.076618+00:00",
+      "odds_data": "[{\"label\": \"Home\", \"odds\": 1.44}, {\"label\": \"Away\", \"odds\": 2.75}]"
+    },
+    "Correct Score 1st Half": {
+      "bookmaker": "bet365",
+      "snapshot_at": "2026-02-26T13:02:13.076618+00:00",
+      "odds_data": "[{\"label\": \"0:6\", \"odds\": 126.0}, {\"label\": \"1:6\", \"odds\": 41.0}, {\"label\": \"2:6\", \"odds\": 23.0}, {\"label\": \"6:0\", \"odds\": 41.0}, {\"label\": \"6:1\", \"odds\": 15.0}, {\"label\": \"6:2\", \"odds\": 11.0}, {\"label\": \"3:6\", \"odds\": 13.0}, {\"label\": \"4:6\", \"odds\": 7.5}, {\"label\": \"6:3\", \"odds\": 4.5}, {\"label\": \"6:4\", \"odds\": 6.0}, {\"label\": \"7:5\", \"odds\": 13.0}, {\"label\": \"7:6\", \"odds\": 5.5}, {\"label\": \"5:7\", \"odds\": 23.0}, {\"label\": \"6:7\", \"odds\": 7.5}]"
+    }
+  }
+}

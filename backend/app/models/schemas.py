@@ -139,6 +139,27 @@ class Injury(BaseModel):
     status: str = ""  # Doubtful, Out, etc.
 
 
+# --- Cotes & Audit ---
+
+class OddsData(BaseModel):
+    """Une seule ligne de cote (ex: Home, Over 2.5)."""
+    label: str
+    odds: float
+
+
+class OddsSnapshot(BaseModel):
+    """Snapshot d'un marché pour un bookmaker à un instant T."""
+    id: Optional[str] = None
+    match_id: int
+    sport: Sport
+    bookmaker: str
+    market_name: str
+    market_value: Optional[str] = None # Ex: "2.5" pour Over/Under
+    odds_data: list[OddsData]
+    recorded_at: Optional[datetime] = None
+    is_live: bool = False
+
+
 class MatchAnalysisContext(BaseModel):
     """Contexte complet pour l'analyse IA d'un match."""
     match: Match

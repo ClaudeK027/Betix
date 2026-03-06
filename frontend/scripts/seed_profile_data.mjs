@@ -105,7 +105,7 @@ async function seedProfile(email) {
         { id: 'premium_monthly', name: 'The Insider (Monthly)', price: 9.99, features: ['Analyses Illimitées', 'xG en temps réel', 'Support Prioritaire'] },
         { id: 'premium_annual', name: 'The Insider (Annual)', price: 99.99, features: ['All Premium Features', '2 Months Free'] }
     ];
-    // Note: Schema says plans has stripe_price_id, but it's likely nullable or I can fake it.
+    // Note: Schema says plans has mollie_plan_id, but it's nullable for now.
     const { error: plansError } = await supabase
         .from('plans')
         .upsert(plansData);

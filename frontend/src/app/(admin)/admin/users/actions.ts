@@ -146,13 +146,39 @@ export async function updateAgentAction(agentId: string, data: UpdateAgentData) 
             // First check if a subscription exists
             const { data: existingSub } = await supabaseAdmin
                 .from('subscriptions')
-                .select('user_id')
+                .select('user_id, plan_id, mollie_subscription_id')
                 .eq('user_id', agentId)
                 .single();
 
             const subUpdates: any = {};
             if (data.plan_id) subUpdates.plan_id = data.plan_id;
             if (data.subscription_status) subUpdates.status = data.subscription_status;
+
+            // Si l'admin change le plan ET qu'un abonnement Mollie existe, l'annuler
+            if (data.plan_id && existingSub?.mollie_subscription_id && existingSub.plan_id !== data.plan_id) {
+                try {
+                    const { data: profile } = await supabaseAdmin
+                        .from('profiles')
+                        .select('mollie_customer_id')
+                        .eq('id', agentId)
+                        .single();
+
+                    if (profile?.mollie_customer_id) {
+                        const { mollieClient } = await import('@/lib/mollie');
+                        await mollieClient.customerSubscriptions.cancel(
+                            existingSub.mollie_subscription_id,
+                            { customerId: profile.mollie_customer_id }
+                        );
+                        console.log(`[Admin Action] Cancelled Mollie subscription ${existingSub.mollie_subscription_id} for user ${agentId}`);
+                    }
+                } catch (mollieErr: any) {
+                    console.warn(`[Admin Action] Could not cancel Mollie subscription: ${mollieErr.message}`);
+                    // Continue — the subscription might already be cancelled
+                }
+                // Clear the mollie_subscription_id since admin is overriding
+                subUpdates.mollie_subscription_id = null;
+                subUpdates.source = 'manual_gift';
+            }
 
             if (existingSub) {
                 const { error: subError } = await supabaseAdmin

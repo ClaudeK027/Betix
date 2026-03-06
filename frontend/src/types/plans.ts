@@ -1,4 +1,4 @@
-export type PlanFrequency = 'free' | 'daily' | 'weekly' | 'monthly' | 'yearly';
+export type PlanFrequency = 'free' | 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'semi_annual' | 'yearly';
 
 export interface PlanFeature {
     // Defines a single feature value within a category (e.g. "20/j" or true)
@@ -13,6 +13,7 @@ export interface PlanFeatures {
     vip: Record<string, PlanFeature | string | boolean>;
 }
 
+/** @deprecated — Use trial_price/trial_days instead. Kept for migration rollback. */
 export interface PlanPromo {
     price: number;
     savings: string;
@@ -26,10 +27,16 @@ export interface Plan {
     price: number;
     frequency: PlanFrequency;
     features: PlanFeatures;
+    /** @deprecated — Use trial_price/trial_days instead */
     promo: PlanPromo | null;
-    stripe_price_id: string | null;
+    trial_price: number | null;
+    trial_days: number | null;
+    strikethrough_price: number | null;
+    mollie_plan_id: string | null;
     is_active: boolean;
     position: number;
+    badge_text: string | null;
+    badge_color: string | null;
     created_at?: string;
 }
 

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(PYTHONIOENCODING=utf-8 python -m app.engine.confidence_generator football 1535 --provider claude --model claude-sonnet-4-6)",
+      "Bash(PYTHONIOENCODING=utf-8 python -m scripts.updates.batch_audit_next_days --run-number 1 --dry-run)"
+    ]
+  }
+}

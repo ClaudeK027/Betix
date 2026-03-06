@@ -34,7 +34,7 @@ export function StatsCenter({ stats }: StatsCenterProps) {
             {/* 2. Win Rate */}
             <Card className="border-white/10 bg-black/40 backdrop-blur-md">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Win Rate</CardTitle>
+                    <CardTitle className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Taux de Victoire</CardTitle>
                     <Target className="size-4 text-blue-400" />
                 </CardHeader>
                 <CardContent>
@@ -54,7 +54,7 @@ export function StatsCenter({ stats }: StatsCenterProps) {
                 </CardHeader>
                 <CardContent>
                     <div className="text-3xl font-black tracking-tighter text-white">
-                        {stats.bestStreak} <span className="text-lg font-bold text-muted-foreground">Wins</span>
+                        {stats.bestStreak} <span className="text-lg font-bold text-muted-foreground">Victoires</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">Actuelle : {stats.currentStreak > 0 ? `+${stats.currentStreak} 🔥` : `${stats.currentStreak} ❄️`}</p>
                 </CardContent>
