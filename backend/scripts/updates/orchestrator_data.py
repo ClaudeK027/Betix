@@ -1,0 +1,131 @@
+"""
+BETIX — orchestrator_data.py
+Le "Cerveau Secondaire" dédié aux données de fond (Background Data).
+
+Fréquences :
+- Ingestion des matchs (MatchDiscoverer) : Toutes les 6 heures (avant les cotes)
+- Ingestion des Cotes (OddsIngester) : Toutes les 6 heures
+- Nettoyage et Stats (DailyMatchOrchestrator) : Toutes les 8 heures
+"""
+
+import asyncio
+import logging
+import sys
+import os
+from datetime import datetime
+
+# Add backend to path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
+# Import logic from scripts
+from scripts.updates.process_daily_matches import DailyMatchOrchestrator
+from scripts.updates.upsert_odds import OddsIngester
+from scripts.updates.discover_matches import MatchDiscoverer
+from app.services.config_reader import ConfigReader
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s -- %(message)s",
+    force=True,
+    handlers=[
+        logging.FileHandler("automation_data.log", encoding='utf-8'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger("betix.orchestrator_data")
+
+# Defaults (fallback si la base est injoignable)
+DEFAULT_SLEEP_INTERVAL = 60
+DEFAULT_DISCOVERY_EVERY_N = 360
+DEFAULT_CLEANUP_EVERY_N = 480
+DEFAULT_DISCOVERY_DAYS = 10
+
+
+def load_data_config() -> dict:
+    """Charge la config data depuis system_config."""
+    try:
+        reader = ConfigReader()
+        return {
+            "enabled": reader.get_bool("orch_data.enabled", True),
+            "sleep_interval_s": reader.get_int("orch_data.sleep_interval_s", DEFAULT_SLEEP_INTERVAL),
+            "discovery_every_n": reader.get_int("orch_data.discovery_every_n", DEFAULT_DISCOVERY_EVERY_N),
+            "cleanup_every_n": reader.get_int("orch_data.cleanup_every_n", DEFAULT_CLEANUP_EVERY_N),
+            "discovery_days": reader.get_int("orch_data.discovery_days", DEFAULT_DISCOVERY_DAYS),
+        }
+    except Exception as e:
+        logger.warning(f"Config fallback (erreur DB) : {e}")
+        return {
+            "enabled": True,
+            "sleep_interval_s": DEFAULT_SLEEP_INTERVAL,
+            "discovery_every_n": DEFAULT_DISCOVERY_EVERY_N,
+            "cleanup_every_n": DEFAULT_CLEANUP_EVERY_N,
+            "discovery_days": DEFAULT_DISCOVERY_DAYS,
+        }
+
+
+async def run_forever():
+    logger.info("BETIX Data Orchestrator Starting...")
+
+    iteration = 0
+
+    # INITIAL RUN (Startup Task)
+    logger.info("[STARTUP] Running Daily Cleanup & Stats (process_daily_matches)...")
+    try:
+        processor = DailyMatchOrchestrator()
+        await processor.run()
+    except Exception as e:
+        logger.error(f"Startup Error in process_daily_matches: {e}")
+
+    logger.info("Startup complete. Entering scheduled background cycles.")
+
+    while True:
+        try:
+            cfg = load_data_config()
+
+            if not cfg["enabled"]:
+                logger.info("Orchestrator Data DESACTIVE par la config. Attente 60s...")
+                await asyncio.sleep(60)
+                continue
+
+            logger.info(f"--- Start Data Cycle (Iter: {iteration}) ---")
+
+            # MATCH DISCOVERY + ODDS INGESTION (configurable frequency)
+            if iteration % cfg["discovery_every_n"] == 0:
+                logger.info("Running Match Discovery...")
+                try:
+                    discoverer = MatchDiscoverer(days=cfg["discovery_days"])
+                    await discoverer.run()
+                except Exception as e:
+                    logger.error(f"Error in MatchDiscoverer: {e}")
+
+                logger.info("Running Odds Ingestion...")
+                try:
+                    odds_ingester = OddsIngester()
+                    await odds_ingester.run()
+                except Exception as e:
+                    logger.error(f"Error in OddsIngester: {e}")
+
+            # DAILY MATCH ORCHESTRATOR (configurable frequency)
+            if iteration % cfg["cleanup_every_n"] == 0 and iteration != 0:
+                logger.info("Running Daily Cleanup & Stats...")
+                try:
+                    processor = DailyMatchOrchestrator()
+                    await processor.run()
+                except Exception as e:
+                    logger.error(f"Error in DailyMatchOrchestrator: {e}")
+
+            iteration += 1
+            if iteration > 14400: iteration = 0
+
+            logger.info(f"--- Data Orchestrator Sleeping {cfg['sleep_interval_s']}s ---")
+            await asyncio.sleep(cfg["sleep_interval_s"])
+
+        except Exception as e:
+            logger.error(f"Data Orchestrator Critical Error: {e}")
+            await asyncio.sleep(60)
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(run_forever())
+    except KeyboardInterrupt:
+        logger.info("👋 Data Orchestrator stopped by user.")

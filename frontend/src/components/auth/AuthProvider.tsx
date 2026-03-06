@@ -45,9 +45,22 @@ interface AuthContextType {
     isAdmin: boolean;
     isSuperAdmin: boolean;
     signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-    signUp: (email: string, password: string, username: string) => Promise<{ error: string | null }>;
+    signInWithGoogle: () => Promise<{ error: string | null }>;
+    signInWithMagicLink: (email: string) => Promise<{ error: string | null }>;
+    signUp: (email: string, password: string) => Promise<{
+        error: string | null;
+        session: Session | null;
+        user: User | null;
+        needsConfirmation: boolean;
+    }>;
     signOut: () => Promise<void>;
+    resetPasswordForEmail: (email: string) => Promise<{ error: string | null }>;
+    updatePassword: (newPassword: string) => Promise<{ error: string | null }>;
     refreshProfile: () => Promise<void>;
+    assuranceLevel: {
+        current: string | null;
+        next: string | null;
+    } | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -61,6 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [session, setSession] = useState<Session | null>(null);
     const [profile, setProfile] = useState<Profile | null>(null);
     const [subscription, setSubscription] = useState<UserSubscription | null>(null);
+    const [assuranceLevel, setAssuranceLevel] = useState<{ current: string | null; next: string | null } | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     // Memoize the supabase client so it doesn't trigger infinite loops in hooks
@@ -125,15 +139,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: error?.message || null };
     }, [supabase]);
 
-    const signUp = useCallback(async (email: string, password: string, username: string) => {
-        const { error } = await supabase.auth.signUp({
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+
+    const signInWithGoogle = useCallback(async () => {
+        logger.info("[AuthProvider] Initiating Google OAuth...");
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: `${appUrl}/api/auth/callback`,
+            },
+        });
+        if (error) logger.error("[AuthProvider] Google OAuth failed:", error.message);
+        return { error: error?.message || null };
+    }, [supabase, appUrl]);
+
+    const signInWithMagicLink = useCallback(async (email: string) => {
+        logger.info(`[AuthProvider] Sending Magic Link to: ${email}`);
+        const { error } = await supabase.auth.signInWithOtp({
+            email,
+            options: {
+                emailRedirectTo: `${appUrl}/api/auth/callback`,
+            },
+        });
+        if (error) logger.error("[AuthProvider] Magic Link failed:", error.message);
+        return { error: error?.message || null };
+    }, [supabase, appUrl]);
+
+    const signUp = useCallback(async (email: string, password: string) => {
+        const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
-                data: { username },
+                emailRedirectTo: `${appUrl}/api/auth/callback`,
             },
         });
-        return { error: error?.message || null };
+
+        return {
+            error: error?.message || null,
+            session: data?.session || null,
+            user: data?.user || null,
+            needsConfirmation: !error && !data?.session
+        };
     }, [supabase]);
 
     const signOut = useCallback(async () => {
@@ -151,11 +197,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, [supabase]);
 
+    const resetPasswordForEmail = useCallback(async (email: string) => {
+        logger.info(`[AuthProvider] Sending password reset to: ${email}`);
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/update-password`,
+        });
+        if (error) logger.error("[AuthProvider] Password reset failed:", error.message);
+        return { error: error?.message || null };
+    }, [supabase]);
+
+    const updatePassword = useCallback(async (newPassword: string) => {
+        logger.info("[AuthProvider] Updating password...");
+        const { error } = await supabase.auth.updateUser({ password: newPassword });
+        if (error) logger.error("[AuthProvider] Password update failed:", error.message);
+        return { error: error?.message || null };
+    }, [supabase]);
+
     // Derived state
     const role: UserRole = profile?.role ?? "user";
     const isAdmin = role === "admin" || role === "super_admin";
     const isSuperAdmin = role === "super_admin";
-    const currentPlanId = subscription?.plan?.id || "free";
+    const currentPlanId = subscription?.plan?.id || "no_subscription";
 
     // Memoize context value
     const contextValue = useMemo(() => ({
@@ -169,10 +231,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAdmin,
         isSuperAdmin,
         signIn,
+        signInWithGoogle,
+        signInWithMagicLink,
         signUp,
         signOut,
+        resetPasswordForEmail,
+        updatePassword,
         refreshProfile,
-    }), [user, session, profile, subscription, currentPlanId, role, isLoading, isAdmin, isSuperAdmin, signIn, signUp, signOut, refreshProfile]);
+        assuranceLevel,
+    }), [user, session, profile, subscription, currentPlanId, role, isLoading, isAdmin, isSuperAdmin, signIn, signInWithGoogle, signInWithMagicLink, signUp, signOut, resetPasswordForEmail, updatePassword, refreshProfile, assuranceLevel]);
 
     const lastFetchedUserId = useRef<string | null>(null);
     const isInitialCheckDone = useRef(false);
@@ -186,6 +253,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             const userId = session?.user?.id || null;
             const isNewUser = userId !== lastFetchedUserId.current;
+
+            // Fetch AAL
+            const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+            if (mounted && aal) {
+                setAssuranceLevel({
+                    current: aal.currentLevel,
+                    next: aal.nextLevel
+                });
+            }
 
             // Avoid redundant fetches for the same user if we already did initial check
             if (!isNewUser && isInitialCheckDone.current) {

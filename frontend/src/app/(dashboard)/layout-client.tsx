@@ -3,7 +3,7 @@
 import { useAuth } from "@/components/auth/AuthProvider";
 import { BetixLogo } from "@/components/ui/betix-logo";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -16,10 +16,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { LogOut, Shield, Target, User, Loader2, Menu } from "lucide-react";
+import { LogOut, Shield, User, Loader2, Menu } from "lucide-react";
 import { FootballIcon, BasketballIcon, TennisIcon, AllSportsIcon } from "@/components/icons/SportIcons";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { UserNav } from "@/components/auth/UserNav";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { SubscriptionWall } from "@/components/dashboard/SubscriptionWall";
 import {
     Sheet,
     SheetContent,
@@ -74,13 +76,8 @@ function DashboardNavbar() {
                 </div>
 
                 <div className="flex items-center gap-2 sm:gap-4">
-                    {/* XP Badge - Simplified on mobile */}
-                    <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-2 sm:px-3 py-1.5 rounded-full">
-                        <Target className="size-3.5 sm:size-4 text-emerald-400" />
-                        <span className="font-black text-emerald-400 text-[10px] sm:text-xs">857 XP</span>
-                    </div>
 
-                    <Separator orientation="vertical" className="h-6 bg-white/10 hidden sm:block" />
+                    <NotificationBell />
 
                     <UserNav />
 
@@ -132,7 +129,41 @@ export default function DashboardLayoutClient({
 }: {
     children: React.ReactNode;
 }) {
-    const { isLoading, profile } = useAuth();
+    const { isLoading, profile, subscription, isAdmin, assuranceLevel } = useAuth();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    // =========================================================================
+    // MFA GUARD
+    // =========================================================================
+    useEffect(() => {
+        if (isLoading) return;
+
+        // If user has a factor enrolled but is only at AAL1, force MFA verification
+        // Skip if already on /mfa page
+        const isMfaPage = pathname === "/mfa";
+
+        if (assuranceLevel?.current === 'aal1' && assuranceLevel?.next === 'aal2' && !isMfaPage) {
+            console.log("[DashboardGuard] MFA required (aal1 -> aal2). Redirecting to /mfa...");
+            router.push("/mfa");
+        }
+    }, [isLoading, assuranceLevel, pathname, router]);
+
+    // =========================================================================
+    // PAYWALL — Inline overlay instead of redirect
+    // =========================================================================
+    const needsSubscription = (() => {
+        if (isLoading) return false;
+        if (isAdmin) return false;
+        const isExcludedPath =
+            pathname === "/dashboard/profile" ||
+            pathname.startsWith("/onboarding");
+        if (isExcludedPath) return false;
+        const hasActiveStatus = subscription &&
+            ["active", "trialing", "past_due"].includes(subscription.status);
+        const isRestrictedPlan = subscription?.plan?.id === 'no_subscription';
+        return !hasActiveStatus || isRestrictedPlan;
+    })();
 
     return (
         <div className="min-h-screen flex flex-col bg-black">
@@ -153,9 +184,9 @@ export default function DashboardLayoutClient({
                 )}
             </Suspense>
 
-            <main className="flex-1 container mx-auto px-4 md:px-6 py-6 overflow-hidden">
+            <main className="flex-1 container mx-auto px-4 md:px-6 py-6">
                 <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>}>
-                    {children}
+                    {needsSubscription ? <SubscriptionWall /> : children}
                 </Suspense>
             </main>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { SystemNotification } from "@/types/admin";
+import { AppNotification } from "@/types/notifications";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 interface HolographicStreamProps {
-    notifications: SystemNotification[];
+    notifications: AppNotification[];
     onMarkRead: (id: string) => void;
 }
 
@@ -38,7 +38,7 @@ export function HolographicStream({ notifications, onMarkRead }: HolographicStre
     return (
         <div className="space-y-4">
             {notifications.map((notif, index) => {
-                const isSystem = notif.type === "system";
+                const isSystem = notif.type === "system" || notif.type === "broadcast";
                 const isCritical = notif.severity === "critical";
 
                 return (
@@ -47,7 +47,7 @@ export function HolographicStream({ notifications, onMarkRead }: HolographicStre
                         className={cn(
                             "relative group p-6 rounded-2xl overflow-hidden transition-all duration-300 animate-in slide-in-from-right-4",
                             "border backdrop-blur-xl",
-                            !notif.read ? "bg-black/80" : "bg-black/40 opacity-70 hover:opacity-100",
+                            !notif.is_read ? "bg-black/80" : "bg-black/40 opacity-70 hover:opacity-100",
                             isCritical ? "border-red-500/50 shadow-[0_0_20px_-10px_rgba(239,68,68,0.3)]" :
                                 isSystem ? "border-emerald-500/20 hover:border-emerald-500/40" :
                                     "border-blue-500/20 hover:border-blue-500/40"
@@ -95,7 +95,7 @@ export function HolographicStream({ notifications, onMarkRead }: HolographicStre
                                     </div>
                                     <span className="text-[10px] uppercase font-mono text-neutral-500 flex items-center gap-1.5 backdrop-blur-md px-2 py-0.5 rounded bg-white/5">
                                         <Clock className="size-3" />
-                                        {new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        {new Date(notif.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </span>
                                 </div>
 
@@ -104,7 +104,7 @@ export function HolographicStream({ notifications, onMarkRead }: HolographicStre
                                 </p>
 
                                 <div className="flex items-center gap-3">
-                                    {notif.action && (
+                                    {notif.action_url && (
                                         <Button
                                             size="sm"
                                             variant="outline"
@@ -114,10 +114,10 @@ export function HolographicStream({ notifications, onMarkRead }: HolographicStre
                                                     "bg-white/5 border-white/10 text-white hover:bg-white/10"
                                             )}
                                         >
-                                            {notif.action} <ArrowRight className="size-3" />
+                                            Voir les détails <ArrowRight className="size-3" />
                                         </Button>
                                     )}
-                                    {!notif.read && (
+                                    {!notif.is_read && (
                                         <Button
                                             size="sm"
                                             variant="ghost"

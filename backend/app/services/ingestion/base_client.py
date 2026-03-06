@@ -55,8 +55,10 @@ class SupabaseREST:
         try:
             resp.raise_for_status()
         except httpx.HTTPStatusError as e:
+            print(f"DEBUG: Supabase UPSERT Error Body: {e.response.text}")
             logger.error(f"Supabase UPSERT Error: {e.response.text}")
             raise
+
         return resp.json()
 
     def insert(self, table: str, data: dict) -> dict:
@@ -86,17 +88,39 @@ class SupabaseREST:
         return resp.json()
 
     def select(
-        self, table: str, columns: str = "*", filters: dict[str, Any] | None = None, limit: int | None = None
+        self, 
+        table: str, 
+        columns: str = "*", 
+        filters: dict[str, Any] | None = None, 
+        limit: int | None = None,
+        order: str | None = None
     ) -> list[dict]:
-        """SELECT rows from a table with optional filters."""
-        url = f"{self.base_url}/{table}?select={columns}"
+        """SELECT rows from a table with optional filters and ordering."""
+        url = f"{self.base_url}/{table}"
+        params = {"select": columns}
+
         if filters:
             for col, val in filters.items():
-                url += f"&{col}=eq.{val}"
+                # Support for (operator, value) tuples, e.g., ("lte", "2024-01-01")
+                if isinstance(val, tuple) and len(val) == 2:
+                    op, v = val
+                    params[col] = f"{op}.{v}"
+                else:
+                    params[col] = f"eq.{val}"
+        
+        if order:
+            params["order"] = order
         if limit:
-            url += f"&limit={limit}"
-        resp = httpx.get(url, headers=self.headers, timeout=15.0)
-        resp.raise_for_status()
+            # PostgREST expects limit as a query param, not a header
+            params["limit"] = str(limit)
+            
+        # httpx handles encoding of params automatically
+        resp = httpx.get(url, headers=self.headers, params=params, timeout=15.0)
+        try:
+            resp.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Supabase SELECT Error for {table}: {e.response.text} | Params: {params}")
+            raise
         return resp.json()
 
     def select_raw(self, table: str, query_params: str) -> list[dict]:

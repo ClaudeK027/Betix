@@ -1,5 +1,5 @@
 export type SportType = "football" | "basketball" | "tennis";
-export type MatchStatus = "scheduled" | "upcoming" | "imminent" | "live" | "finished" | "postponed";
+export type MatchStatus = "scheduled" | "upcoming" | "imminent" | "live" | "finished" | "postponed" | "cancelled";
 export type PredictionLevel = "safe" | "value" | "risky";
 export type FactorImpact = "positive" | "negative" | "neutral";
 
@@ -27,6 +27,8 @@ export interface Prediction {
     confidence: number; // 0-100
     level: PredictionLevel;
     analysis: string;
+    bookmaker?: string;
+    rank?: number;
     keyFactors: KeyFactor[];
 }
 
@@ -42,6 +44,17 @@ export interface Match {
     statusShort?: string;
     homeScore?: number;
     awayScore?: number;
+    scoreDisplay?: string;
+    scoreDetails?: Record<string, any>;
     venue?: string;
     predictions?: Prediction[];
+    aiSummary?: string;
+    aiAudit?: {
+        snapshot_at: string;
+        odds: any;
+        h2h: any;
+        rolling_stats: any;
+        ai_analysis: any;
+        locked?: boolean;
+    };
 }

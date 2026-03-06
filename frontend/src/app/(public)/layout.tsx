@@ -1,8 +1,16 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { BetixLogo } from "@/components/ui/betix-logo";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard, Trophy, CreditCard, LogIn, ArrowRight } from "lucide-react";
 import { FootballIcon, BasketballIcon, TennisIcon } from "@/components/icons/SportIcons";
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+    SheetClose,
+} from "@/components/ui/sheet";
 
 export default function PublicLayout({
     children,
@@ -41,18 +49,74 @@ export default function PublicLayout({
                         </Link>
                     </nav>
 
-                    {/* CTA Buttons */}
-                    <div className="flex items-center gap-3">
-                        <Link href="/login">
-                            <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-                                Se connecter
-                            </Button>
+                    {/* CTA Buttons & Mobile Menu */}
+                    <div className="flex items-center gap-2 sm:gap-4">
+                        <Link href="/login" className="hidden text-sm font-medium text-muted-foreground hover:text-foreground transition-colors sm:block">
+                            Se connecter
                         </Link>
                         <Link href="/signup">
-                            <Button size="sm" className="gradient-accent text-white border-0">
+                            <Button size="sm" className="gradient-accent text-white border-0 h-9 px-4 sm:px-5">
                                 Débuter
                             </Button>
                         </Link>
+
+                        {/* Mobile Menu */}
+                        <div className="md:hidden">
+                            <Sheet>
+                                <SheetTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="ml-1 text-muted-foreground hover:text-foreground">
+                                        <Menu className="size-5" />
+                                    </Button>
+                                </SheetTrigger>
+                                <SheetContent side="right" className="w-[85vw] max-w-[400px] border-l border-white/10 bg-black/95 backdrop-blur-xl p-0">
+                                    <SheetHeader className="p-6 border-b border-white/5">
+                                        <div className="flex items-center gap-2">
+                                            <SheetTitle className="flex items-center">
+                                                <BetixLogo className="h-8 w-auto" />
+                                                <span className="sr-only">Menu principal</span>
+                                            </SheetTitle>
+                                        </div>
+                                    </SheetHeader>
+
+                                    <div className="flex flex-col gap-2 p-6 mt-2">
+                                        <SheetClose asChild>
+                                            <Link href="/#features" className="flex items-center gap-4 px-4 py-3 rounded-xl text-lg font-medium text-white/80 hover:text-white hover:bg-white/5 transition-all">
+                                                <LayoutDashboard className="size-5 text-primary" />
+                                                Fonctionnalités
+                                            </Link>
+                                        </SheetClose>
+                                        <SheetClose asChild>
+                                            <Link href="/#sports" className="flex items-center gap-4 px-4 py-3 rounded-xl text-lg font-medium text-white/80 hover:text-white hover:bg-white/5 transition-all">
+                                                <Trophy className="size-5 text-emerald-400" />
+                                                Sports
+                                            </Link>
+                                        </SheetClose>
+                                        <SheetClose asChild>
+                                            <Link href="/#pricing" className="flex items-center gap-4 px-4 py-3 rounded-xl text-lg font-medium text-white/80 hover:text-white hover:bg-white/5 transition-all">
+                                                <CreditCard className="size-5 text-purple-400" />
+                                                Tarifs
+                                            </Link>
+                                        </SheetClose>
+
+                                        <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-4" />
+
+                                        <SheetClose asChild>
+                                            <Link href="/login" className="flex items-center gap-4 px-4 py-3 rounded-xl text-lg font-medium text-muted-foreground hover:text-white hover:bg-white/5 transition-all">
+                                                <LogIn className="size-5" />
+                                                Se connecter
+                                            </Link>
+                                        </SheetClose>
+
+                                        <SheetClose asChild>
+                                            <Link href="/signup" className="mt-4 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-lg font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_20px_-5px_rgba(79,70,229,0.5)] transition-all hover:scale-[1.02] border-0">
+                                                Débuter
+                                                <ArrowRight className="size-5 text-white/80" />
+                                            </Link>
+                                        </SheetClose>
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -95,7 +159,6 @@ export default function PublicLayout({
                             <ul className="space-y-2">
                                 <li><Link href="/cgu" className="text-sm text-muted-foreground hover:text-foreground transition-colors">CGU</Link></li>
                                 <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Confidentialit&eacute;</Link></li>
-                                <li><Link href="/mentions" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Mentions l&eacute;gales</Link></li>
                             </ul>
                         </div>
 
@@ -103,7 +166,7 @@ export default function PublicLayout({
                         <div className="space-y-3">
                             <h4 className="text-sm font-semibold">Contact</h4>
                             <ul className="space-y-2">
-                                <li><a href="mailto:support@betix.io" className="text-sm text-muted-foreground hover:text-foreground transition-colors">support@betix.io</a></li>
+                                <li><a href="mailto:bet-ix@outlook.fr" className="text-sm text-muted-foreground hover:text-foreground transition-colors">bet-ix@outlook.fr</a></li>
                             </ul>
                         </div>
                     </div>

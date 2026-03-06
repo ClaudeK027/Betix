@@ -62,7 +62,7 @@ export function SeasonPass({ subscription: propSub }: SeasonPassProps) {
     }
 
     const handleAction = () => {
-        router.push("/dashboard/subscription");
+        router.push("/profile/subscription");
     };
 
     return (
@@ -118,13 +118,8 @@ export function SeasonPass({ subscription: propSub }: SeasonPassProps) {
                                 ? "bg-white/5 border border-white/10 hover:bg-white/10 text-white"
                                 : "bg-amber-500 hover:bg-amber-600 text-black shadow-[0_0_20px_-5px_rgba(245,158,11,0.5)]"
                         )}>
-                        {isPremium ? "Gérer l'abonnement" : "Upgrade Premium"}
+                        {isPremium ? "Gérer l'abonnement" : "Passer Premium"}
                     </Button>
-                    {isPremium && (
-                        <Button variant="ghost" onClick={handleAction} className="w-full md:w-auto text-neutral-400 hover:text-white">
-                            Factures
-                        </Button>
-                    )}
                 </div>
 
             </div>

@@ -75,5 +75,5 @@ ANALYTICS_TO_PUBLIC_STATUS = {
     "finished": "finished",
     "postponed": "postponed",
     "cancelled": "cancelled",
-    "abandoned": "cancelled",
+    "abandoned": "finished",
 }
