@@ -1,6 +1,7 @@
 'use server';
 
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { mollieClient } from "@/lib/mollie";
 import { revalidatePath } from "next/cache";
 
 export async function getPlansAction() {
@@ -207,6 +208,91 @@ export async function updateAgentAction(agentId: string, data: UpdateAgentData) 
 
     } catch (error: any) {
         console.error("[Admin Action] Error:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Résilie l'abonnement d'un utilisateur : annule sur Mollie + passe en no_subscription.
+ * Coupure immédiate de l'accès premium.
+ */
+export async function cancelSubscriptionAction(userId: string) {
+    console.log(`[Admin Action] Terminating subscription for user ${userId}`);
+
+    try {
+        // 1. Récupérer l'abonnement actuel
+        const { data: subscription, error: subError } = await supabaseAdmin
+            .from('subscriptions')
+            .select('user_id, plan_id, status, mollie_subscription_id')
+            .eq('user_id', userId)
+            .single();
+
+        if (subError || !subscription) {
+            return { success: false, error: 'Aucun abonnement trouvé pour cet utilisateur.' };
+        }
+
+        if (subscription.plan_id === 'no_subscription') {
+            return { success: false, error: 'L\'utilisateur n\'a déjà aucun abonnement actif.' };
+        }
+
+        // 2. Annuler sur Mollie si un abonnement récurrent existe
+        if (subscription.mollie_subscription_id) {
+            const { data: profile } = await supabaseAdmin
+                .from('profiles')
+                .select('mollie_customer_id')
+                .eq('id', userId)
+                .single();
+
+            if (!profile?.mollie_customer_id) {
+                return { success: false, error: `mollie_customer_id introuvable pour l'utilisateur ${userId}. Résiliation Mollie impossible.` };
+            }
+
+            const subId = subscription.mollie_subscription_id.trim();
+            const custId = profile.mollie_customer_id.trim();
+            console.log(`[Admin Action] Cancelling Mollie sub="${subId}" for customer="${custId}"`);
+
+            try {
+                await mollieClient.customerSubscriptions.cancel(
+                    subId,
+                    { customerId: custId }
+                );
+                console.log(`[Admin Action] Mollie subscription ${subscription.mollie_subscription_id} cancelled OK`);
+            } catch (mollieErr: any) {
+                const msg = mollieErr.message || '';
+                // Seule erreur acceptable : l'abo est déjà annulé côté Mollie
+                if (msg.includes('canceled') || msg.includes('cancelled')) {
+                    console.log(`[Admin Action] Mollie sub already cancelled, continuing DB cleanup`);
+                } else {
+                    return { success: false, error: `Échec annulation Mollie : ${msg}` };
+                }
+            }
+        }
+
+        // 3. Résilier : plan → no_subscription, statut → canceled, accès coupé immédiatement
+        const { error: updateError } = await supabaseAdmin
+            .from('subscriptions')
+            .update({
+                plan_id: 'no_subscription',
+                status: 'canceled',
+                mollie_subscription_id: null,
+                current_period_end: null,
+            })
+            .eq('user_id', userId);
+
+        if (updateError) {
+            throw new Error(`Subscription update failed: ${updateError.message}`);
+        }
+
+        console.log(`[Admin Action] Subscription terminated for user ${userId} (was: ${subscription.plan_id})`);
+
+        revalidatePath('/admin/users');
+        return {
+            success: true,
+            message: `Abonnement résilié. L'utilisateur est passé en no_subscription.`
+        };
+
+    } catch (error: any) {
+        console.error("[Admin Action] Cancel Error:", error);
         return { success: false, error: error.message };
     }
 }

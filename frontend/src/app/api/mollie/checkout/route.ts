@@ -50,11 +50,52 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        if (plan.price <= 0 && (!plan.trial_days || plan.trial_days <= 0)) {
-            return NextResponse.json(
-                { error: 'Le plan gratuit sans essai ne nécessite pas de paiement par carte.' },
-                { status: 400 }
-            );
+        // Plan gratuit (0€) : activer directement sans passer par Mollie
+        if (plan.price <= 0 && (!plan.trial_price || plan.trial_price <= 0)) {
+            // Annuler un éventuel abonnement Mollie existant
+            const { data: profile } = await supabaseAdmin
+                .from('profiles')
+                .select('mollie_customer_id')
+                .eq('id', user.id)
+                .single();
+
+            const { data: existingSub } = await supabaseAdmin
+                .from('subscriptions')
+                .select('mollie_subscription_id')
+                .eq('user_id', user.id)
+                .single();
+
+            if (existingSub?.mollie_subscription_id && profile?.mollie_customer_id) {
+                try {
+                    await mollieClient.customerSubscriptions.cancel(
+                        existingSub.mollie_subscription_id,
+                        { customerId: profile.mollie_customer_id }
+                    );
+                } catch (e: any) {
+                    console.warn(`[Mollie/Checkout] Could not cancel old subscription: ${e.message}`);
+                }
+            }
+
+            // Activer le plan gratuit directement en BDD
+            await supabaseAdmin
+                .from('subscriptions')
+                .upsert({
+                    user_id: user.id,
+                    plan_id: planId,
+                    status: 'active',
+                    current_period_end: null,
+                    source: 'mollie',
+                    mollie_subscription_id: null,
+                });
+
+            console.log(`[Mollie/Checkout] Free plan "${planId}" activated for user ${user.id}`);
+
+            // Retourner sans checkoutUrl → le frontend gère la redirection
+            const publicUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+            return NextResponse.json({
+                free: true,
+                redirectUrl: `${publicUrl}/profile/subscription?status=success&planId=${planId}`,
+            });
         }
 
         // 3. Récupérer ou créer le profil avec le mollie_customer_id

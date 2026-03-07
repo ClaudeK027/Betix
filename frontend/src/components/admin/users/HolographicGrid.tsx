@@ -29,9 +29,10 @@ interface HolographicGridProps {
     users: AdminUser[];
     onSelectUser: (user: AdminUser) => void;
     onEditUser: (user: AdminUser) => void;
+    onCancelSubscription?: (user: AdminUser) => void;
 }
 
-export function HolographicGrid({ users, onSelectUser, onEditUser }: HolographicGridProps) {
+export function HolographicGrid({ users, onSelectUser, onEditUser, onCancelSubscription }: HolographicGridProps) {
     const roleConfig: Record<string, any> = {
         free: { color: "text-neutral-400", border: "border-neutral-700", bg: "bg-neutral-500/10", label: "ROOKIE" },
         premium: { color: "text-amber-400", border: "border-amber-500/50", bg: "bg-amber-500/10", label: "PREMIUM" },
@@ -172,6 +173,17 @@ export function HolographicGrid({ users, onSelectUser, onEditUser }: Holographic
                                             <Edit className="size-3.5" /> Modifier les accès
                                         </DropdownMenuItem>
                                         <DropdownMenuItem className="gap-2 text-xs font-medium"><Crown className="size-3.5 text-amber-500" /> Offrir Premium</DropdownMenuItem>
+                                        {(user.status === 'active' || user.status === 'past_due' || user.status === 'trialing') && (
+                                            <DropdownMenuItem
+                                                className="text-orange-400 focus:text-orange-400 gap-2 text-xs font-medium"
+                                                onSelect={(e) => {
+                                                    e.preventDefault();
+                                                    onCancelSubscription?.(user);
+                                                }}
+                                            >
+                                                <Ban className="size-3.5" /> Annuler l&apos;abonnement
+                                            </DropdownMenuItem>
+                                        )}
                                         <DropdownMenuSeparator className="bg-white/10" />
                                         <DropdownMenuItem className="text-red-400 focus:text-red-400 gap-2 text-xs font-medium">
                                             <Ban className="size-3.5" /> Suspendre l&apos;agent

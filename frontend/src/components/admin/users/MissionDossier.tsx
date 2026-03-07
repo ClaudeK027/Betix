@@ -19,19 +19,26 @@ import {
     Shield,
     User,
     Wifi,
-    CreditCard
+    CreditCard,
+    XCircle,
+    Loader2,
+    AlertTriangle
 } from "lucide-react";
-import { getPlansAction } from "@/app/(admin)/admin/users/actions";
+import { getPlansAction, cancelSubscriptionAction } from "@/app/(admin)/admin/users/actions";
 import { useState, useEffect } from "react";
 
 interface MissionDossierProps {
     user: AdminUser | null;
     open: boolean;
     onClose: () => void;
+    onSubscriptionCancelled?: () => void;
 }
 
-export function MissionDossier({ user, open, onClose }: MissionDossierProps) {
+export function MissionDossier({ user, open, onClose, onSubscriptionCancelled }: MissionDossierProps) {
     const [plans, setPlans] = useState<any[]>([]);
+    const [cancelConfirm, setCancelConfirm] = useState(false);
+    const [cancelling, setCancelling] = useState(false);
+    const [cancelResult, setCancelResult] = useState<{ success: boolean; message: string } | null>(null);
 
     useEffect(() => {
         if (open) {
@@ -40,10 +47,37 @@ export function MissionDossier({ user, open, onClose }: MissionDossierProps) {
                     setPlans(result.data);
                 }
             });
+            setCancelConfirm(false);
+            setCancelResult(null);
         }
-    }, [open]);
+    }, [open, user?.id]);
 
     if (!user) return null;
+
+    const canCancel = (user.status === 'active' || user.status === 'past_due' || user.status === 'trialing')
+        && user.plan_id !== 'no_subscription';
+
+    const handleCancelSubscription = async () => {
+        setCancelling(true);
+        setCancelResult(null);
+        try {
+            const result = await cancelSubscriptionAction(user.id);
+            setCancelResult({
+                success: result.success,
+                message: result.success
+                    ? (result.message || 'Abonnement annulé.')
+                    : (result.error || 'Erreur inconnue.')
+            });
+            if (result.success) {
+                setCancelConfirm(false);
+                onSubscriptionCancelled?.();
+            }
+        } catch {
+            setCancelResult({ success: false, message: 'Erreur réseau.' });
+        } finally {
+            setCancelling(false);
+        }
+    };
 
     const riskLevel = user.status === "churned" ? "CRITICAL" : user.status === "suspended" ? "HIGH" : "LOW";
     const riskColor = riskLevel === "CRITICAL" ? "text-red-500" : riskLevel === "HIGH" ? "text-amber-500" : "text-emerald-500";
@@ -147,6 +181,60 @@ export function MissionDossier({ user, open, onClose }: MissionDossierProps) {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Cancel Subscription */}
+                        {canCancel && !cancelConfirm && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="w-full mt-3 border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300 font-mono text-xs gap-2"
+                                onClick={() => setCancelConfirm(true)}
+                            >
+                                <XCircle className="size-3.5" /> RESILIER_ABONNEMENT
+                            </Button>
+                        )}
+
+                        {cancelConfirm && (
+                            <div className="mt-3 p-3 rounded-xl bg-red-500/5 border border-red-500/20 space-y-3">
+                                <div className="flex items-start gap-2">
+                                    <AlertTriangle className="size-4 text-red-400 mt-0.5 shrink-0" />
+                                    <p className="text-xs text-red-300 leading-relaxed">
+                                        Résilier l&apos;abonnement de <strong>{user.name}</strong> ?
+                                        L&apos;accès premium sera coupé immédiatement et l&apos;abonnement Mollie annulé.
+                                    </p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="flex-1 h-8 border-white/10 text-neutral-400 hover:bg-white/5 text-xs"
+                                        onClick={() => setCancelConfirm(false)}
+                                        disabled={cancelling}
+                                    >
+                                        Annuler
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        className="flex-1 h-8 bg-red-600 hover:bg-red-700 text-white text-xs font-bold gap-2"
+                                        onClick={handleCancelSubscription}
+                                        disabled={cancelling}
+                                    >
+                                        {cancelling ? <Loader2 className="size-3.5 animate-spin" /> : <XCircle className="size-3.5" />}
+                                        {cancelling ? 'Annulation...' : 'Confirmer'}
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+
+                        {cancelResult && (
+                            <div className={cn("mt-2 p-2 rounded-lg text-xs font-mono",
+                                cancelResult.success
+                                    ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
+                                    : "bg-red-500/10 border border-red-500/20 text-red-400"
+                            )}>
+                                {cancelResult.message}
+                            </div>
+                        )}
                     </div>
 
                     <Separator className="my-8 bg-white/10" />
