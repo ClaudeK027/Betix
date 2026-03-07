@@ -41,9 +41,9 @@ export function MatchCard({ match }: MatchCardProps) {
         <Card
             style={{ borderLeftColor: sportDetails.borderColor }}
             className={cn(
-                "relative overflow-hidden bg-black/40 backdrop-blur-xl border-t-white/10 border-r-white/10 border-b-white/10 border-l-[3px]",
+                "relative overflow-hidden bg-black/40 backdrop-blur-xl border border-white/10 border-l-[3px] border-l-solid",
                 "transition-all duration-500 group h-full flex flex-col justify-between",
-                "hover:border-t-white/20 hover:border-r-white/20 hover:border-b-white/20 hover:-translate-y-1.5 hover:scale-[1.01]",
+                "hover:border-white/20 hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-2xl hover:shadow-primary/5",
                 sportDetails.glow
             )}>
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none" />

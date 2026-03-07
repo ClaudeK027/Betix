@@ -31,7 +31,8 @@ export async function POST(req: NextRequest) {
 
         // 2. Récupérer les détails du paiement
         const payment = await mollieClient.payments.get(paymentId);
-        const metadata = payment.metadata ? JSON.parse(payment.metadata as string) : {};
+        const rawMetadata = payment.metadata;
+        const metadata = typeof rawMetadata === 'string' ? JSON.parse(rawMetadata) : (rawMetadata || {});
 
         console.log(`[Mollie/Webhook] Payment status: ${payment.status}, sequenceType: ${payment.sequenceType}`);
 
