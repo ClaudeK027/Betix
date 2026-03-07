@@ -141,11 +141,10 @@ export function MatchCard({ match }: MatchCardProps) {
                                     {(() => {
                                         const now = new Date();
                                         const matchDateStr = match.date;
-                                        const todayStr = now.toISOString().split('T')[0];
-
+                                        const todayStr = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
                                         const tomorrowDate = new Date(now);
                                         tomorrowDate.setDate(now.getDate() + 1);
-                                        const tomorrowStr = tomorrowDate.toISOString().split('T')[0];
+                                        const tomorrowStr = [tomorrowDate.getFullYear(), String(tomorrowDate.getMonth() + 1).padStart(2, '0'), String(tomorrowDate.getDate()).padStart(2, '0')].join('-');
 
                                         if (matchDateStr === todayStr) return "Aujourd'hui";
                                         if (matchDateStr === tomorrowStr) return "Demain";

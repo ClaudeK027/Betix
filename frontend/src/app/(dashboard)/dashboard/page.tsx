@@ -46,7 +46,12 @@ export default function DashboardPage() {
                 short: m.away_team.code || m.away_team.name.substring(0, 3).toUpperCase(),
                 logo: m.away_team.logo
             },
-            date: dateObj.toISOString().split('T')[0],
+            // Fix: always compute local date string instead of UTC to avoid midnight offset issues
+            date: [
+                dateObj.getFullYear(),
+                String(dateObj.getMonth() + 1).padStart(2, '0'),
+                String(dateObj.getDate()).padStart(2, '0')
+            ].join('-'),
             time: dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
             status: m.status,
             statusShort: m.status_short,

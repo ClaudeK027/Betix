@@ -50,9 +50,9 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        if (plan.price <= 0) {
+        if (plan.price <= 0 && (!plan.trial_days || plan.trial_days <= 0)) {
             return NextResponse.json(
-                { error: 'Le plan gratuit ne nécessite pas de paiement.' },
+                { error: 'Le plan gratuit sans essai ne nécessite pas de paiement par carte.' },
                 { status: 400 }
             );
         }

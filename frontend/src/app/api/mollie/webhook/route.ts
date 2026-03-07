@@ -84,26 +84,42 @@ async function handlePaidPayment(payment: any, metadata: any) {
                 return;
             }
 
-            // Créer l'abonnement Mollie (paiements récurrents automatiques)
-            const subscription = await mollieClient.customerSubscriptions.create({
+            // Extraire trial_days depuis metadata
+            const trialDays = metadata.trial_days ? parseInt(metadata.trial_days, 10) : 0;
+            const isTrial = trialDays > 0;
+
+            const subscriptionParams: any = {
                 customerId: payment.customerId,
                 amount: {
                     currency: 'EUR',
                     value: Number(plan.price).toFixed(2),
                 },
                 interval: interval,
-                description: `BETIX — ${plan.name}`,
+                description: isTrial
+                    ? `BETIX — ${plan.name} (Prélèvement après ${trialDays}j d'essai)`
+                    : `BETIX — ${plan.name}`,
                 webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/mollie/webhook`,
                 metadata: JSON.stringify({
                     supabase_user_id: userId,
                     plan_id: planId,
                 }),
-            });
+            };
+
+            let nextPeriodEnd = new Date();
+
+            if (isTrial) {
+                const startDate = new Date(Date.now() + trialDays * 86400000);
+                subscriptionParams.startDate = startDate.toISOString().split('T')[0]; // Format requis YYYY-MM-DD
+                nextPeriodEnd = startDate; // Dans Supabase, la période en cours se termine à la fin de l'essai
+                console.log(`[Mollie/Webhook] Trial plan detected. First recurring payment scheduled for ${subscriptionParams.startDate}`);
+            } else {
+                nextPeriodEnd = calculateNextPeriodEnd(interval);
+            }
+
+            // Créer l'abonnement Mollie (paiements récurrents automatiques)
+            const subscription = await mollieClient.customerSubscriptions.create(subscriptionParams);
 
             console.log(`[Mollie/Webhook] Subscription created: ${subscription.id}`);
-
-            // Calculer la prochaine échéance
-            const nextPeriodEnd = calculateNextPeriodEnd(interval);
 
             // Enregistrer/mettre à jour l'abonnement dans Supabase
             await supabaseAdmin
