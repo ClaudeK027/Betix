@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Search, UserPlus, Filter, Loader2 } from "lucide-react";
 
 import { AdminUser } from "@/types/admin";
+import { cancelSubscriptionAction } from "@/app/(admin)/admin/users/actions";
 
 export default function AdminUsersPage() {
     const [search, setSearch] = useState("");
@@ -74,6 +75,12 @@ export default function AdminUsersPage() {
     const handleEditUser = (user: any) => {
         setEditingUser(user);
         setIsEditOpen(true);
+    };
+
+    const handleCancelSubscription = (user: AdminUser) => {
+        // Open the dossier on the user so the cancel UI is visible
+        setSelectedUser(user);
+        setIsDossierOpen(true);
     };
 
     if (loading && users.length === 0) {
@@ -147,6 +154,7 @@ export default function AdminUsersPage() {
                         users={filtered}
                         onSelectUser={handleUserSelect}
                         onEditUser={handleEditUser}
+                        onCancelSubscription={handleCancelSubscription}
                     />
 
                     {/* Side Panel */}
@@ -154,6 +162,7 @@ export default function AdminUsersPage() {
                         user={selectedUser}
                         open={isDossierOpen}
                         onClose={() => setIsDossierOpen(false)}
+                        onSubscriptionCancelled={fetchUsers}
                     />
 
                     {/* Edit Modal */}

@@ -19,13 +19,14 @@ export function MatchCard({ match }: MatchCardProps) {
     const isFinished = match.status === "finished";
     const topPrediction = match.predictions?.[0];
 
-    const sportDetails = match.sport === "football"
+    const normalizedSport = (match.sport || "football").toLowerCase();
+    const sportDetails = normalizedSport === "football"
         ? {
             borderColor: "#4ade80",
             glow: "shadow-[0_0_20px_-10px_rgba(74,222,128,0.3)] hover:shadow-[0_0_30px_-5px_rgba(74,222,128,0.4)]",
             text: "text-green-400"
         }
-        : match.sport === "basketball"
+        : normalizedSport === "basketball"
             ? {
                 borderColor: "#fb923c",
                 glow: "shadow-[0_0_20px_-10px_rgba(251,146,60,0.3)] hover:shadow-[0_0_30px_-5px_rgba(251,146,60,0.4)]",
@@ -39,9 +40,13 @@ export function MatchCard({ match }: MatchCardProps) {
 
     return (
         <Card
-            style={{ borderLeftColor: sportDetails.borderColor }}
+            style={{
+                borderLeftColor: sportDetails.borderColor,
+                borderLeftStyle: 'solid',
+                borderLeftWidth: '3px'
+            }}
             className={cn(
-                "relative overflow-hidden bg-black/40 backdrop-blur-xl border border-white/10 border-solid border-l-[3px]",
+                "relative overflow-hidden bg-black/40 backdrop-blur-xl border border-white/10",
                 "transition-all duration-500 group h-full flex flex-col justify-between",
                 "hover:border-white/20 hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-2xl hover:shadow-primary/5",
                 sportDetails.glow

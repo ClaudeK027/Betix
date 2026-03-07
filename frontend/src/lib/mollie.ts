@@ -22,10 +22,13 @@ async function mollieRequest<T>(
     return new Promise((resolve, reject) => {
         const bodyStr = body ? JSON.stringify(body) : '';
 
+        // Sanitise path: trim whitespace/newlines that cause "unescaped characters" errors
+        const safePath = `/v2${path}`.replace(/[\s\r\n]+/g, '');
+
         const options = {
             hostname: MOLLIE_BASE,
             port: 443,
-            path: `/v2${path}`,
+            path: safePath,
             method,
             headers: {
                 'Authorization': `Bearer ${API_KEY}`,

@@ -99,7 +99,7 @@ export function PricingCard({ plan, variant, isCurrentPlan, subscriptionStatus }
     }
 
     const handleCheckout = async () => {
-        if (isFree || isCurrentPlan) return;
+        if (isCurrentPlan) return;
 
         setIsCheckingOut(true);
         try {
@@ -114,6 +114,12 @@ export function PricingCard({ plan, variant, isCurrentPlan, subscriptionStatus }
             if (!res.ok) {
                 console.error('[PricingCard] Checkout error:', data.error);
                 toast.error(data.error || 'Erreur lors de la création du paiement.');
+                return;
+            }
+
+            // Plan gratuit : redirection directe sans Mollie
+            if (data.free && data.redirectUrl) {
+                window.location.href = data.redirectUrl;
                 return;
             }
 
