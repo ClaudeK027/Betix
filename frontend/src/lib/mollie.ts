@@ -84,6 +84,18 @@ export const mollieClient = {
             const { customerId, ...rest } = data;
             return mollieRequest<{ id: string }>('POST', `/customers/${customerId}/subscriptions`, rest);
         },
+        get: (subscriptionId: string, opts: { customerId: string }) =>
+            mollieRequest<{
+                id: string;
+                status: string;
+                amount: { value: string; currency: string };
+                interval: string;
+                description: string;
+                startDate: string;
+                nextPaymentDate?: string;
+                createdAt: string;
+                canceledAt?: string;
+            }>('GET', `/customers/${opts.customerId}/subscriptions/${subscriptionId}`),
         cancel: (subscriptionId: string, opts: { customerId: string }) =>
             mollieRequest('DELETE', `/customers/${opts.customerId}/subscriptions/${subscriptionId}`),
     },
