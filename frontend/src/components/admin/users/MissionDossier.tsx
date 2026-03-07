@@ -24,7 +24,7 @@ import {
     Loader2,
     AlertTriangle
 } from "lucide-react";
-import { getPlansAction, cancelSubscriptionAction } from "@/app/(admin)/admin/users/actions";
+import { getPlansAction, cancelSubscriptionAction, getSubscriptionDetailsAction } from "@/app/(admin)/admin/users/actions";
 import { useState, useEffect } from "react";
 
 interface MissionDossierProps {
@@ -39,9 +39,11 @@ export function MissionDossier({ user, open, onClose, onSubscriptionCancelled }:
     const [cancelConfirm, setCancelConfirm] = useState(false);
     const [cancelling, setCancelling] = useState(false);
     const [cancelResult, setCancelResult] = useState<{ success: boolean; message: string } | null>(null);
+    const [billingInfo, setBillingInfo] = useState<any>(null);
+    const [billingLoading, setBillingLoading] = useState(false);
 
     useEffect(() => {
-        if (open) {
+        if (open && user?.id) {
             getPlansAction().then(result => {
                 if (result.success && result.data) {
                     setPlans(result.data);
@@ -49,6 +51,15 @@ export function MissionDossier({ user, open, onClose, onSubscriptionCancelled }:
             });
             setCancelConfirm(false);
             setCancelResult(null);
+
+            // Fetch Mollie billing details
+            setBillingInfo(null);
+            setBillingLoading(true);
+            getSubscriptionDetailsAction(user.id).then(result => {
+                if (result.success && result.data) {
+                    setBillingInfo(result.data);
+                }
+            }).finally(() => setBillingLoading(false));
         }
     }, [open, user?.id]);
 
@@ -181,6 +192,65 @@ export function MissionDossier({ user, open, onClose, onSubscriptionCancelled }:
                                 </div>
                             </div>
                         </div>
+
+                        {/* Mollie Billing Intel */}
+                        {billingLoading && (
+                            <div className="flex items-center gap-2 mt-3 text-neutral-500">
+                                <Loader2 className="size-3 animate-spin" />
+                                <span className="text-[10px] font-mono">FETCHING_MOLLIE_DATA...</span>
+                            </div>
+                        )}
+
+                        {billingInfo?.mollie && (
+                            <div className="mt-3 p-3 rounded-xl bg-blue-500/5 border border-blue-500/15 space-y-2">
+                                <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Mollie Billing</p>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <p className="text-[9px] font-mono text-neutral-500">STATUS</p>
+                                        <p className={cn("text-xs font-bold uppercase",
+                                            billingInfo.mollie.status === 'active' ? "text-emerald-400" :
+                                            billingInfo.mollie.status === 'canceled' ? "text-red-400" : "text-amber-400"
+                                        )}>
+                                            {billingInfo.mollie.status}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[9px] font-mono text-neutral-500">MONTANT</p>
+                                        <p className="text-xs font-bold text-white">
+                                            {billingInfo.mollie.amount} {billingInfo.mollie.currency} / {billingInfo.mollie.interval}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[9px] font-mono text-neutral-500">CREE LE</p>
+                                        <p className="text-xs text-neutral-300">
+                                            {new Date(billingInfo.mollie.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                        </p>
+                                    </div>
+                                    {billingInfo.mollie.nextPaymentDate ? (
+                                        <div>
+                                            <p className="text-[9px] font-mono text-neutral-500">PROCHAIN PRELEVEMENT</p>
+                                            <p className="text-xs font-bold text-amber-400">
+                                                {new Date(billingInfo.mollie.nextPaymentDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                            </p>
+                                        </div>
+                                    ) : billingInfo.mollie.canceledAt ? (
+                                        <div>
+                                            <p className="text-[9px] font-mono text-neutral-500">RESILIE LE</p>
+                                            <p className="text-xs text-red-400">
+                                                {new Date(billingInfo.mollie.canceledAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                            </p>
+                                        </div>
+                                    ) : null}
+                                </div>
+                                <p className="text-[9px] font-mono text-neutral-600 pt-1">{billingInfo.mollie.id}</p>
+                            </div>
+                        )}
+
+                        {billingInfo && !billingInfo.mollie && billingInfo.source === 'manual_gift' && (
+                            <div className="mt-3 p-2 rounded-lg bg-purple-500/5 border border-purple-500/15">
+                                <p className="text-[10px] font-mono text-purple-400">Abonnement offert manuellement (pas de facturation Mollie)</p>
+                            </div>
+                        )}
 
                         {/* Cancel Subscription */}
                         {canCancel && !cancelConfirm && (

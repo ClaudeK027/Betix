@@ -213,6 +213,88 @@ export async function updateAgentAction(agentId: string, data: UpdateAgentData) 
 }
 
 /**
+ * Récupère les détails de facturation Mollie pour un utilisateur.
+ */
+export async function getSubscriptionDetailsAction(userId: string) {
+    try {
+        const { data: subscription } = await supabaseAdmin
+            .from('subscriptions')
+            .select('plan_id, status, mollie_subscription_id, current_period_end, source')
+            .eq('user_id', userId)
+            .single();
+
+        if (!subscription) {
+            return { success: false, error: 'Aucun abonnement trouvé.' };
+        }
+
+        // Si pas d'abonnement Mollie, retourner uniquement les données BDD
+        if (!subscription.mollie_subscription_id) {
+            return {
+                success: true,
+                data: {
+                    source: subscription.source || 'manual_gift',
+                    planId: subscription.plan_id,
+                    dbStatus: subscription.status,
+                    currentPeriodEnd: subscription.current_period_end,
+                    mollie: null,
+                }
+            };
+        }
+
+        // Récupérer le mollie_customer_id
+        const { data: profile } = await supabaseAdmin
+            .from('profiles')
+            .select('mollie_customer_id')
+            .eq('id', userId)
+            .single();
+
+        if (!profile?.mollie_customer_id) {
+            return {
+                success: true,
+                data: {
+                    source: subscription.source,
+                    planId: subscription.plan_id,
+                    dbStatus: subscription.status,
+                    currentPeriodEnd: subscription.current_period_end,
+                    mollie: null,
+                }
+            };
+        }
+
+        // Appeler Mollie pour les détails live
+        const custId = profile.mollie_customer_id.trim();
+        const subId = subscription.mollie_subscription_id.trim();
+
+        const mollieSub = await mollieClient.customerSubscriptions.get(subId, { customerId: custId });
+
+        return {
+            success: true,
+            data: {
+                source: subscription.source,
+                planId: subscription.plan_id,
+                dbStatus: subscription.status,
+                currentPeriodEnd: subscription.current_period_end,
+                mollie: {
+                    id: mollieSub.id,
+                    status: mollieSub.status,
+                    amount: mollieSub.amount.value,
+                    currency: mollieSub.amount.currency,
+                    interval: mollieSub.interval,
+                    description: mollieSub.description,
+                    createdAt: mollieSub.createdAt,
+                    nextPaymentDate: mollieSub.nextPaymentDate || null,
+                    canceledAt: mollieSub.canceledAt || null,
+                },
+            }
+        };
+
+    } catch (error: any) {
+        console.error("[Admin Action] getSubscriptionDetails Error:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
  * Résilie l'abonnement d'un utilisateur : annule sur Mollie + passe en no_subscription.
  * Coupure immédiate de l'accès premium.
  */
