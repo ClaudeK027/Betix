@@ -4,6 +4,7 @@ export type PredictionLevel = "safe" | "value" | "risky";
 export type FactorImpact = "positive" | "negative" | "neutral";
 
 export interface Team {
+    id?: number;
     name: string;
     short: string;
     logo?: string;

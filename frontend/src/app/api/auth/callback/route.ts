@@ -8,9 +8,6 @@ export async function GET(request: Request) {
     // if "next" is in search params, use it as the redirection URL
     const next = searchParams.get('next') ?? '/dashboard'
 
-    // Prefer environment variable for production URL to avoid localhost origins in Vercel
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || origin
-
     if (code) {
         const supabase = await createClient()
         const { error } = await supabase.auth.exchangeCodeForSession(code)
@@ -20,15 +17,15 @@ export async function GET(request: Request) {
 
             if (isLocalEnv) {
                 // we can safely redirect to origin in dev
-                return NextResponse.redirect(`${appUrl}${next}`)
+                return NextResponse.redirect(`${origin}${next}`)
             } else if (forwardedHost) {
                 return NextResponse.redirect(`https://${forwardedHost}${next}`)
             } else {
-                return NextResponse.redirect(`${appUrl}${next}`)
+                return NextResponse.redirect(`${origin}${next}`)
             }
         }
     }
 
     // return the user to an error page with instructions
-    return NextResponse.redirect(`${appUrl}/login?error=auth-callback-failed`)
+    return NextResponse.redirect(`${origin}/login?error=auth-callback-failed`)
 }

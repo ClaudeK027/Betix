@@ -19,20 +19,33 @@ export function MatchCard({ match }: MatchCardProps) {
     const isFinished = match.status === "finished";
     const topPrediction = match.predictions?.[0];
 
-    // Sport-based neon accents (left border + glow)
     const sportDetails = match.sport === "football"
-        ? { border: "border-l-emerald-500", glow: "shadow-[0_0_20px_-10px_rgba(16,185,129,0.3)]", text: "text-emerald-500" }
+        ? {
+            borderColor: "#4ade80",
+            glow: "shadow-[0_0_20px_-10px_rgba(74,222,128,0.3)] hover:shadow-[0_0_30px_-5px_rgba(74,222,128,0.4)]",
+            text: "text-green-400"
+        }
         : match.sport === "basketball"
-            ? { border: "border-l-orange-500", glow: "shadow-[0_0_20px_-10px_rgba(249,115,22,0.3)]", text: "text-orange-500" }
-            : { border: "border-l-yellow-500", glow: "shadow-[0_0_20px_-10px_rgba(234,179,8,0.3)]", text: "text-yellow-500" };
+            ? {
+                borderColor: "#fb923c",
+                glow: "shadow-[0_0_20px_-10px_rgba(251,146,60,0.3)] hover:shadow-[0_0_30px_-5px_rgba(251,146,60,0.4)]",
+                text: "text-orange-400"
+            }
+            : {
+                borderColor: "#facc15",
+                glow: "shadow-[0_0_20px_-10px_rgba(250,204,21,0.3)] hover:shadow-[0_0_30px_-5px_rgba(250,204,21,0.4)]",
+                text: "text-yellow-400"
+            };
 
     return (
-        <Card className={cn(
-            "relative overflow-hidden bg-black/40 backdrop-blur-xl border-white/10 border-l-[3px]",
-            sportDetails.border,
-            "hover:border-white/20 transition-all duration-300 group h-full flex flex-col justify-between",
-            sportDetails.glow
-        )}>
+        <Card
+            style={{ borderLeftColor: sportDetails.borderColor }}
+            className={cn(
+                "relative overflow-hidden bg-black/40 backdrop-blur-xl border border-white/10 border-solid border-l-[3px]",
+                "transition-all duration-500 group h-full flex flex-col justify-between",
+                "hover:border-white/20 hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-2xl hover:shadow-primary/5",
+                sportDetails.glow
+            )}>
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none" />
 
             <CardContent className="p-5 relative z-10 space-y-5">
@@ -141,11 +154,10 @@ export function MatchCard({ match }: MatchCardProps) {
                                     {(() => {
                                         const now = new Date();
                                         const matchDateStr = match.date;
-                                        const todayStr = now.toISOString().split('T')[0];
-
+                                        const todayStr = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
                                         const tomorrowDate = new Date(now);
                                         tomorrowDate.setDate(now.getDate() + 1);
-                                        const tomorrowStr = tomorrowDate.toISOString().split('T')[0];
+                                        const tomorrowStr = [tomorrowDate.getFullYear(), String(tomorrowDate.getMonth() + 1).padStart(2, '0'), String(tomorrowDate.getDate()).padStart(2, '0')].join('-');
 
                                         if (matchDateStr === todayStr) return "Aujourd'hui";
                                         if (matchDateStr === tomorrowStr) return "Demain";

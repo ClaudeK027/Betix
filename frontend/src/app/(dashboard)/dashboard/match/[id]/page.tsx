@@ -196,11 +196,13 @@ export default function MatchAnalysisPage({ params }: { params: Promise<{ id: st
                         country: "International"
                     },
                     homeTeam: {
+                        id: matchData.home_team.id,
                         name: matchData.home_team.name,
                         short: matchData.home_team.code || matchData.home_team.name.substring(0, 3).toUpperCase(),
                         logo: matchData.home_team.logo
                     },
                     awayTeam: {
+                        id: matchData.away_team.id,
                         name: matchData.away_team.name,
                         short: matchData.away_team.code || matchData.away_team.name.substring(0, 3).toUpperCase(),
                         logo: matchData.away_team.logo
@@ -623,7 +625,10 @@ export default function MatchAnalysisPage({ params }: { params: Promise<{ id: st
                             <CardContent className="space-y-6 pt-8 pb-10 px-8">
                                 {(() => {
                                     const h2h = match.aiAudit?.h2h;
-                                    if (!h2h || Object.keys(h2h).length === 0 || h2h.summary === "No H2H found") {
+                                    const noH2H = !h2h || Object.keys(h2h).length === 0
+                                        || h2h.summary === "No H2H found"
+                                        || (typeof h2h.summary === 'object' && h2h.summary && Object.keys(h2h.summary).length === 0);
+                                    if (noH2H) {
                                         return (
                                             <div className="py-12 flex items-center justify-center">
                                                 <span className="text-sm text-zinc-600 font-medium">Pas encore disponible</span>
@@ -633,12 +638,15 @@ export default function MatchAnalysisPage({ params }: { params: Promise<{ id: st
 
                                     // Déterminer qui est A et B par rapport à Home/Away
                                     const isTennis = match.sport === 'tennis';
-                                    // Les IDs home/away sont injectés dans le h2h par le backend
-                                    const isHomeA = isTennis
-                                        ? (h2h.home_player_id != null && (h2h.summary?.player_a_id === h2h.home_player_id))
-                                        : (h2h.home_team_id != null && h2h.team_a_id === h2h.home_team_id);
+
+                                    // Source 1: IDs depuis le match (public.matches → home_team.id)
+                                    // Source 2: IDs injectés dans h2h par data_aggregation (fallback pour anciens audits)
+                                    const homeId = match.homeTeam.id
+                                        ?? (isTennis ? h2h.home_player_id : h2h.home_team_id);
 
                                     const tennisH2h = isTennis ? (h2h.summary || {}) : null;
+                                    const h2hTeamAId = isTennis ? tennisH2h?.player_a_id : h2h.team_a_id;
+                                    const isHomeA = homeId != null && h2hTeamAId === homeId;
 
                                     const homeWins = Number(isTennis
                                         ? (isHomeA ? tennisH2h?.total_wins_a : tennisH2h?.total_wins_b)
@@ -722,7 +730,7 @@ export default function MatchAnalysisPage({ params }: { params: Promise<{ id: st
                                                     <div className="absolute -top-10 -right-10 size-32 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
                                                     <span className="block text-[10px] uppercase tracking-widest text-white/40 mb-2 font-bold">Dernière Confrontation</span>
                                                     <span className="text-2xl font-black text-white tracking-tight">{tennisH2h.last_score}</span>
-                                                    <span className="block text-xs text-muted-foreground mt-2 uppercase tracking-wide">Gagné par {tennisH2h.last_winner_id === h2h.home_player_id ? "Domicile" : "Extérieur"} ({tennisH2h.last_meeting_date})</span>
+                                                    <span className="block text-xs text-muted-foreground mt-2 uppercase tracking-wide">Gagné par {tennisH2h.last_winner_id === homeId ? "Domicile" : "Extérieur"} ({tennisH2h.last_meeting_date})</span>
                                                 </div>
                                             )}
                                         </div>
