@@ -139,7 +139,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: error?.message || null };
     }, [supabase]);
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+    const appUrl = (typeof window !== 'undefined' ? window.location.origin : '') || process.env.NEXT_PUBLIC_APP_URL || '';
 
     const signInWithGoogle = useCallback(async () => {
         logger.info("[AuthProvider] Initiating Google OAuth...");
