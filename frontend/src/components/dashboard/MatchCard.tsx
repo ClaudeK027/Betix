@@ -41,7 +41,7 @@ export function MatchCard({ match }: MatchCardProps) {
         <Card
             style={{ borderLeftColor: sportDetails.borderColor }}
             className={cn(
-                "relative overflow-hidden bg-black/40 backdrop-blur-xl border border-white/10 border-l-[3px] border-l-solid",
+                "relative overflow-hidden bg-black/40 backdrop-blur-xl border border-white/10 border-solid border-l-[3px]",
                 "transition-all duration-500 group h-full flex flex-col justify-between",
                 "hover:border-white/20 hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-2xl hover:shadow-primary/5",
                 sportDetails.glow
