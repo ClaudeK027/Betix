@@ -68,11 +68,11 @@ function LoginForm() {
     return (
         <AccessTerminal type="login">
             {/* OAuth */}
-            <div className="space-y-3 mb-8">
+            <div className="space-y-3 mb-5 sm:mb-8">
                 <Button
                     variant="outline"
                     disabled={isLoading}
-                    className="w-full h-11 bg-white hover:bg-neutral-100 text-black border-0 rounded-xl transition-all duration-300 gap-3 font-medium text-sm"
+                    className="w-full h-10 sm:h-11 bg-white hover:bg-neutral-100 text-black border-0 rounded-xl transition-all duration-300 gap-3 font-medium text-sm"
                     onClick={async () => {
                         setIsLoading(true);
                         toast.info("Initialisation de l'accès Google...");
@@ -93,14 +93,14 @@ function LoginForm() {
                 </Button>
             </div>
 
-            <div className="relative mb-8">
+            <div className="relative mb-5 sm:mb-8">
                 <Separator className="bg-white/10" />
                 <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-black px-4 text-xs font-medium text-neutral-500">
                     ou
                 </span>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 <BiometricInput
                     label="Adresse e-mail"
                     type="email"
@@ -163,7 +163,7 @@ function LoginForm() {
 
             </form>
 
-            <div className="text-center mt-8">
+            <div className="text-center mt-5 sm:mt-8">
                 <p className="text-sm text-neutral-500">
                     Pas encore de compte ?{" "}
                     <Link href="/signup" className="text-white hover:underline transition-colors ml-1 font-medium">
