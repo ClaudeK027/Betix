@@ -113,6 +113,12 @@ class TennisMatchUpserter:
             
         # --- B. STATUS (avec normalisation) ---
         raw_status = raw.get("event_status", "")
+        # API-Tennis renvoie parfois des codes numériques au lieu de texte
+        # "1" = Not Started, "2" = In Progress, "3" = Finished, "6" = Postponed, "7" = Cancelled
+        NUMERIC_STATUS_MAP = {"1": "notstarted", "2": "live", "3": "finished", "4": "postponed",
+                              "5": "cancelled", "6": "postponed", "7": "cancelled", "8": "walkover", "0": "notstarted"}
+        if raw_status in NUMERIC_STATUS_MAP:
+            raw_status = NUMERIC_STATUS_MAP[raw_status]
         normalized = raw_status.lower().replace(" ", "").replace("-", "")  # "Walk Over" -> "walkover"
         
         is_live = str(raw.get("event_live", "0")) == "1"
