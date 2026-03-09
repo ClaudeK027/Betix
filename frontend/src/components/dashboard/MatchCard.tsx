@@ -55,39 +55,40 @@ export function MatchCard({ match }: MatchCardProps) {
 
             <CardContent className="p-5 relative z-10 space-y-5">
                 {/* Header: League & Status */}
-                <div className="flex items-start justify-between mb-3 relative">
-                    {/* League Name - Reduced size to fit long names */}
-                    <div className="flex items-start gap-1.5 sm:gap-2 text-[8px] min-[400px]:text-[9px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-widest leading-tight w-[40%] sm:w-auto">
-                        <SportIcon sport={match.sport} size={12} className={cn("shrink-0 sm:size-[14px] mt-0.5 sm:mt-0", sportDetails.text)} />
-                        <span>{league?.name}</span>
+                <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-1 mb-3">
+                    {/* League Name - Fluid Left */}
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-[9px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-widest leading-tight w-full xs:w-auto flex-1 min-w-[120px]">
+                        <SportIcon sport={match.sport} size={12} className={cn("shrink-0 sm:size-[14px]", sportDetails.text)} />
+                        <span className="truncate">{league?.name}</span>
                     </div>
 
-                    {/* Status Badge (Centered, Elevated higher than before) */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-20">
-                        {isLive ? (
-                            <Badge className="bg-red-500/90 hover:bg-red-500 text-white border-0 px-2 py-0 text-[8px] sm:text-[10px] font-black tracking-widest shadow-lg shadow-red-500/20 backdrop-blur-md animate-pulse">
-                                LIVE
-                            </Badge>
-                        ) : match.status === "imminent" ? (
-                            <Badge className="bg-amber-500/90 hover:bg-amber-500 text-white border-0 px-2 py-0 text-[8px] sm:text-[10px] font-black tracking-widest shadow-lg shadow-amber-500/20 backdrop-blur-md animate-pulse">
-                                IMMINENT
-                            </Badge>
-                        ) : isFinished ? (
-                            <Badge variant="outline" className="bg-neutral-900/60 border-white/10 text-neutral-400 px-2 py-0 text-[8px] sm:text-[10px] font-black tracking-widest backdrop-blur-md">
-                                TERMINÉ
-                            </Badge>
-                        ) : (
-                            <Badge className="bg-blue-600/90 hover:bg-blue-600 text-white border-0 px-2 py-0 text-[8px] sm:text-[10px] font-black tracking-widest shadow-lg shadow-blue-500/20 backdrop-blur-md">
-                                PROCHAINEMENT
-                            </Badge>
-                        )}
-                    </div>
+                    {/* Badges Container - Fluid Right */}
+                    <div className="flex items-center justify-end gap-2 shrink-0">
+                        {/* Status Badge */}
+                        <div className="flex flex-col items-center">
+                            {isLive ? (
+                                <Badge className="bg-red-500/90 hover:bg-red-500 text-white border-0 px-2 py-0 text-[9px] sm:text-[10px] font-black tracking-widest shadow-lg shadow-red-500/20 backdrop-blur-md animate-pulse">
+                                    LIVE
+                                </Badge>
+                            ) : match.status === "imminent" ? (
+                                <Badge className="bg-amber-500/90 hover:bg-amber-500 text-white border-0 px-2 py-0 text-[9px] sm:text-[10px] font-black tracking-widest shadow-lg shadow-amber-500/20 backdrop-blur-md animate-pulse">
+                                    IMMINENT
+                                </Badge>
+                            ) : isFinished ? (
+                                <Badge variant="outline" className="bg-neutral-900/60 border-white/10 text-neutral-400 px-2 py-0 text-[9px] sm:text-[10px] font-black tracking-widest backdrop-blur-md">
+                                    TERMINÉ
+                                </Badge>
+                            ) : (
+                                <Badge className="bg-blue-600/90 hover:bg-blue-600 text-white border-0 px-2 py-0 text-[9px] sm:text-[10px] font-black tracking-widest shadow-lg shadow-blue-500/20 backdrop-blur-md">
+                                    PROCHAINEMENT
+                                </Badge>
+                            )}
+                        </div>
 
-                    {/* Prediction Badge (Right) */}
-                    <div className="flex items-center justify-end max-w-[35%] sm:max-w-[40%]">
+                        {/* Prediction Badge */}
                         {topPrediction && (
                             <Badge className={`
-                                    text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 h-5 border truncate
+                                    text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 h-5 border truncate shrink-0
                                     ${topPrediction.level === "safe"
                                     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_10px_-4px_rgba(16,185,129,0.5)]"
                                     : topPrediction.level === "value"
@@ -103,11 +104,11 @@ export function MatchCard({ match }: MatchCardProps) {
                 </div>
 
                 {/* Match Content */}
-                <div className="flex items-center justify-between gap-2 sm:gap-4">
+                <div className="flex items-center justify-between gap-1 sm:gap-4">
                     {/* Home */}
-                    <div className="flex-1 flex items-center gap-2 sm:gap-4 min-w-0">
+                    <div className="flex-1 flex items-center gap-1.5 sm:gap-4 min-w-0">
                         <div className={cn(
-                            "size-12 sm:size-16 bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-inner transition-all duration-500",
+                            "size-10 sm:size-16 bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-inner transition-all duration-500",
                             match.sport === 'tennis' ? "rounded-xl" : "rounded-full"
                         )}>
                             {match.homeTeam.logo ? (
@@ -127,7 +128,7 @@ export function MatchCard({ match }: MatchCardProps) {
                                 <span className="text-[10px] sm:text-xs font-bold text-muted-foreground">{match.homeTeam.short}</span>
                             )}
                         </div>
-                        <span className="text-xs sm:text-sm font-semibold truncate text-white">{match.homeTeam.name}</span>
+                        <span className="text-[11px] min-[400px]:text-xs sm:text-sm font-semibold line-clamp-2 leading-tight text-white">{match.homeTeam.name}</span>
                     </div>
 
                     {/* Score / Time */}
@@ -174,10 +175,10 @@ export function MatchCard({ match }: MatchCardProps) {
                     </div>
 
                     {/* Away */}
-                    <div className="flex-1 flex items-center justify-end gap-2 sm:gap-4 min-w-0">
-                        <span className="text-xs sm:text-sm font-semibold truncate text-white text-right">{match.awayTeam.name}</span>
+                    <div className="flex-1 flex items-center justify-end gap-1.5 sm:gap-4 min-w-0">
+                        <span className="text-[11px] min-[400px]:text-xs sm:text-sm font-semibold line-clamp-2 leading-tight text-white text-right">{match.awayTeam.name}</span>
                         <div className={cn(
-                            "size-12 sm:size-16 bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-inner transition-all duration-500",
+                            "size-10 sm:size-16 bg-neutral-900 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-inner transition-all duration-500",
                             match.sport === 'tennis' ? "rounded-xl" : "rounded-full"
                         )}>
                             {match.awayTeam.logo ? (
