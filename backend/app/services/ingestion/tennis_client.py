@@ -209,12 +209,17 @@ class TennisClient(BaseSportClient):
 
         # 3. Status Mapping (Logic Robuste)
         raw_status = raw.get("event_status", "")
+        # API-Tennis renvoie parfois des codes numériques ("1"=Not Started, "3"=Finished, etc.)
+        NUMERIC_STATUS_MAP = {"1": "Not Started", "2": "Live", "3": "Finished", "4": "Postponed",
+                              "5": "Cancelled", "6": "Postponed", "7": "Cancelled", "8": "Walkover", "0": "Not Started"}
+        if raw_status in NUMERIC_STATUS_MAP:
+            raw_status = NUMERIC_STATUS_MAP[raw_status]
         is_live = str(raw.get("event_live", "0")) == "1"
         winner_raw = raw.get("event_winner")
         final_res = raw.get("event_final_result", "")
-        
+
         status = self.status_map.get(raw_status, "scheduled")
-        
+
         # Règle de fin absolue
         if raw_status == "Finished" or (winner_raw and final_res and final_res != "-"):
             status = "finished"
