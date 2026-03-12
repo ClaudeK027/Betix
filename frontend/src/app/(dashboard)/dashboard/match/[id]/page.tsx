@@ -266,10 +266,20 @@ export default function MatchAnalysisPage({ params }: { params: Promise<{ id: st
         <div className={`space-y-6 sm:space-y-8 animate-fade-in pb-20 transition-opacity duration-700 ${mounted ? "opacity-100" : "opacity-0"}`}>
 
             {/* Back Navigation */}
-            <Link href="/dashboard" className="inline-flex items-center gap-2 text-muted-foreground hover:text-white transition-colors group">
+            <button
+                onClick={() => {
+                    if (window.history.state && window.history.state.idx > 0) {
+                        window.history.back();
+                    } else {
+                        // Fallback in case there is no history
+                        window.location.href = '/dashboard' + (match.sport ? `?sport=${match.sport}` : '');
+                    }
+                }}
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-white transition-colors group"
+            >
                 <ArrowLeft className="size-4 group-hover:-translate-x-1 transition-transform" />
                 <span>Retour aux matchs</span>
-            </Link>
+            </button>
 
             {/* 1. HERO SECTION (The Stadium) */}
             <MatchHero match={match} />

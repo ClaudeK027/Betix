@@ -226,7 +226,7 @@ export function MatchCard({ match }: MatchCardProps) {
                                 "relative z-10 hover:bg-neutral-950/80"
                             )}
                         >
-                            <Link href={`/dashboard/match/${match.id}`} className="gap-2 flex items-center">
+                            <Link href={`/dashboard/match/${match.id}?sport=${match.sport}`} className="gap-2 flex items-center">
                                 <span className="font-bold text-[11px] uppercase tracking-wider text-white/50 group-hover/btn:text-white transition-colors">Voir l'analyse</span>
                                 <Sparkles className="size-3.5 text-primary animate-pulse group-hover/btn:scale-110 transition-transform" />
                             </Link>

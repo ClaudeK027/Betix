@@ -52,7 +52,7 @@ export function MissionDossier({ user, open, onClose, onSubscriptionCancelled }:
             setCancelConfirm(false);
             setCancelResult(null);
 
-            // Fetch Mollie billing details
+            // Fetch Stripe billing details
             setBillingInfo(null);
             setBillingLoading(true);
             getSubscriptionDetailsAction(user.id).then(result => {
@@ -193,62 +193,62 @@ export function MissionDossier({ user, open, onClose, onSubscriptionCancelled }:
                             </div>
                         </div>
 
-                        {/* Mollie Billing Intel */}
+                        {/* Stripe Billing Intel */}
                         {billingLoading && (
                             <div className="flex items-center gap-2 mt-3 text-neutral-500">
                                 <Loader2 className="size-3 animate-spin" />
-                                <span className="text-[10px] font-mono">FETCHING_MOLLIE_DATA...</span>
+                                <span className="text-[10px] font-mono">FETCHING_STRIPE_DATA...</span>
                             </div>
                         )}
 
-                        {billingInfo?.mollie && (
+                        {billingInfo?.stripe && (
                             <div className="mt-3 p-3 rounded-xl bg-blue-500/5 border border-blue-500/15 space-y-2">
-                                <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Mollie Billing</p>
+                                <p className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">Stripe Billing</p>
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
                                         <p className="text-[9px] font-mono text-neutral-500">STATUS</p>
                                         <p className={cn("text-xs font-bold uppercase",
-                                            billingInfo.mollie.status === 'active' ? "text-emerald-400" :
-                                            billingInfo.mollie.status === 'canceled' ? "text-red-400" : "text-amber-400"
+                                            billingInfo.stripe.status === 'active' ? "text-emerald-400" :
+                                            billingInfo.stripe.status === 'canceled' ? "text-red-400" : "text-amber-400"
                                         )}>
-                                            {billingInfo.mollie.status}
+                                            {billingInfo.stripe.status}
                                         </p>
                                     </div>
                                     <div>
                                         <p className="text-[9px] font-mono text-neutral-500">MONTANT</p>
                                         <p className="text-xs font-bold text-white">
-                                            {billingInfo.mollie.amount} {billingInfo.mollie.currency} / {billingInfo.mollie.interval}
+                                            {billingInfo.stripe.amount} {billingInfo.stripe.currency} / {billingInfo.stripe.interval}
                                         </p>
                                     </div>
                                     <div>
                                         <p className="text-[9px] font-mono text-neutral-500">CREE LE</p>
                                         <p className="text-xs text-neutral-300">
-                                            {new Date(billingInfo.mollie.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                            {new Date(billingInfo.stripe.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
                                         </p>
                                     </div>
-                                    {billingInfo.mollie.nextPaymentDate ? (
+                                    {billingInfo.stripe.currentPeriodEnd ? (
                                         <div>
                                             <p className="text-[9px] font-mono text-neutral-500">PROCHAIN PRELEVEMENT</p>
                                             <p className="text-xs font-bold text-amber-400">
-                                                {new Date(billingInfo.mollie.nextPaymentDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                {new Date(billingInfo.stripe.currentPeriodEnd).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
                                             </p>
                                         </div>
-                                    ) : billingInfo.mollie.canceledAt ? (
+                                    ) : billingInfo.stripe.canceledAt ? (
                                         <div>
                                             <p className="text-[9px] font-mono text-neutral-500">RESILIE LE</p>
                                             <p className="text-xs text-red-400">
-                                                {new Date(billingInfo.mollie.canceledAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                {new Date(billingInfo.stripe.canceledAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
                                             </p>
                                         </div>
                                     ) : null}
                                 </div>
-                                <p className="text-[9px] font-mono text-neutral-600 pt-1">{billingInfo.mollie.id}</p>
+                                <p className="text-[9px] font-mono text-neutral-600 pt-1">{billingInfo.stripe.id}</p>
                             </div>
                         )}
 
-                        {billingInfo && !billingInfo.mollie && billingInfo.source === 'manual_gift' && (
+                        {billingInfo && !billingInfo.stripe && billingInfo.source === 'manual_gift' && (
                             <div className="mt-3 p-2 rounded-lg bg-purple-500/5 border border-purple-500/15">
-                                <p className="text-[10px] font-mono text-purple-400">Abonnement offert manuellement (pas de facturation Mollie)</p>
+                                <p className="text-[10px] font-mono text-purple-400">Abonnement offert manuellement (pas de facturation Stripe)</p>
                             </div>
                         )}
 
@@ -270,7 +270,7 @@ export function MissionDossier({ user, open, onClose, onSubscriptionCancelled }:
                                     <AlertTriangle className="size-4 text-red-400 mt-0.5 shrink-0" />
                                     <p className="text-xs text-red-300 leading-relaxed">
                                         Résilier l&apos;abonnement de <strong>{user.name}</strong> ?
-                                        L&apos;accès premium sera coupé immédiatement et l&apos;abonnement Mollie annulé.
+                                        L&apos;accès premium sera coupé immédiatement et l&apos;abonnement Stripe annulé.
                                     </p>
                                 </div>
                                 <div className="flex gap-2">

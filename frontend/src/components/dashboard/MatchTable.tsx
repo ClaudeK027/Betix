@@ -277,7 +277,7 @@ export function MatchTable({ items }: MatchTableProps) {
 
                                                 {/* Action */}
                                                 <div className="flex items-center justify-end">
-                                                    <Link href={`/dashboard/match/${match.id}`} className="w-full sm:w-auto">
+                                                    <Link href={`/dashboard/match/${match.id}?sport=${match.sport}`} className="w-full sm:w-auto">
                                                         <Button className="w-full gap-2 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20" variant="outline">
                                                             Voir l&apos;analyse complète <ExternalLink className="size-3.5" />
                                                         </Button>

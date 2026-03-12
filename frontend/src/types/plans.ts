@@ -32,7 +32,7 @@ export interface Plan {
     trial_price: number | null;
     trial_days: number | null;
     strikethrough_price: number | null;
-    mollie_plan_id: string | null;
+    stripe_price_id: string | null;
     is_active: boolean;
     position: number;
     badge_text: string | null;

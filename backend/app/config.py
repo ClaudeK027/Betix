@@ -41,8 +41,8 @@ class Settings(BaseSettings):
     # --- OpenWeatherMap ---
     OPENWEATHER_KEY: str = ""
 
-    # --- Mollie ---
-    MOLLIE_API_KEY: str = ""
+    # --- Stripe ---
+    STRIPE_SECRET_KEY: str = ""
 
     # --- Ingestion ---
     CURRENT_SEASON: int = 2024

@@ -17,7 +17,7 @@ export function FAQSection() {
         },
         {
             q: "Quels moyens de paiement acceptez-vous ?",
-            a: "Nous acceptons toutes les cartes bancaires majeures (Visa, Mastercard, Amex) via Mollie, une plateforme de paiement européenne certifiée et sécurisée. Vos données sont chiffrées et protégées."
+            a: "Nous acceptons toutes les cartes bancaires majeures (Visa, Mastercard, Amex) via Stripe, leader mondial du paiement en ligne, certifié et sécurisé. Vos données sont chiffrées et protégées."
         },
         {
             q: "Y a-t-il une garantie de résultats ?",

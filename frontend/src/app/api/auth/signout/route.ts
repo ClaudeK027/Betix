@@ -24,8 +24,13 @@ export async function POST(req: NextRequest) {
     // The client-side window.location.replace("/login") is sufficient to clear the 
     // current user's router cache.
 
-    // 5. Return redirect to login
-    return NextResponse.redirect(new URL("/login", req.url), {
+    // 5. Construct redirect URL, ensuring HTTP for local development
+    const requestUrl = new URL(req.url);
+    if (requestUrl.hostname === "localhost" || requestUrl.hostname === "127.0.0.1") {
+        requestUrl.protocol = "http:";
+    }
+
+    return NextResponse.redirect(new URL("/login", requestUrl.origin), {
         status: 302,
     });
 }

@@ -222,7 +222,7 @@ export default async function LandingPage() {
                         {/* 2. Haut Niveau de Sécurité (Le radar) */}
                         <BentoGridItem
                             title="Haut Niveau de Sécurité"
-                            description="Transactions cryptées (Stripe/Mollie) et protection absolue de vos données personnelles."
+                            description="Transactions cryptées (Stripe) et protection absolue de vos données personnelles."
                             header={
                                 <div className="flex-1 w-full h-full min-h-[12rem] md:min-h-full rounded-xl flex items-center justify-center relative overflow-hidden group">
                                     {/* Radar Background */}
