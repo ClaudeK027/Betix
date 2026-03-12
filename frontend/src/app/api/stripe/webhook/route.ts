@@ -18,9 +18,8 @@ import { stripe, calculateNextPeriodEnd } from '@/lib/stripe';
 import Stripe from 'stripe';
 
 // Stripe envoie du raw body, pas du JSON parsé
-export const config = {
-    api: { bodyParser: false },
-};
+// Dans le App Router, utiliser req.text() suffit pour lire le raw body
+// Pas besoin de l'ancienne config `api: { bodyParser: false }`
 
 export async function POST(req: NextRequest) {
     try {
@@ -209,12 +208,12 @@ async function handleSubscriptionUpdated(subscription: any) {
 
     let status: string;
     switch (subscription.status) {
-        case 'active':     status = 'active'; break;
-        case 'trialing':   status = 'trialing'; break;
-        case 'past_due':   status = 'past_due'; break;
+        case 'active': status = 'active'; break;
+        case 'trialing': status = 'trialing'; break;
+        case 'past_due': status = 'past_due'; break;
         case 'canceled':
-        case 'unpaid':     status = 'canceled'; break;
-        default:           status = 'active';
+        case 'unpaid': status = 'canceled'; break;
+        default: status = 'active';
     }
 
     const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
