@@ -62,7 +62,7 @@ export default function PrivacyPage() {
                         <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-sm">
                             <p>
                                 <strong className="text-white">Nous ne vendons, n'échangeons, ni ne louons vos informations personnelles à des tiers.</strong><br /><br />
-                                Nous pouvons être amenés à partager des informations de facturation limitées avec nos processeurs de paiement sécurisés (ex. Stripe, Mollie) afin de gérer vos abonnements, strictement dans le cadre imposé par la réglementation financière et européenne (RGPD).
+                                Nous pouvons être amenés à partager des informations de facturation limitées avec notre processeur de paiement sécurisé (Stripe) afin de gérer vos abonnements, strictement dans le cadre imposé par la réglementation financière et européenne (RGPD).
                             </p>
                         </div>
                     </section>

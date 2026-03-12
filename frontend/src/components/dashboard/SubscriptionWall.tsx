@@ -135,7 +135,7 @@ export function SubscriptionWall() {
                                     badgeColor,
                                     features: featuresList,
                                     cta,
-                                    ctaLink: `/api/mollie/checkout?planId=${dbPlan.mollie_plan_id || dbPlan.id}`,
+                                    ctaLink: `/api/stripe/checkout?planId=${dbPlan.stripe_price_id || dbPlan.id}`,
                                     promo: dbPlan.promo ? {
                                         price: dbPlan.promo.price,
                                         duration: dbPlan.promo.duration,

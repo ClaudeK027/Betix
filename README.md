@@ -21,7 +21,7 @@ Le dépôt contient deux composants majeurs, vivant de manière autonome et comm
 ### 1. 🖥️ Le Frontend (Next.js)
 Situé dans `/frontend`. C'est le portail utilisateur SaaS (Dashboard, Paywall).
 - **Stack** : Next.js 15 (App Router), React, Tailwind CSS, Shadcn UI.
-- **Rôle** : Servir la Landing Page ultra-optimisée SEO, gérer l'authentification MFA via Supabase, traiter les paiements avec Mollie en natif, et restituer l'analyse IA via une interface (UI) premium et interactive.
+- **Rôle** : Servir la Landing Page ultra-optimisée SEO, gérer l'authentification MFA via Supabase, traiter les paiements avec Stripe, et restituer l'analyse IA via une interface (UI) premium et interactive.
 - **Philosophie** : Data Fetching sévère côté serveur (Server Components). Toute modification du flux d'accès (Premium Gate) se gère à la racine des layouts pour bloquer technétiquement la vue.
 - **En savoir plus** : [Consulter la documentation dédiée Frontend](./frontend/README.md).
 
@@ -49,12 +49,12 @@ Le backend sépare ses calculs en deux schémas de base de données :
 
 ---
 
-## 💳 Monétisation (Mollie)
+## 💳 Monétisation (Stripe)
 
 La gestion des abonnements est centralisée de bout-en-bout :
-- L'utilisateur final achète l'accès via le client (Routing Next.js).
-- Le backend Supabase webhook écoute `POST /api/mollie/webhook`.
-- À chaque récurrence d'abonnement, le webhook authentifie la demande, allonge la date d'échéance `current_period_end` dans la table des `subscriptions`, débloquant instantanément le Paywall Next.js (grâce aux abonnements Realtime/SSR Supabase).
+- L'utilisateur final achète l'accès via Stripe Checkout (Routing Next.js).
+- Le backend Supabase webhook écoute `POST /api/stripe/webhook`.
+- À chaque récurrence d'abonnement, le webhook vérifie la signature Stripe, allonge la date d'échéance `current_period_end` dans la table des `subscriptions`, débloquant instantanément le Paywall Next.js (grâce aux abonnements Realtime/SSR Supabase).
 
 ---
 
@@ -64,13 +64,13 @@ La gestion des abonnements est centralisée de bout-en-bout :
 - Node.js (v20+)
 - Python (v3.12+)
 - Une instance **Supabase** (URL et Clés).
-- Des clés API (API-Sports, API-Tennis, Anthropic/Google Gemini, API Mollie Test).
+- Des clés API (API-Sports, API-Tennis, Anthropic/Google Gemini, Stripe).
 
 ### 1️⃣ Lancement du Frontend
 ```bash
 cd frontend
 npm install
-# Remplir le fichier .env (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, MOLLIE_API_KEY, etc.)
+# Remplir le fichier .env (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, STRIPE_SECRET_KEY, etc.)
 npm run dev
 ```
 

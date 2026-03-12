@@ -1,7 +1,7 @@
 'use server';
 
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { mollieClient } from "@/lib/mollie";
+import { stripe } from "@/lib/stripe";
 import { revalidatePath } from "next/cache";
 
 export async function getPlansAction() {
@@ -147,7 +147,7 @@ export async function updateAgentAction(agentId: string, data: UpdateAgentData) 
             // First check if a subscription exists
             const { data: existingSub } = await supabaseAdmin
                 .from('subscriptions')
-                .select('user_id, plan_id, mollie_subscription_id')
+                .select('user_id, plan_id, stripe_subscription_id')
                 .eq('user_id', agentId)
                 .single();
 
@@ -155,29 +155,16 @@ export async function updateAgentAction(agentId: string, data: UpdateAgentData) 
             if (data.plan_id) subUpdates.plan_id = data.plan_id;
             if (data.subscription_status) subUpdates.status = data.subscription_status;
 
-            // Si l'admin change le plan ET qu'un abonnement Mollie existe, l'annuler
-            if (data.plan_id && existingSub?.mollie_subscription_id && existingSub.plan_id !== data.plan_id) {
+            // Si l'admin change le plan ET qu'un abonnement Stripe existe, l'annuler
+            if (data.plan_id && existingSub?.stripe_subscription_id && existingSub.plan_id !== data.plan_id) {
                 try {
-                    const { data: profile } = await supabaseAdmin
-                        .from('profiles')
-                        .select('mollie_customer_id')
-                        .eq('id', agentId)
-                        .single();
-
-                    if (profile?.mollie_customer_id) {
-                        const { mollieClient } = await import('@/lib/mollie');
-                        await mollieClient.customerSubscriptions.cancel(
-                            existingSub.mollie_subscription_id,
-                            { customerId: profile.mollie_customer_id }
-                        );
-                        console.log(`[Admin Action] Cancelled Mollie subscription ${existingSub.mollie_subscription_id} for user ${agentId}`);
-                    }
-                } catch (mollieErr: any) {
-                    console.warn(`[Admin Action] Could not cancel Mollie subscription: ${mollieErr.message}`);
-                    // Continue — the subscription might already be cancelled
+                    await stripe.subscriptions.cancel(existingSub.stripe_subscription_id);
+                    console.log(`[Admin Action] Cancelled Stripe subscription ${existingSub.stripe_subscription_id} for user ${agentId}`);
+                } catch (stripeErr: any) {
+                    console.warn(`[Admin Action] Could not cancel Stripe subscription: ${stripeErr.message}`);
                 }
-                // Clear the mollie_subscription_id since admin is overriding
-                subUpdates.mollie_subscription_id = null;
+                // Clear the stripe_subscription_id since admin is overriding
+                subUpdates.stripe_subscription_id = null;
                 subUpdates.source = 'manual_gift';
             }
 
@@ -213,13 +200,13 @@ export async function updateAgentAction(agentId: string, data: UpdateAgentData) 
 }
 
 /**
- * Récupère les détails de facturation Mollie pour un utilisateur.
+ * Récupère les détails de facturation Stripe pour un utilisateur.
  */
 export async function getSubscriptionDetailsAction(userId: string) {
     try {
         const { data: subscription } = await supabaseAdmin
             .from('subscriptions')
-            .select('plan_id, status, mollie_subscription_id, current_period_end, source')
+            .select('plan_id, status, stripe_subscription_id, current_period_end, source')
             .eq('user_id', userId)
             .single();
 
@@ -227,8 +214,8 @@ export async function getSubscriptionDetailsAction(userId: string) {
             return { success: false, error: 'Aucun abonnement trouvé.' };
         }
 
-        // Si pas d'abonnement Mollie, retourner uniquement les données BDD
-        if (!subscription.mollie_subscription_id) {
+        // Si pas d'abonnement Stripe, retourner uniquement les données BDD
+        if (!subscription.stripe_subscription_id) {
             return {
                 success: true,
                 data: {
@@ -236,19 +223,15 @@ export async function getSubscriptionDetailsAction(userId: string) {
                     planId: subscription.plan_id,
                     dbStatus: subscription.status,
                     currentPeriodEnd: subscription.current_period_end,
-                    mollie: null,
+                    stripe: null,
                 }
             };
         }
 
-        // Récupérer le mollie_customer_id
-        const { data: profile } = await supabaseAdmin
-            .from('profiles')
-            .select('mollie_customer_id')
-            .eq('id', userId)
-            .single();
+        // Appeler Stripe pour les détails live
+        try {
+            const stripeSub = await stripe.subscriptions.retrieve(subscription.stripe_subscription_id) as any;
 
-        if (!profile?.mollie_customer_id) {
             return {
                 success: true,
                 data: {
@@ -256,37 +239,32 @@ export async function getSubscriptionDetailsAction(userId: string) {
                     planId: subscription.plan_id,
                     dbStatus: subscription.status,
                     currentPeriodEnd: subscription.current_period_end,
-                    mollie: null,
+                    stripe: {
+                        id: stripeSub.id,
+                        status: stripeSub.status,
+                        amount: ((stripeSub.items.data[0]?.price?.unit_amount || 0) / 100).toFixed(2),
+                        currency: stripeSub.currency.toUpperCase(),
+                        interval: stripeSub.items.data[0]?.price?.recurring?.interval || 'month',
+                        intervalCount: stripeSub.items.data[0]?.price?.recurring?.interval_count || 1,
+                        currentPeriodEnd: new Date(stripeSub.current_period_end * 1000).toISOString(),
+                        createdAt: new Date(stripeSub.created * 1000).toISOString(),
+                        canceledAt: stripeSub.canceled_at ? new Date(stripeSub.canceled_at * 1000).toISOString() : null,
+                    },
+                }
+            };
+        } catch (stripeErr: any) {
+            console.warn(`[Admin Action] Could not fetch Stripe subscription: ${stripeErr.message}`);
+            return {
+                success: true,
+                data: {
+                    source: subscription.source,
+                    planId: subscription.plan_id,
+                    dbStatus: subscription.status,
+                    currentPeriodEnd: subscription.current_period_end,
+                    stripe: null,
                 }
             };
         }
-
-        // Appeler Mollie pour les détails live
-        const custId = profile.mollie_customer_id.trim();
-        const subId = subscription.mollie_subscription_id.trim();
-
-        const mollieSub = await mollieClient.customerSubscriptions.get(subId, { customerId: custId });
-
-        return {
-            success: true,
-            data: {
-                source: subscription.source,
-                planId: subscription.plan_id,
-                dbStatus: subscription.status,
-                currentPeriodEnd: subscription.current_period_end,
-                mollie: {
-                    id: mollieSub.id,
-                    status: mollieSub.status,
-                    amount: mollieSub.amount.value,
-                    currency: mollieSub.amount.currency,
-                    interval: mollieSub.interval,
-                    description: mollieSub.description,
-                    createdAt: mollieSub.createdAt,
-                    nextPaymentDate: mollieSub.nextPaymentDate || null,
-                    canceledAt: mollieSub.canceledAt || null,
-                },
-            }
-        };
 
     } catch (error: any) {
         console.error("[Admin Action] getSubscriptionDetails Error:", error);
@@ -295,7 +273,7 @@ export async function getSubscriptionDetailsAction(userId: string) {
 }
 
 /**
- * Résilie l'abonnement d'un utilisateur : annule sur Mollie + passe en no_subscription.
+ * Résilie l'abonnement d'un utilisateur : annule sur Stripe + passe en no_subscription.
  * Coupure immédiate de l'accès premium.
  */
 export async function cancelSubscriptionAction(userId: string) {
@@ -305,7 +283,7 @@ export async function cancelSubscriptionAction(userId: string) {
         // 1. Récupérer l'abonnement actuel
         const { data: subscription, error: subError } = await supabaseAdmin
             .from('subscriptions')
-            .select('user_id, plan_id, status, mollie_subscription_id')
+            .select('user_id, plan_id, status, stripe_subscription_id')
             .eq('user_id', userId)
             .single();
 
@@ -317,35 +295,17 @@ export async function cancelSubscriptionAction(userId: string) {
             return { success: false, error: 'L\'utilisateur n\'a déjà aucun abonnement actif.' };
         }
 
-        // 2. Annuler sur Mollie si un abonnement récurrent existe
-        if (subscription.mollie_subscription_id) {
-            const { data: profile } = await supabaseAdmin
-                .from('profiles')
-                .select('mollie_customer_id')
-                .eq('id', userId)
-                .single();
-
-            if (!profile?.mollie_customer_id) {
-                return { success: false, error: `mollie_customer_id introuvable pour l'utilisateur ${userId}. Résiliation Mollie impossible.` };
-            }
-
-            const subId = subscription.mollie_subscription_id.trim();
-            const custId = profile.mollie_customer_id.trim();
-            console.log(`[Admin Action] Cancelling Mollie sub="${subId}" for customer="${custId}"`);
-
+        // 2. Annuler sur Stripe si un abonnement récurrent existe
+        if (subscription.stripe_subscription_id) {
             try {
-                await mollieClient.customerSubscriptions.cancel(
-                    subId,
-                    { customerId: custId }
-                );
-                console.log(`[Admin Action] Mollie subscription ${subscription.mollie_subscription_id} cancelled OK`);
-            } catch (mollieErr: any) {
-                const msg = mollieErr.message || '';
-                // Seule erreur acceptable : l'abo est déjà annulé côté Mollie
-                if (msg.includes('canceled') || msg.includes('cancelled')) {
-                    console.log(`[Admin Action] Mollie sub already cancelled, continuing DB cleanup`);
+                await stripe.subscriptions.cancel(subscription.stripe_subscription_id);
+                console.log(`[Admin Action] Stripe subscription ${subscription.stripe_subscription_id} cancelled OK`);
+            } catch (stripeErr: any) {
+                const msg = stripeErr.message || '';
+                if (msg.includes('canceled') || msg.includes('No such subscription')) {
+                    console.log(`[Admin Action] Stripe sub already cancelled, continuing DB cleanup`);
                 } else {
-                    return { success: false, error: `Échec annulation Mollie : ${msg}` };
+                    return { success: false, error: `Échec annulation Stripe : ${msg}` };
                 }
             }
         }
@@ -356,7 +316,7 @@ export async function cancelSubscriptionAction(userId: string) {
             .update({
                 plan_id: 'no_subscription',
                 status: 'canceled',
-                mollie_subscription_id: null,
+                stripe_subscription_id: null,
                 current_period_end: null,
             })
             .eq('user_id', userId);

@@ -215,11 +215,13 @@ class BasketballClient(BaseSportClient):
             "sport": self.sport,
             "league_name": league_info.get("name", "") if league_info else "",
             "home_team": {
+                "id": analytics_row.get("home_team_id"),
                 "name": home_info.get("name", ""),
                 "logo": home_info.get("logo_url", ""),
                 "code": home_info.get("short_name", ""),
             },
             "away_team": {
+                "id": analytics_row.get("away_team_id"),
                 "name": away_info.get("name", ""),
                 "logo": away_info.get("logo_url", ""),
                 "code": away_info.get("short_name", ""),

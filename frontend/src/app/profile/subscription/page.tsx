@@ -27,21 +27,22 @@ export default function SubscriptionPage() {
     const supabase = createClient();
     const [isCancelling, setIsCancelling] = useState(false);
 
-    // Auto-vérification après redirection Mollie
+    // Auto-vérification après redirection Stripe
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const status = params.get('status');
         const planId = params.get('planId');
+        const sessionId = params.get('session_id');
 
         if (status === 'success' && planId && !verifying) {
             setVerifying(true);
             const verify = async () => {
                 try {
                     toast.info('Vérification du paiement en cours...');
-                    const res = await fetch('/api/mollie/verify', {
+                    const res = await fetch('/api/stripe/verify', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ planId }),
+                        body: JSON.stringify({ planId, sessionId }),
                     });
                     const data = await res.json();
                     if (res.ok && data.verified) {
@@ -280,7 +281,7 @@ export default function SubscriptionPage() {
                                 badgeColor,
                                 features: featuresList,
                                 cta,
-                                ctaLink: `/api/mollie/checkout?planId=${dbPlan.mollie_plan_id || dbPlan.id}`,
+                                ctaLink: `/api/stripe/checkout?planId=${dbPlan.stripe_price_id || dbPlan.id}`,
                                 promo: dbPlan.promo ? {
                                     price: dbPlan.promo.price,
                                     duration: dbPlan.promo.duration,

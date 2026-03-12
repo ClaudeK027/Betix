@@ -11,7 +11,7 @@ Le frontend de BETIX est conçu pour être à la fois un outil marketing puissan
 - **Framework** : Next.js 15+ (App Router).
 - **Styling** : Tailwind CSS + shadcn/ui.
 - **Backend as a Service** : Supabase (Auth, Database, Storage).
-- **Payment Gateway** : Mollie.
+- **Payment Gateway** : Stripe.
 - **Déploiement cible** : Vercel.
 
 ### La Séparation Serveur / Client
@@ -63,20 +63,19 @@ Enveloppe toute l'application (dans `app/layout.tsx`).
 
 ---
 
-## 💳 4. Le Flux de Paiement (Mollie)
+## 💳 4. Le Flux de Paiement (Stripe)
 
-Contrairement à Stripe, Mollie a été implémenté via des APIs REST natives (sans dépendre de Webhooks frontend complexes gérés par le SDK).
+Stripe est intégré via le SDK officiel `stripe` et Stripe Checkout (mode subscription).
 
 ### Le Cycle d'Abonnement
 1. **L'utilisateur choisit un plan métier** via le `SubscriptionWall` ou la page Pricing.
-2. **Lien de Checkout** : Le bouton "S'abonner" redirige vers un route d'API interne : `/api/mollie/checkout?planId=X`.
-3. **Création du paiement (`checkout/route.ts`)** : Le backend vérifie le plan, contacte Mollie via API, génère un lien de paiement unique, et redirige l'utilisateur vers la page hébergée par Mollie.
+2. **Lien de Checkout** : Le bouton "S'abonner" appelle `/api/stripe/checkout` avec le `planId`.
+3. **Création de la session (`checkout/route.ts`)** : Le backend vérifie le plan, crée un Customer Stripe si nécessaire, puis crée une Checkout Session (`mode: 'subscription'`) et retourne l'URL de paiement.
 4. **Validation (Le Webhook `webhook/route.ts`)** :
-   - Mollie post à cette URL lorsque le paiement réussit.
+   - Stripe poste les événements (`checkout.session.completed`, `invoice.paid`, etc.) à cette URL avec vérification de signature.
    - Le script contourne le RLS via `supabase-admin`.
-   - Si c'est un premier paiement de séquence (`first`), il demande à Mollie de créer un abonnement récurrent (`customerSubscriptions.create`) pour ce client.
-   - L'abonnement est inséré en base avec la date `current_period_end`.
-5. **Accès immédiat** : Lors du retour sur Betix (page `/dashboard/subscription/success`), le `SubscriptionWall` consulte en temps réel la BDD (grâce à Supabase Realtime ou via un `router.refresh()`) et débloque le dashboard.
+   - L'abonnement est inséré/mis à jour en base avec la date `current_period_end` de Stripe.
+5. **Accès immédiat** : Lors du retour sur Betix (page `/profile/subscription?status=success`), la route `/api/stripe/verify` sert de fallback pour confirmer le paiement si le webhook n'a pas encore été reçu.
 
 ---
 

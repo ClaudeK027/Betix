@@ -71,6 +71,7 @@ BASKETBALL_STATUS_MAP = {
 # =============================================================================
 ANALYTICS_TO_PUBLIC_STATUS = {
     "scheduled": "upcoming",
+    "imminent": "imminent",
     "live": "live",
     "finished": "finished",
     "postponed": "postponed",

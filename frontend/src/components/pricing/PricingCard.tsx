@@ -103,7 +103,7 @@ export function PricingCard({ plan, variant, isCurrentPlan, subscriptionStatus }
 
         setIsCheckingOut(true);
         try {
-            const res = await fetch('/api/mollie/checkout', {
+            const res = await fetch('/api/stripe/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ planId: plan.id }),
@@ -117,14 +117,14 @@ export function PricingCard({ plan, variant, isCurrentPlan, subscriptionStatus }
                 return;
             }
 
-            // Plan gratuit : redirection directe sans Mollie
+            // Plan gratuit : redirection directe sans Stripe
             if (data.free && data.redirectUrl) {
                 window.location.href = data.redirectUrl;
                 return;
             }
 
             if (data.checkoutUrl) {
-                // Redirection directe vers Mollie, sans popup
+                // Redirection vers Stripe Checkout
                 window.location.href = data.checkoutUrl;
             }
         } catch (err) {
