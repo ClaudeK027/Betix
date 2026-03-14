@@ -5,7 +5,7 @@ import { ShieldCheck } from "lucide-react";
 export function TrustBadge() {
     return (
         <div className="relative group perspective-1000 size-48 mx-auto">
-            <div className="relative w-full h-full transition-transform duration-700 transform-style-3d group-hover:rotate-y-180 animate-float">
+            <div className="relative w-full h-full transition-transform duration-700 transform-style-3d md:group-hover:rotate-y-180 animate-float">
 
                 {/* Front Side */}
                 <div className="absolute inset-0 backface-hidden flex items-center justify-center">
@@ -13,9 +13,9 @@ export function TrustBadge() {
                         <div className="absolute inset-2 border border-dashed border-amber-500/50 rounded-full animate-spin-slow" />
                         <div className="flex flex-col items-center justify-center text-center p-4">
                             <ShieldCheck className="size-10 text-amber-500 mb-2" />
-                            <span className="text-xl font-black text-white uppercase tracking-tighter">30 DAYS</span>
-                            <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Money Back</span>
-                            <span className="text-[8px] text-neutral-400 mt-1">GUARANTEE</span>
+                            <span className="text-xl font-black text-white uppercase tracking-tighter">30 JOURS</span>
+                            <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Satisfait</span>
+                            <span className="text-[8px] text-neutral-400 mt-1">OU REMBOURSÉ</span>
                         </div>
                     </div>
                 </div>
@@ -26,8 +26,8 @@ export function TrustBadge() {
                         <div className="absolute inset-2 border border-dashed border-blue-500/50 rounded-full animate-reverse-spin-slow" />
                         <div className="flex flex-col items-center justify-center text-center p-4">
                             <span className="text-3xl font-black text-white">100%</span>
-                            <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mt-1">Risk Free</span>
-                            <span className="text-[8px] text-neutral-400 mt-1">TRY PREMIUM NOW</span>
+                            <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mt-1">Sans Risque</span>
+                            <span className="text-[8px] text-neutral-400 mt-1">ESSAYEZ PREMIUM</span>
                         </div>
                     </div>
                 </div>
