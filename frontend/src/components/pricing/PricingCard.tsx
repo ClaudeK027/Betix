@@ -203,38 +203,36 @@ export function PricingCard({ plan, variant, isCurrentPlan, subscriptionStatus }
                                         {plan.trial_days} jours d'essai gratuit
                                     </span>
                                 </div>
-                                {/* Prix Barré + Prix Normal sur la même ligne */}
-                                <div className="flex items-baseline flex-wrap gap-x-3 gap-y-1">
+                                <div className="flex items-baseline flex-wrap gap-x-2 gap-y-1">
                                     {plan.strikethrough_price != null && (
-                                        <span className="text-xl lg:text-[1.75rem] font-bold text-neutral-500 line-through decoration-neutral-600">
+                                        <span className="text-xl lg:text-2xl font-bold text-neutral-500 line-through decoration-neutral-600">
                                             {plan.strikethrough_price}€
                                         </span>
                                     )}
                                     <span className="text-4xl lg:text-[3.25rem] font-black text-green-400 tracking-tight leading-none">
                                         {plan.price}€
                                     </span>
+                                    <span className="text-sm font-medium text-neutral-500">{plan.period}</span>
                                 </div>
-                                <span className="text-sm font-medium text-neutral-500 mt-1">{plan.period}</span>
                             </div>
                         ) : plan.trial_price != null && plan.trial_days != null ? (
                             /* ══ Scénario 4 : Offre de lancement payante (ex: 14.99€) ══ */
                             <div className="flex flex-col gap-3">
-                                {/* Prix Barré + Prix Principal sur la même ligne */}
-                                <div className="flex items-baseline flex-wrap gap-x-3 gap-y-1">
+                                <div className="flex items-baseline flex-wrap gap-x-2 gap-y-1">
                                     {plan.strikethrough_price != null && (
-                                        <span className="text-xl lg:text-[1.75rem] font-bold text-neutral-500 line-through decoration-neutral-600">
+                                        <span className="text-xl lg:text-2xl font-bold text-neutral-500 line-through decoration-neutral-600">
                                             {plan.strikethrough_price}€
                                         </span>
                                     )}
-                                    <div className="flex items-center gap-2 lg:gap-3">
-                                        <span className="text-4xl lg:text-[3.25rem] font-black text-white tracking-tight leading-none">{plan.trial_price}€</span>
-                                        <span className="text-[10px] lg:text-[11px] font-bold text-green-400 uppercase tracking-wider bg-green-500/10 px-2 lg:px-2.5 py-1 rounded-md border border-green-500/20 self-center">
-                                            {plan.trial_days} jours
-                                        </span>
-                                    </div>
+                                    <span className="text-4xl lg:text-[3.25rem] font-black text-white tracking-tight leading-none">
+                                        {plan.trial_price}€
+                                    </span>
+                                    <span className="text-[10px] lg:text-[11px] font-bold text-green-400 uppercase tracking-wider bg-green-500/10 px-2 lg:px-2.5 py-1 rounded-md border border-green-500/20 self-center mb-1">
+                                        {plan.trial_days} jours
+                                    </span>
                                 </div>
                                 {/* Encart glassmorphism "Suivi de..." */}
-                                <div className="text-xs font-semibold text-neutral-400 bg-white/[0.03] backdrop-blur-sm py-2 px-3 rounded-lg border border-white/10 inline-flex w-fit items-center gap-1.5">
+                                <div className="text-xs font-semibold text-neutral-400 bg-white/[0.03] backdrop-blur-sm py-2 px-3 rounded-lg border border-white/10 inline-flex w-fit items-center gap-1.5 align-middle">
                                     <span className="text-neutral-500">Suivi de</span>
                                     <span className="text-white font-bold">{plan.price}€</span>
                                     <span className="text-neutral-500">{plan.period}</span>
@@ -243,17 +241,16 @@ export function PricingCard({ plan, variant, isCurrentPlan, subscriptionStatus }
                         ) : (
                             /* ══ Scénario 1 & 2 : Prix normal (avec ou sans prix barré) ══ */
                             <div className="flex flex-col gap-2">
-                                {/* Prix Barré + Prix Principal sur la même ligne */}
-                                <div className="flex items-baseline flex-wrap gap-x-3 gap-y-1">
+                                <div className="flex items-baseline flex-wrap gap-x-2 gap-y-1">
                                     {plan.strikethrough_price != null && (
-                                        <span className="text-xl lg:text-[1.75rem] font-bold text-neutral-500 line-through decoration-neutral-600">
+                                        <span className="text-xl lg:text-2xl font-bold text-neutral-500 line-through decoration-neutral-600">
                                             {plan.strikethrough_price}€
                                         </span>
                                     )}
-                                    <div className="flex items-baseline gap-1.5">
-                                        <span className="text-4xl lg:text-[3.25rem] font-black text-white tracking-tight leading-none">{plan.price}€</span>
-                                        <span className="text-xs lg:text-sm font-medium text-neutral-500">{plan.period}</span>
-                                    </div>
+                                    <span className="text-4xl lg:text-[3.25rem] font-black text-white tracking-tight leading-none">
+                                        {plan.price}€
+                                    </span>
+                                    <span className="text-xs lg:text-sm font-medium text-neutral-500">{plan.period}</span>
                                 </div>
                             </div>
                         )}
