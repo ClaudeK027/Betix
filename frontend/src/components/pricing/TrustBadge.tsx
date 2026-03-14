@@ -13,9 +13,9 @@ export function TrustBadge() {
                         <div className="absolute inset-2 border border-dashed border-amber-500/50 rounded-full animate-spin-slow" />
                         <div className="flex flex-col items-center justify-center text-center p-4">
                             <ShieldCheck className="size-10 text-amber-500 mb-2" />
-                            <span className="text-xl font-black text-white uppercase tracking-tighter">30 JOURS</span>
-                            <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Satisfait</span>
-                            <span className="text-[8px] text-neutral-400 mt-1">OU REMBOURSÉ</span>
+                            <span className="text-xl font-black text-white uppercase tracking-tighter">100%</span>
+                            <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">NO RISK</span>
+                            <span className="text-[8px] text-neutral-400 mt-1">ESSAYEZ PREMIUM</span>
                         </div>
                     </div>
                 </div>
@@ -26,7 +26,7 @@ export function TrustBadge() {
                         <div className="absolute inset-2 border border-dashed border-blue-500/50 rounded-full animate-reverse-spin-slow" />
                         <div className="flex flex-col items-center justify-center text-center p-4">
                             <span className="text-3xl font-black text-white">100%</span>
-                            <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mt-1">Sans Risque</span>
+                            <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mt-1">NO RISK</span>
                             <span className="text-[8px] text-neutral-400 mt-1">ESSAYEZ PREMIUM</span>
                         </div>
                     </div>
