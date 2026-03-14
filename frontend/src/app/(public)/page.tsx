@@ -39,6 +39,7 @@ import { Spotlight } from "@/components/ui/card-spotlight";
 import { BreathingGauge } from "@/components/ui/breathing-gauge";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/server";
+import { getDisplayFeatures } from "@/lib/plans";
 
 /* ================================================================
    Landing Page — BETIX Premium (Refonte Wow)
@@ -566,8 +567,10 @@ export default async function LandingPage() {
                             return sortedPlans.map((plan) => {
                                 const isPremium = plan.frequency !== 'free';
 
-                                // Get first 2 features from 'core' category
-                                const planFeatures = Object.entries(plan.features?.core || {}).slice(0, 2);
+                                // Use standard utility to get formatted features, just like /pricing page
+                                const allDisplayFeatures = getDisplayFeatures(plan as any, definitions || []);
+                                // Take the first 2 included features
+                                const planFeatures = allDisplayFeatures.filter((f: { text: string, included: boolean }) => f.included).slice(0, 2);
 
                                 // Format frequency display
                                 let periodDisplay = plan.frequency;
@@ -580,7 +583,7 @@ export default async function LandingPage() {
                                     <div
                                         key={plan.id}
                                         className={cn(
-                                            "p-6 sm:p-8 rounded-3xl border transition-all relative overflow-hidden group",
+                                            "flex flex-col p-6 sm:p-8 rounded-3xl border transition-all relative overflow-hidden group h-full",
                                             isPremium
                                                 ? "border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10"
                                                 : "border-white/5 bg-neutral-900/50 hover:bg-neutral-900"
@@ -589,63 +592,65 @@ export default async function LandingPage() {
                                         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                                     )}
 
-                                        <div className="relative z-10">
-                                            <div className="mb-4 text-muted-foreground font-mono text-sm uppercase tracking-wider flex justify-between items-center">
-                                                <span>{plan.name}</span>
-                                            </div>
+                                        <div className="relative z-10 flex flex-col h-full">
+                                            {/* Top Section (Title, Badge, Price, Description) */}
+                                            <div className="flex-1 flex flex-col justify-start">
+                                                <div className="mb-4 text-muted-foreground font-mono text-sm uppercase tracking-wider flex justify-between items-center">
+                                                    <span>{plan.name}</span>
+                                                </div>
 
-                                            {plan.trial_days && plan.trial_days > 0 && (
-                                                <Badge className="mb-4 font-mono text-[10px] bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20">
-                                                    {plan.trial_days} jours d&apos;essai gratuit
-                                                </Badge>
-                                            )}
+                                                <div className="min-h-[28px] mb-4">
+                                                    {plan.trial_days && plan.trial_days > 0 ? (
+                                                        <Badge className="font-mono text-[10px] bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20">
+                                                            {plan.trial_days} jours d&apos;essai gratuit
+                                                        </Badge>
+                                                    ) : <div className="h-full"></div>}
+                                                </div>
 
-                                            <div className="flex items-center gap-2 mb-1">
-                                                {plan.strikethrough_price && plan.strikethrough_price > plan.price && (
-                                                    <span className="text-xl sm:text-2xl font-bold text-muted-foreground line-through opacity-70">
-                                                        {plan.strikethrough_price}€
-                                                    </span>
-                                                )}
-                                                <div className="text-4xl font-bold text-white">
-                                                    {plan.price === 0 ? "Gratuit" : `${plan.price}€`}
-                                                    {plan.frequency !== 'free' && (
-                                                        <span className="text-base font-normal text-muted-foreground ml-1">
-                                                            /{periodDisplay}
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    {plan.strikethrough_price && plan.strikethrough_price > plan.price && (
+                                                        <span className="text-xl sm:text-2xl font-bold text-muted-foreground line-through opacity-70">
+                                                            {plan.strikethrough_price}€
                                                         </span>
                                                     )}
+                                                    <div className="text-4xl font-bold text-white">
+                                                        {plan.price === 0 ? "Gratuit" : `${plan.price}€`}
+                                                        {plan.frequency !== 'free' && (
+                                                            <span className="text-base font-normal text-muted-foreground ml-1">
+                                                                /{periodDisplay}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
+
+                                                <p className={cn("text-sm mt-2", isPremium ? "text-blue-200/60" : "text-muted-foreground")}>
+                                                    {plan.description || (isPremium ? "Accès illimité à l'intelligence artificielle." : "Pour tester la puissance de l'IA.")}
+                                                </p>
                                             </div>
 
-                                            <p className={cn("text-sm mb-8 mt-2", isPremium ? "text-blue-200/60" : "text-muted-foreground")}>
-                                                {plan.description || (isPremium ? "Accès illimité à l'intelligence artificielle." : "Pour tester la puissance de l'IA.")}
-                                            </p>
-
-                                            <ul className="space-y-3 mb-8">
-                                                {planFeatures.map(([key, val]) => {
-                                                    const def = definitions?.find(d => d.id === key);
-                                                    const label = def?.label || key;
-                                                    const displayValue = typeof val === 'object' ? (val as any).value : val;
-
-                                                    return (
-                                                        <li key={key} className="flex items-center gap-3 text-sm">
-                                                            <CheckCircle2 className={cn("size-4", isPremium ? "text-blue-400" : "text-neutral-600")} />
-                                                            <span>{label} : <span className="font-bold">{displayValue === true ? "Inclus" : displayValue}</span></span>
+                                            {/* Bottom Section (Features & CTA) pushed to the bottom */}
+                                            <div className="mt-8 flex flex-col justify-end">
+                                                <ul className="space-y-3 mb-8">
+                                                    {planFeatures.map((f: { text: string, included: boolean }, i: number) => (
+                                                        <li key={i} className="flex items-start gap-3 text-sm">
+                                                            <CheckCircle2 className={cn("size-5 shrink-0", isPremium ? "text-blue-400" : "text-neutral-600")} />
+                                                            <span className="text-neutral-300">{f.text}</span>
                                                         </li>
-                                                    );
-                                                })}
-                                            </ul>
+                                                    ))}
+                                                </ul>
 
-                                            <Link href="/signup">
-                                                <Button
-                                                    className={cn(
-                                                        "w-full transition-all",
-                                                        isPremium ? "bg-blue-600 hover:bg-blue-700 text-white border-0" : ""
-                                                    )}
-                                                    variant={isPremium ? "default" : "outline"}
-                                                >
-                                                    Débuter
-                                                </Button>
-                                            </Link>
+                                                <Link href="/signup">
+                                                    <Button
+                                                        className={cn(
+                                                            "w-full transition-all",
+                                                            isPremium ? "bg-blue-600 hover:bg-blue-700 text-white border-0" : ""
+                                                        )}
+                                                        variant={isPremium ? "default" : "outline"}
+                                                    >
+                                                        Débuter
+                                                    </Button>
+                                                </Link>
+                                            </div>
                                         </div>
                                     </div>
                                 );
